@@ -1,0 +1,78 @@
+@import "tailwindcss";
+
+:root {
+  --background: #0a0e1a;
+  --foreground: #ffffff;
+  --sidebar-bg: #0d1421;
+  --card-bg: #121829;
+  --border-color: #1a2332;
+  --accent-teal: #2dd4bf;
+  --accent-purple: #a855f7;
+  --accent-purple-light: #c084fc;
+  --success-green: #10b981;
+  --text-muted: #64748b;
+  --text-secondary: #cbd5e1;
+  --text-medium: #64748b;
+  --complete-gray: #6b7280;
+  --button-secondary: #1e293b;
+  --glass-bg: rgba(18, 24, 41, 0.8);
+  --glass-border: rgba(45, 212, 191, 0.2);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-sidebar: var(--sidebar-bg);
+  --color-card: var(--card-bg);
+  --color-border: var(--border-color);
+  --color-accent-teal: var(--accent-teal);
+  --color-accent-purple: var(--accent-purple);
+  --color-accent-purple-light: var(--accent-purple-light);
+  --color-muted: var(--text-muted);
+  --color-secondary: var(--text-secondary);
+  --color-medium: var(--text-medium);
+  --color-success: var(--success-green);
+  --color-complete: var(--complete-gray);
+  --color-button-secondary: var(--button-secondary);
+  --color-glass-bg: var(--glass-bg);
+  --color-glass-border: var(--glass-border);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+  --safe-area-inset-bottom: env(safe-area-inset-bottom);
+}
+
+body {
+  background: radial-gradient(ellipse at top, #1e3a8a 0%, var(--background) 50%, var(--background) 100%);
+  background-attachment: fixed;
+  color: var(--foreground);
+  font-family: system-ui, -apple-system, sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+/* Glassmorphism effects */
+.glass-card {
+  background: var(--glass-bg);
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--glass-border);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+/* Subtle animations */
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-3px); }
+}
+
+.float-animation {
+  animation: float 6s ease-in-out infinite;
+}
+
+/* Glow effects */
+.glow-teal {
+  box-shadow: 0 0 20px rgba(45, 212, 191, 0.3);
+}
+
+.glow-purple {
+  box-shadow: 0 0 20px rgba(168, 85, 247, 0.3);
+}

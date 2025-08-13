@@ -1,0 +1,79 @@
+<svg width="400" height="200" viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background with gradient -->
+  <defs>
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#252932"/>
+      <stop offset="100%" style="stop-color:#2a303a"/>
+    </linearGradient>
+    
+    <linearGradient id="eyeGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#ffffff"/>
+      <stop offset="100%" style="stop-color:#f8fafc"/>
+    </linearGradient>
+    
+    <linearGradient id="irisGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#4ECDC4"/>
+      <stop offset="100%" style="stop-color:#45b7aa"/>
+    </linearGradient>
+    
+    <filter id="eyeShadow" x="-50%" y="-50%" width="200%" height="200%">
+      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#4ECDC4" flood-opacity="0.25"/>
+    </filter>
+    
+    <filter id="logoShadow" x="-50%" y="-50%" width="200%" height="200%">
+      <feDropShadow dx="0" dy="10" stdDeviation="10" flood-color="#000000" flood-opacity="0.4"/>
+    </filter>
+  </defs>
+  
+  <!-- Background rounded rectangle -->
+  <rect x="50" y="25" width="300" height="150" rx="24" ry="24" 
+        fill="url(#bgGradient)" 
+        stroke="rgba(78, 205, 196, 0.1)" 
+        stroke-width="1"
+        filter="url(#logoShadow)"/>
+  
+  <!-- Top highlight line -->
+  <rect x="50" y="25" width="300" height="1" rx="24" ry="24" 
+        fill="rgba(78, 205, 196, 0.3)"/>
+  
+  <!-- Left Eye -->
+  <circle cx="180" cy="80" r="11" 
+          fill="url(#eyeGradient)" 
+          stroke="#4ECDC4" 
+          stroke-width="2"
+          filter="url(#eyeShadow)"/>
+  
+  <!-- Left Eye Iris -->
+  <circle cx="180" cy="80" r="5.5" fill="url(#irisGradient)"/>
+  
+  <!-- Left Eye Pupil -->
+  <circle cx="180" cy="80" r="2.5" fill="#1a1d23"/>
+  
+  <!-- Right Eye -->
+  <circle cx="220" cy="80" r="11" 
+          fill="url(#eyeGradient)" 
+          stroke="#4ECDC4" 
+          stroke-width="2"
+          filter="url(#eyeShadow)"/>
+  
+  <!-- Right Eye Iris -->
+  <circle cx="220" cy="80" r="5.5" fill="url(#irisGradient)"/>
+  
+  <!-- Right Eye Pupil -->
+  <circle cx="220" cy="80" r="2.5" fill="#1a1d23"/>
+  
+  <!-- Text: "Band" -->
+  <text x="200" y="130" text-anchor="middle" 
+        font-family="Inter, -apple-system, BlinkMacSystemFont, sans-serif" 
+        font-size="32" 
+        font-weight="700" 
+        fill="#4ECDC4"
+        style="text-shadow: 0 0 20px rgba(78, 205, 196, 0.3);">Band</text>
+  
+  <!-- Text: "Seeking" -->
+  <text x="200" y="155" text-anchor="middle" 
+        font-family="Inter, -apple-system, BlinkMacSystemFont, sans-serif" 
+        font-size="32" 
+        font-weight="300" 
+        fill="#cbd5e1">Seeking</text>
+</svg>
