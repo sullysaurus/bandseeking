@@ -349,18 +349,7 @@ export default function FindMusicians() {
                 {filteredMusicians.map((musician) => (
                   <MusicianCard 
                     key={musician.id} 
-                    id={musician.id}
-                    name={musician.full_name || musician.username}
-                    username={musician.username}
-                    location={musician.location || 'Location not set'}
-                    instruments={musician.instruments || []}
-                    genres={musician.genres || []}
-                    experienceLevel={musician.experience_level || 'Not specified'}
-                    bio={musician.bio || 'No bio yet'}
-                    lookingFor={musician.looking_for || []}
-                    yearsExperience={0}
-                    availability={musician.looking_for && musician.looking_for.length > 0 ? 'available' : 'not-looking'}
-                    avatar={musician.avatar_url}
+                    profile={musician}
                   />
                 ))}
               </div>

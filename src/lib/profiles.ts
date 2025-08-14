@@ -18,6 +18,9 @@ export interface Profile {
   avatar_url: string | null
   created_at: string
   updated_at: string
+  last_active_at?: string | null
+  response_time_type?: 'quick' | 'standard' | 'slow' | null
+  avg_response_minutes?: number | null
 }
 
 export interface ProfileUpdate {

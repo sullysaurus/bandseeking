@@ -72,6 +72,37 @@ INSERT INTO bands (name, slug, description, genre, location, status, looking_for
 
 ('Electronic Dreams', 'electronic-dreams', 'Electronic music production duo looking to expand into live performances. Seeking live musicians who can adapt electronic sounds to acoustic instruments.', 'Electronic', 'Los Angeles, CA', 'recruiting', ARRAY['Drums', 'Bass', 'Guitar'], 'https://electronicdreams.io', '@electronicdreams', '550e8400-e29b-41d4-a716-446655440005');
 
+-- Update profiles with activity tracking data for realistic status indicators
+UPDATE profiles SET 
+  last_active_at = CURRENT_TIMESTAMP - INTERVAL '5 minutes',
+  response_time_type = 'quick',
+  avg_response_minutes = 15
+WHERE id = '550e8400-e29b-41d4-a716-446655440001';
+
+UPDATE profiles SET 
+  last_active_at = CURRENT_TIMESTAMP - INTERVAL '30 minutes',
+  response_time_type = 'standard', 
+  avg_response_minutes = 120
+WHERE id = '550e8400-e29b-41d4-a716-446655440002';
+
+UPDATE profiles SET 
+  last_active_at = CURRENT_TIMESTAMP - INTERVAL '2 hours',
+  response_time_type = 'standard',
+  avg_response_minutes = 90
+WHERE id = '550e8400-e29b-41d4-a716-446655440003';
+
+UPDATE profiles SET 
+  last_active_at = CURRENT_TIMESTAMP - INTERVAL '1 day',
+  response_time_type = 'slow',
+  avg_response_minutes = 360
+WHERE id = '550e8400-e29b-41d4-a716-446655440004';
+
+UPDATE profiles SET 
+  last_active_at = CURRENT_TIMESTAMP - INTERVAL '3 minutes',
+  response_time_type = 'quick',
+  avg_response_minutes = 25
+WHERE id = '550e8400-e29b-41d4-a716-446655440005';
+
 -- Insert band members
 INSERT INTO band_members (band_id, user_id, role) VALUES
 -- Midnight Electric (Alex's band) - needs bassist
