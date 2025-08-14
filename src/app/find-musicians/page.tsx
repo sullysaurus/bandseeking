@@ -5,6 +5,7 @@ import { Search, Filter, Plus, Users } from 'lucide-react'
 import Sidebar from '@/components/Sidebar'
 import MusicianCard from '@/components/MusicianCard'
 import ProtectedRoute from '@/components/ProtectedRoute'
+import FilterPanel, { FilterOptions } from '@/components/FilterPanel'
 import { profileService, Profile } from '@/lib/profiles'
 
 /* const mockMusicians = [
@@ -118,6 +119,15 @@ export default function FindMusicians() {
   const [musicians, setMusicians] = useState<Profile[]>([])
   const [loading, setLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState('')
+  const [isFilterOpen, setIsFilterOpen] = useState(false)
+  const [filters, setFilters] = useState<FilterOptions>({
+    instruments: [],
+    genres: [],
+    experienceLevel: [],
+    lookingFor: [],
+    location: '',
+    availability: 'all'
+  })
   
   useEffect(() => {
     loadMusicians()
@@ -130,21 +140,89 @@ export default function FindMusicians() {
     setLoading(false)
   }
   
-  const filteredMusicians = musicians.filter(musician => {
-    if (!searchTerm) return true
-    const searchLower = searchTerm.toLowerCase()
-    return (
-      musician.full_name?.toLowerCase().includes(searchLower) ||
-      musician.username.toLowerCase().includes(searchLower) ||
-      musician.bio?.toLowerCase().includes(searchLower) ||
-      musician.instruments?.some(i => i.toLowerCase().includes(searchLower)) ||
-      musician.genres?.some(g => g.toLowerCase().includes(searchLower)) ||
-      musician.location?.toLowerCase().includes(searchLower)
-    )
-  })
+  const applyFilters = (musician: Profile): boolean => {
+    // Search term filter
+    if (searchTerm) {
+      const searchLower = searchTerm.toLowerCase()
+      const matchesSearch = (
+        musician.full_name?.toLowerCase().includes(searchLower) ||
+        musician.username.toLowerCase().includes(searchLower) ||
+        musician.bio?.toLowerCase().includes(searchLower) ||
+        musician.instruments?.some(i => i.toLowerCase().includes(searchLower)) ||
+        musician.genres?.some(g => g.toLowerCase().includes(searchLower)) ||
+        musician.location?.toLowerCase().includes(searchLower)
+      )
+      if (!matchesSearch) return false
+    }
+
+    // Location filter
+    if (filters.location && filters.location.trim()) {
+      if (!musician.location || !musician.location.toLowerCase().includes(filters.location.toLowerCase())) {
+        return false
+      }
+    }
+
+    // Instruments filter
+    if (filters.instruments?.length) {
+      const hasMatchingInstrument = filters.instruments.some(filterInstrument =>
+        musician.instruments?.some(musicianInstrument =>
+          musicianInstrument.toLowerCase().includes(filterInstrument.toLowerCase())
+        )
+      )
+      if (!hasMatchingInstrument) return false
+    }
+
+    // Genres filter
+    if (filters.genres?.length) {
+      const hasMatchingGenre = filters.genres.some(filterGenre =>
+        musician.genres?.some(musicianGenre =>
+          musicianGenre.toLowerCase().includes(filterGenre.toLowerCase())
+        )
+      )
+      if (!hasMatchingGenre) return false
+    }
+
+    // Experience level filter
+    if (filters.experienceLevel?.length) {
+      if (!musician.experience_level || !filters.experienceLevel.includes(musician.experience_level)) {
+        return false
+      }
+    }
+
+    // Looking for filter
+    if (filters.lookingFor?.length) {
+      const hasMatchingLookingFor = filters.lookingFor.some(filterLookingFor =>
+        musician.looking_for?.some(musicianLookingFor =>
+          musicianLookingFor.toLowerCase().includes(filterLookingFor.toLowerCase())
+        )
+      )
+      if (!hasMatchingLookingFor) return false
+    }
+
+    // Availability filter
+    if (filters.availability && filters.availability !== 'all') {
+      const isAvailable = musician.looking_for && musician.looking_for.length > 0
+      if (filters.availability === 'available' && !isAvailable) return false
+      if (filters.availability === 'not-looking' && isAvailable) return false
+    }
+
+    return true
+  }
   
+  const filteredMusicians = musicians.filter(applyFilters)
   const totalMusicians = filteredMusicians.length
   const availableMusicians = filteredMusicians.filter(m => m.looking_for && m.looking_for.length > 0).length
+
+  const getActiveFilterCount = () => {
+    let count = 0
+    if (filters.instruments?.length) count += filters.instruments.length
+    if (filters.genres?.length) count += filters.genres.length
+    if (filters.experienceLevel?.length) count += filters.experienceLevel.length
+    if (filters.lookingFor?.length) count += filters.lookingFor.length
+    if (filters.location) count++
+    if (filters.availability && filters.availability !== 'all') count++
+    return count
+  }
 
   return (
     <ProtectedRoute>
@@ -172,9 +250,17 @@ export default function FindMusicians() {
                     className="bg-card border-0 rounded-lg pl-12 pr-4 py-3 text-white placeholder-medium focus:outline-none focus:ring-2 focus:ring-accent-teal w-96"
                   />
                 </div>
-                <button className="flex items-center gap-2 bg-card hover:bg-opacity-80 text-white px-4 py-3 rounded-lg transition-colors">
+                <button 
+                  onClick={() => setIsFilterOpen(true)}
+                  className="flex items-center gap-2 bg-card hover:bg-opacity-80 text-white px-4 py-3 rounded-lg transition-colors relative"
+                >
                   <Filter className="w-5 h-5" />
                   Filters
+                  {getActiveFilterCount() > 0 && (
+                    <span className="absolute -top-2 -right-2 bg-accent-teal text-black text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                      {getActiveFilterCount()}
+                    </span>
+                  )}
                 </button>
                 <button className="flex items-center gap-2 bg-accent-teal hover:bg-opacity-90 text-black font-medium px-6 py-3 rounded-lg transition-colors">
                   <Plus className="w-5 h-5" />
@@ -182,8 +268,8 @@ export default function FindMusicians() {
                 </button>
               </div>
               
-              {/* Mobile search */}
-              <div className="md:hidden">
+              {/* Mobile search and filters */}
+              <div className="md:hidden space-y-3">
                 <div className="relative">
                   <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-medium w-5 h-5" />
                   <input 
@@ -193,6 +279,24 @@ export default function FindMusicians() {
                     onChange={(e) => setSearchTerm(e.target.value)}
                     className="bg-card border-0 rounded-lg pl-12 pr-4 py-3 text-white placeholder-medium focus:outline-none focus:ring-2 focus:ring-accent-teal w-full"
                   />
+                </div>
+                <div className="flex gap-3">
+                  <button 
+                    onClick={() => setIsFilterOpen(true)}
+                    className="flex items-center gap-2 bg-card hover:bg-opacity-80 text-white px-4 py-3 rounded-lg transition-colors relative flex-1"
+                  >
+                    <Filter className="w-5 h-5" />
+                    Filters
+                    {getActiveFilterCount() > 0 && (
+                      <span className="absolute -top-2 -right-2 bg-accent-teal text-black text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                        {getActiveFilterCount()}
+                      </span>
+                    )}
+                  </button>
+                  <button className="flex items-center gap-2 bg-accent-teal hover:bg-opacity-90 text-black font-medium px-4 py-3 rounded-lg transition-colors">
+                    <Plus className="w-4 h-4" />
+                    Post
+                  </button>
                 </div>
               </div>
             </div>
@@ -264,6 +368,14 @@ export default function FindMusicians() {
           </div>
         </main>
       </div>
+
+      <FilterPanel
+        isOpen={isFilterOpen}
+        onClose={() => setIsFilterOpen(false)}
+        filters={filters}
+        onFiltersChange={setFilters}
+        type="musicians"
+      />
     </ProtectedRoute>
   )
 }

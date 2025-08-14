@@ -76,6 +76,41 @@ export const LOOKING_FOR_OPTIONS = [
   'Networking',
 ]
 
+export const BAND_ROLES = [
+  'Lead Guitar',
+  'Rhythm Guitar', 
+  'Bass Player',
+  'Drummer',
+  'Lead Vocals',
+  'Backing Vocals',
+  'Keyboardist',
+  'Pianist',
+  'Saxophonist',
+  'Trumpeter',
+  'Violinist',
+  'Cellist',
+  'Flutist',
+  'Harmonica Player',
+  'DJ',
+  'Producer',
+  'Sound Engineer',
+  'Percussionist',
+  'Accordion Player',
+  'Banjo Player',
+  'Mandolin Player',
+  'Ukulele Player',
+  'Violin',
+  'Cello',
+  'Guitar',
+  'Bass',
+  'Drums',
+  'Vocals',
+  'Keyboard',
+  'Piano',
+  'Saxophone',
+  'Trumpet'
+]
+
 export const EXPERIENCE_LEVELS = [
   { value: 'Beginner', label: 'Beginner', description: 'Just starting out, learning the basics' },
   { value: 'Intermediate', label: 'Intermediate', description: 'Comfortable playing, some performance experience' },

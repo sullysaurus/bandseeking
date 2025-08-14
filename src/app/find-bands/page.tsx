@@ -6,6 +6,7 @@ import Link from 'next/link'
 import Sidebar from '@/components/Sidebar'
 import BandCard from '@/components/BandCard'
 import ProtectedRoute from '@/components/ProtectedRoute'
+import FilterPanel, { FilterOptions } from '@/components/FilterPanel'
 import { bandService, Band } from '@/lib/bands'
 
 
@@ -13,6 +14,14 @@ export default function FindBands() {
   const [bands, setBands] = useState<Band[]>([])
   const [loading, setLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState('')
+  const [isFilterOpen, setIsFilterOpen] = useState(false)
+  const [filters, setFilters] = useState<FilterOptions>({
+    instruments: [],
+    genres: [],
+    lookingFor: [],
+    location: '',
+    status: 'all'
+  })
   
   useEffect(() => {
     loadBands()
@@ -25,20 +34,65 @@ export default function FindBands() {
     setLoading(false)
   }
   
-  const filteredBands = bands.filter(band => {
-    if (!searchTerm) return true
-    const searchLower = searchTerm.toLowerCase()
-    return (
-      band.name.toLowerCase().includes(searchLower) ||
-      band.description?.toLowerCase().includes(searchLower) ||
-      band.genre?.toLowerCase().includes(searchLower) ||
-      band.location?.toLowerCase().includes(searchLower) ||
-      band.looking_for?.some(role => role.toLowerCase().includes(searchLower))
-    )
-  })
+  const applyFilters = (band: Band): boolean => {
+    // Search term filter
+    if (searchTerm) {
+      const searchLower = searchTerm.toLowerCase()
+      const matchesSearch = (
+        band.name.toLowerCase().includes(searchLower) ||
+        band.description?.toLowerCase().includes(searchLower) ||
+        band.genre?.toLowerCase().includes(searchLower) ||
+        band.location?.toLowerCase().includes(searchLower) ||
+        band.looking_for?.some(role => role.toLowerCase().includes(searchLower))
+      )
+      if (!matchesSearch) return false
+    }
+
+    // Location filter
+    if (filters.location && filters.location.trim()) {
+      if (!band.location || !band.location.toLowerCase().includes(filters.location.toLowerCase())) {
+        return false
+      }
+    }
+
+    // Genre filter (using single genre field for bands)
+    if (filters.genres?.length && band.genre) {
+      const hasMatchingGenre = filters.genres.some(filterGenre =>
+        band.genre?.toLowerCase().includes(filterGenre.toLowerCase())
+      )
+      if (!hasMatchingGenre) return false
+    }
+
+    // Looking for filter (instruments/roles they need)
+    if (filters.lookingFor?.length) {
+      const hasMatchingRole = filters.lookingFor.some(filterRole =>
+        band.looking_for?.some(bandRole =>
+          bandRole.toLowerCase().includes(filterRole.toLowerCase())
+        )
+      )
+      if (!hasMatchingRole) return false
+    }
+
+    // Status filter
+    if (filters.status && filters.status !== 'all') {
+      if (band.status !== filters.status) return false
+    }
+
+    return true
+  }
   
+  const filteredBands = bands.filter(applyFilters)
   const totalBands = filteredBands.length
   const recruitingBands = filteredBands.filter(b => b.status === 'recruiting').length
+
+  const getActiveFilterCount = () => {
+    let count = 0
+    if (filters.genres?.length) count += filters.genres.length
+    if (filters.lookingFor?.length) count += filters.lookingFor.length
+    if (filters.location) count++
+    if (filters.status && filters.status !== 'all') count++
+    return count
+  }
 
   return (
     <ProtectedRoute>
@@ -66,9 +120,17 @@ export default function FindBands() {
                   className="bg-card border-0 rounded-lg pl-12 pr-4 py-3 text-white placeholder-medium focus:outline-none focus:ring-2 focus:ring-accent-teal w-96"
                 />
               </div>
-              <button className="flex items-center gap-2 bg-card hover:bg-opacity-80 text-white px-4 py-3 rounded-lg transition-colors">
+              <button 
+                onClick={() => setIsFilterOpen(true)}
+                className="flex items-center gap-2 bg-card hover:bg-opacity-80 text-white px-4 py-3 rounded-lg transition-colors relative"
+              >
                 <Filter className="w-5 h-5" />
                 Filters
+                {getActiveFilterCount() > 0 && (
+                  <span className="absolute -top-2 -right-2 bg-accent-teal text-black text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                    {getActiveFilterCount()}
+                  </span>
+                )}
               </button>
               <Link 
                 href="/bands/create"
@@ -79,8 +141,8 @@ export default function FindBands() {
               </Link>
             </div>
             
-            {/* Mobile search */}
-            <div className="md:hidden">
+            {/* Mobile search and filters */}
+            <div className="md:hidden space-y-3">
               <div className="relative">
                 <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-medium w-5 h-5" />
                 <input 
@@ -90,6 +152,27 @@ export default function FindBands() {
                   onChange={(e) => setSearchTerm(e.target.value)}
                   className="bg-card border-0 rounded-lg pl-12 pr-4 py-3 text-white placeholder-medium focus:outline-none focus:ring-2 focus:ring-accent-teal w-full"
                 />
+              </div>
+              <div className="flex gap-3">
+                <button 
+                  onClick={() => setIsFilterOpen(true)}
+                  className="flex items-center gap-2 bg-card hover:bg-opacity-80 text-white px-4 py-3 rounded-lg transition-colors relative flex-1"
+                >
+                  <Filter className="w-5 h-5" />
+                  Filters
+                  {getActiveFilterCount() > 0 && (
+                    <span className="absolute -top-2 -right-2 bg-accent-teal text-black text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                      {getActiveFilterCount()}
+                    </span>
+                  )}
+                </button>
+                <Link 
+                  href="/bands/create"
+                  className="flex items-center gap-2 bg-accent-teal hover:bg-opacity-90 text-white font-medium px-4 py-3 rounded-lg transition-colors"
+                >
+                  <Plus className="w-4 h-4" />
+                  Start
+                </Link>
               </div>
             </div>
           </div>
@@ -142,6 +225,14 @@ export default function FindBands() {
         </div>
         </main>
       </div>
+
+      <FilterPanel
+        isOpen={isFilterOpen}
+        onClose={() => setIsFilterOpen(false)}
+        filters={filters}
+        onFiltersChange={setFilters}
+        type="bands"
+      />
     </ProtectedRoute>
   )
 }

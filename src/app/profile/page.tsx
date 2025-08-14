@@ -39,24 +39,17 @@ export default function ProfilePage() {
         setProfile(existingProfile)
         setEditedProfile(existingProfile)
       } else {
-        // Create a default profile if none exists
-        const defaultProfile = await profileService.createProfile({
-          username: user.user_metadata?.username || user.email?.split('@')[0] || 'user',
-          full_name: user.user_metadata?.full_name || user.email || 'User',
-          instruments: [],
-          genres: [],
-          looking_for: [],
-          experience_level: 'Beginner'
-        })
-        
-        if (defaultProfile) {
-          setProfile(defaultProfile)
-          setEditedProfile(defaultProfile)
-        }
+        // Profile should be created automatically by database trigger
+        // If not found, show appropriate message
+        console.warn('Profile not found - it should have been created automatically')
+        setError('')  // Don't show error since profile creation is automatic
       }
     } catch (err) {
       console.error('Error loading profile:', err)
-      setError('Failed to load profile')
+      // Don't show error message if it's just a missing profile
+      if (!err?.message?.includes('not found')) {
+        setError('Failed to load profile')
+      }
     } finally {
       setLoading(false)
     }
