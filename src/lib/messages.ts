@@ -97,7 +97,7 @@ class MessageService {
       return processedConversations
     } catch (error: any) {
       // Don't log table missing errors as they're expected
-      if (error.code !== '42P01' && !error.message?.includes('does not exist')) {
+      if (error && error.code !== '42P01' && !error.message?.includes('does not exist')) {
         console.error('Error fetching conversations:', error)
       }
       return []
