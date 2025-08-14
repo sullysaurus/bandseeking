@@ -5,8 +5,10 @@ import { Edit, Save, X, MapPin, Music, Calendar, Mail, Phone, Globe, Instagram, 
 import Sidebar from '@/components/Sidebar'
 import ProtectedRoute from '@/components/ProtectedRoute'
 import AvatarUpload from '@/components/AvatarUpload'
+import TagInput from '@/components/TagInput'
 import { profileService, Profile, ProfileUpdate } from '@/lib/profiles'
 import { useAuth } from '@/contexts/AuthContext'
+import { COMMON_INSTRUMENTS, MUSIC_GENRES, LOOKING_FOR_OPTIONS } from '@/lib/constants/music'
 
 export default function ProfilePage() {
   const { user } = useAuth()
@@ -128,19 +130,6 @@ export default function ProfilePage() {
     }
   }
 
-  const addItem = (field: 'instruments' | 'genres' | 'looking_for', item: string) => {
-    if (!editedProfile || !item.trim()) return
-    const current = editedProfile[field] as string[]
-    if (!current.includes(item)) {
-      updateField(field, [...current, item])
-    }
-  }
-
-  const removeItem = (field: 'instruments' | 'genres' | 'looking_for', item: string) => {
-    if (!editedProfile) return
-    const current = editedProfile[field] as string[]
-    updateField(field, current.filter(i => i !== item))
-  }
 
   if (loading || !profile) {
     return (
@@ -357,45 +346,28 @@ export default function ProfilePage() {
                 <div className="bg-card rounded-lg p-6">
                   <h3 className="text-white font-medium mb-4">Instruments</h3>
                   {isEditing ? (
-                    <div className="space-y-2">
-                      <div className="flex flex-wrap gap-2">
-                        {displayProfile.instruments.map((instrument) => (
-                          <span 
-                            key={instrument}
-                            className="inline-flex items-center gap-1 bg-accent-teal/20 text-accent-teal px-2 py-1 rounded-full text-sm"
-                          >
-                            {instrument}
-                            <button
-                              onClick={() => removeItem('instruments', instrument)}
-                              className="ml-1 hover:text-red-400"
-                            >
-                              <X className="w-3 h-3" />
-                            </button>
-                          </span>
-                        ))}
-                      </div>
-                      <input
-                        type="text"
-                        placeholder="Add instrument (press Enter)"
-                        onKeyPress={(e) => {
-                          if (e.key === 'Enter') {
-                            addItem('instruments', e.currentTarget.value)
-                            e.currentTarget.value = ''
-                          }
-                        }}
-                        className="w-full bg-background border border-card rounded px-2 py-1 text-white text-sm focus:outline-none focus:ring-1 focus:ring-accent-teal"
-                      />
-                    </div>
+                    <TagInput
+                      value={displayProfile.instruments}
+                      onChange={(instruments) => updateField('instruments', instruments)}
+                      suggestions={COMMON_INSTRUMENTS}
+                      placeholder="Select or type an instrument"
+                      tagColor="accent-teal"
+                      maxTags={10}
+                    />
                   ) : (
                     <div className="flex flex-wrap gap-2">
-                      {displayProfile.instruments.map((instrument) => (
-                        <span 
-                          key={instrument}
-                          className="bg-accent-teal/20 text-accent-teal px-3 py-1 rounded-full text-sm"
-                        >
-                          {instrument}
-                        </span>
-                      ))}
+                      {displayProfile.instruments.length > 0 ? (
+                        displayProfile.instruments.map((instrument) => (
+                          <span 
+                            key={instrument}
+                            className="bg-accent-teal/20 text-accent-teal px-3 py-1 rounded-full text-sm"
+                          >
+                            {instrument}
+                          </span>
+                        ))
+                      ) : (
+                        <span className="text-medium text-sm">No instruments added</span>
+                      )}
                     </div>
                   )}
                 </div>
@@ -404,45 +376,28 @@ export default function ProfilePage() {
                 <div className="bg-card rounded-lg p-6">
                   <h3 className="text-white font-medium mb-4">Genres</h3>
                   {isEditing ? (
-                    <div className="space-y-2">
-                      <div className="flex flex-wrap gap-2">
-                        {displayProfile.genres.map((genre) => (
-                          <span 
-                            key={genre}
-                            className="inline-flex items-center gap-1 bg-accent-purple/20 text-accent-purple px-2 py-1 rounded-full text-sm"
-                          >
-                            {genre}
-                            <button
-                              onClick={() => removeItem('genres', genre)}
-                              className="ml-1 hover:text-red-400"
-                            >
-                              <X className="w-3 h-3" />
-                            </button>
-                          </span>
-                        ))}
-                      </div>
-                      <input
-                        type="text"
-                        placeholder="Add genre (press Enter)"
-                        onKeyPress={(e) => {
-                          if (e.key === 'Enter') {
-                            addItem('genres', e.currentTarget.value)
-                            e.currentTarget.value = ''
-                          }
-                        }}
-                        className="w-full bg-background border border-card rounded px-2 py-1 text-white text-sm focus:outline-none focus:ring-1 focus:ring-accent-teal"
-                      />
-                    </div>
+                    <TagInput
+                      value={displayProfile.genres}
+                      onChange={(genres) => updateField('genres', genres)}
+                      suggestions={MUSIC_GENRES}
+                      placeholder="Select or type a genre"
+                      tagColor="accent-purple"
+                      maxTags={10}
+                    />
                   ) : (
                     <div className="flex flex-wrap gap-2">
-                      {displayProfile.genres.map((genre) => (
-                        <span 
-                          key={genre}
-                          className="bg-accent-purple/20 text-accent-purple px-3 py-1 rounded-full text-sm"
-                        >
-                          {genre}
-                        </span>
-                      ))}
+                      {displayProfile.genres.length > 0 ? (
+                        displayProfile.genres.map((genre) => (
+                          <span 
+                            key={genre}
+                            className="bg-accent-purple/20 text-accent-purple px-3 py-1 rounded-full text-sm"
+                          >
+                            {genre}
+                          </span>
+                        ))
+                      ) : (
+                        <span className="text-medium text-sm">No genres added</span>
+                      )}
                     </div>
                   )}
                 </div>
@@ -472,45 +427,28 @@ export default function ProfilePage() {
                 <div className="bg-card rounded-lg p-6">
                   <h3 className="text-white font-medium mb-4">Looking For</h3>
                   {isEditing ? (
-                    <div className="space-y-2">
-                      <div className="flex flex-wrap gap-2">
-                        {displayProfile.looking_for.map((item) => (
-                          <span 
-                            key={item}
-                            className="inline-flex items-center gap-1 bg-success/20 text-success px-2 py-1 rounded-full text-sm"
-                          >
-                            {item}
-                            <button
-                              onClick={() => removeItem('looking_for', item)}
-                              className="ml-1 hover:text-red-400"
-                            >
-                              <X className="w-3 h-3" />
-                            </button>
-                          </span>
-                        ))}
-                      </div>
-                      <input
-                        type="text"
-                        placeholder="Add what you're looking for (press Enter)"
-                        onKeyPress={(e) => {
-                          if (e.key === 'Enter') {
-                            addItem('looking_for', e.currentTarget.value)
-                            e.currentTarget.value = ''
-                          }
-                        }}
-                        className="w-full bg-background border border-card rounded px-2 py-1 text-white text-sm focus:outline-none focus:ring-1 focus:ring-accent-teal"
-                      />
-                    </div>
+                    <TagInput
+                      value={displayProfile.looking_for}
+                      onChange={(items) => updateField('looking_for', items)}
+                      suggestions={LOOKING_FOR_OPTIONS}
+                      placeholder="What are you looking for?"
+                      tagColor="success"
+                      maxTags={8}
+                    />
                   ) : (
                     <div className="flex flex-wrap gap-2">
-                      {displayProfile.looking_for.map((item) => (
-                        <span 
-                          key={item}
-                          className="bg-success/20 text-success px-3 py-1 rounded-full text-sm"
-                        >
-                          {item}
-                        </span>
-                      ))}
+                      {displayProfile.looking_for.length > 0 ? (
+                        displayProfile.looking_for.map((item) => (
+                          <span 
+                            key={item}
+                            className="bg-success/20 text-success px-3 py-1 rounded-full text-sm"
+                          >
+                            {item}
+                          </span>
+                        ))
+                      ) : (
+                        <span className="text-medium text-sm">Not specified</span>
+                      )}
                     </div>
                   )}
                 </div>
