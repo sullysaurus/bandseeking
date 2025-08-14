@@ -9,6 +9,7 @@ import TagInput from '@/components/TagInput'
 import { profileService, Profile, ProfileUpdate } from '@/lib/profiles'
 import { useAuth } from '@/contexts/AuthContext'
 import { COMMON_INSTRUMENTS, MUSIC_GENRES, LOOKING_FOR_OPTIONS } from '@/lib/constants/music'
+import { isProfileComplete, getProfileCompletionTasks } from '@/lib/profile-utils'
 
 export default function ProfilePage() {
   const { user } = useAuth()
@@ -39,10 +40,23 @@ export default function ProfilePage() {
         setProfile(existingProfile)
         setEditedProfile(existingProfile)
       } else {
-        // Profile should be created automatically by database trigger
-        // If not found, show appropriate message
-        console.warn('Profile not found - it should have been created automatically')
-        setError('')  // Don't show error since profile creation is automatic
+        // Profile doesn't exist, create one
+        console.log('Profile not found, creating one...')
+        try {
+          const newProfile = await profileService.createProfile({
+            username: user.email?.split('@')[0] || `user_${Date.now()}`,
+            full_name: user.user_metadata?.full_name || user.email?.split('@')[0] || 'User'
+          })
+          if (newProfile) {
+            setProfile(newProfile)
+            setEditedProfile(newProfile)
+            setSuccess('Profile created successfully! Please complete your profile.')
+            setIsEditing(true) // Start in edit mode for new profiles
+          }
+        } catch (createError) {
+          console.error('Error creating profile:', createError)
+          setError('Failed to create profile. Please try refreshing the page.')
+        }
       }
     } catch (err) {
       console.error('Error loading profile:', err)
@@ -158,6 +172,39 @@ export default function ProfilePage() {
       
       <main className="flex-1 p-4 md:p-8 pb-20 md:pb-8">
         <div className="max-w-4xl mx-auto">
+          {/* Welcome Banner for Incomplete Profiles */}
+          {!isProfileComplete(profile) && (
+            <div className="bg-accent-teal/10 border border-accent-teal rounded-lg p-4 md:p-6 mb-6">
+              <div className="flex items-start gap-4">
+                <div className="w-8 h-8 bg-accent-teal rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                  <span className="text-black font-bold text-sm">!</span>
+                </div>
+                <div className="flex-1">
+                  <h2 className="text-lg font-semibold text-accent-teal mb-2">Complete Your Profile</h2>
+                  <p className="text-secondary text-sm mb-3">
+                    Welcome to BandSeeking! Complete your profile to start connecting with other musicians and bands.
+                  </p>
+                  <div className="space-y-1">
+                    {getProfileCompletionTasks(profile).map((task, index) => (
+                      <div key={index} className="flex items-center gap-2 text-sm">
+                        <div className="w-1.5 h-1.5 bg-accent-teal rounded-full flex-shrink-0"></div>
+                        <span className="text-secondary">{task}</span>
+                      </div>
+                    ))}
+                  </div>
+                  {!isEditing && (
+                    <button
+                      onClick={() => setIsEditing(true)}
+                      className="mt-4 bg-accent-teal text-black px-4 py-2 rounded-lg font-medium hover:bg-opacity-90 transition-colors"
+                    >
+                      Complete Profile
+                    </button>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
+
           {/* Header */}
           <div className="flex items-center justify-between mb-6 md:mb-8">
             <h1 className="text-2xl md:text-4xl font-bold text-white">My Profile</h1>

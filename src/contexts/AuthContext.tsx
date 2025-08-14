@@ -2,7 +2,10 @@
 
 import { createContext, useContext, useEffect, useState } from 'react'
 import { User, Session } from '@supabase/supabase-js'
+import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
+import { profileService } from '@/lib/profiles'
+import { isProfileComplete } from '@/lib/profile-utils'
 
 interface AuthContextType {
   user: User | null
@@ -17,6 +20,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
   const [session, setSession] = useState<Session | null>(null)
   const [loading, setLoading] = useState(true)
+  const router = useRouter()
 
   useEffect(() => {
     // Get initial session
@@ -35,6 +39,27 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setSession(session)
         setUser(session?.user ?? null)
         setLoading(false)
+
+        // Handle sign in - redirect to profile for onboarding
+        if (event === 'SIGNED_IN' && session?.user) {
+          try {
+            // Get or create profile
+            let profile = await profileService.getProfile()
+            if (!profile) {
+              profile = await profileService.createProfile({
+                username: session.user.email?.split('@')[0] || `user_${Date.now()}`,
+                full_name: session.user.user_metadata?.full_name || session.user.email?.split('@')[0] || 'User'
+              })
+            }
+            
+            // Always redirect to profile on sign in for onboarding experience
+            router.push('/profile')
+          } catch (error) {
+            console.error('Error handling sign in:', error)
+            // Still redirect to profile even if there's an error - profile page will handle creation
+            router.push('/profile')
+          }
+        }
       }
     )
 

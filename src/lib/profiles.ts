@@ -56,7 +56,7 @@ class ProfileService {
         .from('profiles')
         .select('*')
         .eq('id', targetUserId)
-        .single()
+        .limit(1)
 
       if (error) {
         // Don't log if user is not authenticated
@@ -66,7 +66,17 @@ class ProfileService {
         return null
       }
 
-      return data
+      // Handle multiple profiles by taking the first one
+      if (data && data.length > 1) {
+        console.warn(`Found ${data.length} profiles for user ${targetUserId}, using the first one`)
+        return data[0]
+      }
+
+      if (!data || data.length === 0) {
+        return null
+      }
+
+      return data[0]
     } catch (error) {
       console.error('Error in getProfile:', error)
       return null
@@ -104,9 +114,16 @@ class ProfileService {
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) throw new Error('No authenticated user')
 
+      // Check if profile already exists first
+      const existing = await this.getProfile()
+      if (existing) {
+        console.log('Profile already exists, returning existing profile')
+        return existing
+      }
+
       const { data, error } = await supabase
         .from('profiles')
-        .insert([
+        .upsert([
           {
             id: user.id,
             ...profileData
