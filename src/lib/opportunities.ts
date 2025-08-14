@@ -385,6 +385,22 @@ class OpportunityService {
       return false
     }
   }
+
+  // Get count of all opportunities
+  async getOpportunitiesCount(): Promise<number> {
+    try {
+      const { count, error } = await supabase
+        .from('opportunities')
+        .select('*', { count: 'exact', head: true })
+        .eq('status', 'active')
+
+      if (error) throw error
+      return count || 0
+    } catch (error) {
+      console.error('Error fetching opportunities count:', error)
+      return 0
+    }
+  }
 }
 
 export const opportunityService = new OpportunityService()

@@ -53,7 +53,14 @@ INSERT INTO opportunities (title, description, type, location, is_remote, is_pai
 
 ('Live Session Musician - Multiple Instruments', 'Established artist seeking versatile musicians for upcoming tour. Need players who can handle multiple instruments and genres. Tour starts in June, rehearsals begin in May.', 'session', 'Los Angeles, CA', false, true, '$2000/week + expenses', '2025-06-01 09:00:00+00', '2025-04-01 23:59:59+00', ARRAY['Tour experience', 'Multiple instruments', 'Professional equipment'], ARRAY['Pop', 'Rock', 'R&B'], ARRAY['Guitar', 'Bass', 'Keyboard'], 'Professional', 'platform', '550e8400-e29b-41d4-a716-446655440001', 67),
 
-('Blues Jam Session - Weekly', 'Join our weekly blues jam session every Thursday night! Open to all skill levels. Bring your instruments and let''s create some magic together.', 'session', 'Austin, TX', false, false, NULL, '2025-02-20 20:00:00+00', NULL, ARRAY['Bring your own instrument', 'Positive attitude'], ARRAY['Blues', 'Rock'], ARRAY['Guitar', 'Bass', 'Drums', 'Harmonica'], 'Intermediate', 'platform', '550e8400-e29b-41d4-a716-446655440003', 23);
+('Blues Jam Session - Weekly', 'Join our weekly blues jam session every Thursday night! Open to all skill levels. Bring your instruments and let''s create some magic together.', 'session', 'Austin, TX', false, false, NULL, '2025-02-20 20:00:00+00', NULL, ARRAY['Bring your own instrument', 'Positive attitude'], ARRAY['Blues', 'Rock'], ARRAY['Guitar', 'Bass', 'Drums', 'Harmonica'], 'Intermediate', 'platform', '550e8400-e29b-41d4-a716-446655440003', 23),
+
+-- Add some expired opportunities to test the hide expired feature
+('Summer Festival Guitarist Needed - EXPIRED', 'We needed a guitarist for our summer festival performance. This opportunity has passed but kept for reference.', 'gig', 'San Diego, CA', false, true, '$400', '2024-07-15 14:00:00+00', '2024-07-01 23:59:59+00', ARRAY['Festival experience', 'Own equipment'], ARRAY['Rock', 'Pop'], ARRAY['Guitar'], 'Advanced', 'platform', '550e8400-e29b-41d4-a716-446655440001', 89),
+
+('Holiday Party Band - EXPIRED', 'Looking for a complete band for corporate holiday party. This event already happened.', 'gig', 'New York, NY', false, true, '$1500 total', '2024-12-15 19:00:00+00', '2024-12-01 23:59:59+00', ARRAY['Professional appearance', 'Holiday repertoire'], ARRAY['Pop', 'Jazz', 'Holiday'], ARRAY['Full Band'], 'Professional', 'platform', '550e8400-e29b-41d4-a716-446655440002', 156),
+
+('Studio Session Recording - EXPIRED', 'Needed a session drummer for album recording. Project completed.', 'recording', 'Los Angeles, CA', false, true, '$300/day', '2024-11-10 10:00:00+00', '2024-10-30 23:59:59+00', ARRAY['Studio experience', 'Punctuality'], ARRAY['Alternative', 'Rock'], ARRAY['Drums'], 'Professional', 'platform', '550e8400-e29b-41d4-a716-446655440005', 67);
 
 -- Insert sample bands
 INSERT INTO bands (name, slug, description, genre, location, status, looking_for, website, instagram, owner_id) VALUES
@@ -67,10 +74,32 @@ INSERT INTO bands (name, slug, description, genre, location, status, looking_for
 
 -- Insert band members
 INSERT INTO band_members (band_id, user_id, role) VALUES
--- Get the band IDs and add members
-((SELECT id FROM bands WHERE slug = 'midnight-electric'), '550e8400-e29b-41d4-a716-446655440001', 'Lead Guitar'),
+-- Midnight Electric (Alex's band) - needs bassist
+((SELECT id FROM bands WHERE slug = 'midnight-electric'), '550e8400-e29b-41d4-a716-446655440001', 'Lead Guitar/Founder'),
 ((SELECT id FROM bands WHERE slug = 'midnight-electric'), '550e8400-e29b-41d4-a716-446655440002', 'Drums'),
-((SELECT id FROM bands WHERE slug = 'acoustic-harmony'), '550e8400-e29b-41d4-a716-446655440004', 'Vocals/Guitar'),
-((SELECT id FROM bands WHERE slug = 'fusion-collective'), '550e8400-e29b-41d4-a716-446655440003', 'Bass'),
+
+-- Acoustic Harmony (Emma's band) - needs multiple instruments
+((SELECT id FROM bands WHERE slug = 'acoustic-harmony'), '550e8400-e29b-41d4-a716-446655440004', 'Vocals/Guitar/Founder'),
+
+-- Fusion Collective (Mike's band) - complete band
+((SELECT id FROM bands WHERE slug = 'fusion-collective'), '550e8400-e29b-41d4-a716-446655440003', 'Bass/Founder'),
 ((SELECT id FROM bands WHERE slug = 'fusion-collective'), '550e8400-e29b-41d4-a716-446655440005', 'Keys'),
-((SELECT id FROM bands WHERE slug = 'electronic-dreams'), '550e8400-e29b-41d4-a716-446655440005', 'Producer/Keys');
+((SELECT id FROM bands WHERE slug = 'fusion-collective'), '550e8400-e29b-41d4-a716-446655440001', 'Guitar'),
+((SELECT id FROM bands WHERE slug = 'fusion-collective'), '550e8400-e29b-41d4-a716-446655440002', 'Drums'),
+
+-- Electronic Dreams (Carlos's band) - needs live musicians  
+((SELECT id FROM bands WHERE slug = 'electronic-dreams'), '550e8400-e29b-41d4-a716-446655440005', 'Producer/Keys/Founder'),
+((SELECT id FROM bands WHERE slug = 'electronic-dreams'), '550e8400-e29b-41d4-a716-446655440004', 'Vocals');
+
+-- Insert band applications to showcase application management
+INSERT INTO band_applications (band_id, user_id, message, status, created_at) VALUES
+-- Applications to Midnight Electric
+((SELECT id FROM bands WHERE slug = 'midnight-electric'), '550e8400-e29b-41d4-a716-446655440003', 'Hey! I saw you''re looking for a bassist. I''ve been playing bass for 10+ years and love the rock scene in LA. I have all my own gear and am available for regular rehearsals and gigs. Would love to jam with you guys!', 'pending', now() - INTERVAL '2 days'),
+
+-- Applications to Acoustic Harmony  
+((SELECT id FROM bands WHERE slug = 'acoustic-harmony'), '550e8400-e29b-41d4-a716-446655440001', 'I''m really interested in joining your indie folk project. I primarily play lead guitar but also have experience with violin. Your music sounds exactly like what I''ve been looking for!', 'pending', now() - INTERVAL '1 day'),
+((SELECT id FROM bands WHERE slug = 'acoustic-harmony'), '550e8400-e29b-41d4-a716-446655440005', 'I play keyboards and piano, and I''m drawn to the storytelling aspect of folk music. I''d love to add some atmospheric textures to your sound.', 'accepted', now() - INTERVAL '5 days'),
+
+-- Applications to Electronic Dreams
+((SELECT id FROM bands WHERE slug = 'electronic-dreams'), '550e8400-e29b-41d4-a716-446655440002', 'Electronic music with live drums sounds amazing! I have experience playing to click tracks and electronic sounds. Let me know if you''d like to hear some samples.', 'pending', now() - INTERVAL '3 days'),
+((SELECT id FROM bands WHERE slug = 'electronic-dreams'), '550e8400-e29b-41d4-a716-446655440003', 'I''ve been playing bass in electronic/hybrid bands for years. I have a bass rig that works great with electronic music and I''m comfortable with both synth bass and traditional bass parts.', 'rejected', now() - INTERVAL '1 week');

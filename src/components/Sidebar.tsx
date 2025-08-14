@@ -1,23 +1,28 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Users, Music, User, MessageSquare, Briefcase, Network, LogOut } from 'lucide-react'
+import { Users, Music, User, MessageSquare, Briefcase, Network, LogOut, LayoutDashboard } from 'lucide-react'
 import Link from 'next/link'
 import { useAuth } from '@/contexts/AuthContext'
 import { useRouter } from 'next/navigation'
 import AvatarUpload from './AvatarUpload'
 import { StylizedLogo } from './Logo'
 import { profileService } from '@/lib/profiles'
+import { bandService } from '@/lib/bands'
 
 export default function Sidebar() {
   const { user, signOut } = useAuth()
   const router = useRouter()
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null)
+  const [musiciansCount, setMusiciansCount] = useState<number>(0)
+  const [bandsCount, setBandsCount] = useState<number>(0)
+  const [countsLoading, setCountsLoading] = useState(true)
 
   useEffect(() => {
     if (user) {
       loadProfile()
     }
+    loadCounts()
   }, [user])
 
   const loadProfile = async () => {
@@ -28,6 +33,22 @@ export default function Sidebar() {
       }
     } catch (error) {
       console.error('Error loading profile for sidebar:', error)
+    }
+  }
+
+  const loadCounts = async () => {
+    try {
+      setCountsLoading(true)
+      const [musicians, bands] = await Promise.all([
+        profileService.getMusiciansCount(),
+        bandService.getBandsCount()
+      ])
+      setMusiciansCount(musicians)
+      setBandsCount(bands)
+    } catch (error) {
+      console.error('Error loading counts for sidebar:', error)
+    } finally {
+      setCountsLoading(false)
     }
   }
 
@@ -83,20 +104,28 @@ export default function Sidebar() {
       {/* Navigation */}
       <nav className="space-y-2 flex-1">
         <Link href="/dashboard" className="flex items-center gap-3 px-3 py-2 rounded-lg text-secondary hover:text-white hover:bg-card transition-colors">
-          <div className="w-5 h-5" />
+          <LayoutDashboard className="w-5 h-5" />
           <span>Dashboard</span>
         </Link>
         
         <Link href="/find-musicians" className="flex items-center gap-3 px-3 py-2 rounded-lg text-secondary hover:text-white hover:bg-card transition-colors">
           <Users className="w-5 h-5" />
           <span>Find Musicians</span>
-          <span className="ml-auto bg-success text-white text-xs px-2 py-1 rounded-full">8</span>
+          {countsLoading ? (
+            <span className="ml-auto bg-gray-500 text-white text-xs px-2 py-1 rounded-full">...</span>
+          ) : (
+            <span className="ml-auto bg-success text-white text-xs px-2 py-1 rounded-full">{musiciansCount}</span>
+          )}
         </Link>
         
         <Link href="/find-bands" className="flex items-center gap-3 px-3 py-2 rounded-lg text-secondary hover:text-white hover:bg-card transition-colors">
           <Music className="w-5 h-5" />
           <span>Find Bands</span>
-          <span className="ml-auto bg-accent-purple text-white text-xs px-2 py-1 rounded-full">6</span>
+          {countsLoading ? (
+            <span className="ml-auto bg-gray-500 text-white text-xs px-2 py-1 rounded-full">...</span>
+          ) : (
+            <span className="ml-auto bg-accent-purple text-white text-xs px-2 py-1 rounded-full">{bandsCount}</span>
+          )}
         </Link>
         
         <Link href="/profile" className="flex items-center gap-3 px-3 py-2 rounded-lg text-secondary hover:text-white hover:bg-card transition-colors">
@@ -104,11 +133,13 @@ export default function Sidebar() {
           <span>My Profile</span>
         </Link>
 
-        <Link href="/bands" className="flex items-center gap-3 px-3 py-2 rounded-lg text-medium hover:text-white hover:bg-card transition-colors mt-6">
+        {/* Personal Section */}
+        <Link href="/bands" className="flex items-center gap-3 px-3 py-2 rounded-lg text-secondary hover:text-white hover:bg-card transition-colors">
           <Music className="w-5 h-5" />
           <span>My Bands</span>
         </Link>
 
+        {/* Communication Section */}
         <Link href="/messages" className="flex items-center gap-3 px-3 py-2 rounded-lg text-secondary hover:text-white hover:bg-card transition-colors mt-4">
           <MessageSquare className="w-5 h-5" />
           <span>Messages</span>

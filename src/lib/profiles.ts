@@ -184,6 +184,26 @@ class ProfileService {
     }
   }
 
+  // Get count of all musicians
+  async getMusiciansCount(): Promise<number> {
+    try {
+      const { count, error } = await supabase
+        .from('profiles')
+        .select('*', { count: 'exact', head: true })
+      
+      if (error) throw error
+      return count || 0
+    } catch (error) {
+      console.error('Error fetching musicians count:', error)
+      return 0
+    }
+  }
+
+  // Get profile by ID
+  async getProfileById(userId: string): Promise<Profile | null> {
+    return this.getProfile(userId)
+  }
+
   // Get profile by username
   async getProfileByUsername(username: string): Promise<Profile | null> {
     try {

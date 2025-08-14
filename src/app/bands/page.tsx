@@ -12,6 +12,8 @@ export default function MyBandsPage() {
   const { user } = useAuth()
   const [ownedBands, setOwnedBands] = useState<Band[]>([])
   const [memberBands, setMemberBands] = useState<Band[]>([])
+  const [applications, setApplications] = useState<any[]>([])
+  const [activeTab, setActiveTab] = useState<'owned' | 'member' | 'applications'>('owned')
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
 
@@ -26,13 +28,15 @@ export default function MyBandsPage() {
     setError('')
     
     try {
-      const [owned, member] = await Promise.all([
+      const [owned, member, apps] = await Promise.all([
         bandService.getMyBands(),
-        bandService.getBandsAsMember()
+        bandService.getBandsAsMember(),
+        bandService.getMyApplications()
       ])
       
       setOwnedBands(owned)
       setMemberBands(member)
+      setApplications(apps)
     } catch (err: any) {
       // Handle database migration not applied yet
       if (err?.code === '42P01') {
@@ -209,54 +213,171 @@ export default function MyBandsPage() {
               </div>
             )}
 
-            {/* Owned Bands Section */}
-            <div className="mb-8">
-              <div className="flex items-center gap-3 mb-6">
-                <div className="w-8 h-8 bg-accent-teal rounded-lg flex items-center justify-center">
-                  <Settings className="w-4 h-4 text-black" />
-                </div>
-                <h2 className="text-xl md:text-2xl font-bold text-white">Bands I Own</h2>
-                <span className="text-medium">({ownedBands.length} bands)</span>
+            {/* Tabs */}
+            <div className="mb-6">
+              <div className="flex space-x-1 bg-card p-1 rounded-lg">
+                <button
+                  onClick={() => setActiveTab('owned')}
+                  className={`flex-1 py-3 px-4 text-sm font-medium rounded-md transition-colors flex items-center justify-center gap-2 ${
+                    activeTab === 'owned'
+                      ? 'bg-accent-teal text-black'
+                      : 'text-white hover:text-accent-teal'
+                  }`}
+                >
+                  <Settings className="w-4 h-4" />
+                  My Bands ({ownedBands.length})
+                </button>
+                <button
+                  onClick={() => setActiveTab('member')}
+                  className={`flex-1 py-3 px-4 text-sm font-medium rounded-md transition-colors flex items-center justify-center gap-2 ${
+                    activeTab === 'member'
+                      ? 'bg-accent-teal text-black'
+                      : 'text-white hover:text-accent-teal'
+                  }`}
+                >
+                  <Users className="w-4 h-4" />
+                  I'm In ({memberBands.length})
+                </button>
+                <button
+                  onClick={() => setActiveTab('applications')}
+                  className={`flex-1 py-3 px-4 text-sm font-medium rounded-md transition-colors flex items-center justify-center gap-2 ${
+                    activeTab === 'applications'
+                      ? 'bg-accent-teal text-black'
+                      : 'text-white hover:text-accent-teal'
+                  }`}
+                >
+                  <Calendar className="w-4 h-4" />
+                  Applications ({applications.length})
+                </button>
               </div>
-
-              {ownedBands.length === 0 ? (
-                <div className="bg-card rounded-lg p-8 text-center">
-                  <Music className="w-12 h-12 text-medium mx-auto mb-4" />
-                  <h3 className="text-xl font-semibold text-white mb-2">No bands yet</h3>
-                  <p className="text-secondary mb-4">Create your first band and start recruiting musicians</p>
-                  <Link
-                    href="/bands/create"
-                    className="inline-flex items-center gap-2 bg-accent-teal hover:bg-opacity-90 text-black font-medium px-6 py-3 rounded-lg transition-colors"
-                  >
-                    <Plus className="w-4 h-4" />
-                    Start a Band
-                  </Link>
-                </div>
-              ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 md:gap-6">
-                  {ownedBands.map((band) => (
-                    <BandCard key={band.id} band={band} isOwner={true} />
-                  ))}
-                </div>
-              )}
             </div>
 
-            {/* Member Bands Section */}
-            {memberBands.length > 0 && (
+            {/* Tab Content */}
+            {activeTab === 'owned' && (
               <div className="mb-8">
-                <div className="flex items-center gap-3 mb-6">
-                  <div className="w-8 h-8 bg-accent-purple rounded-lg flex items-center justify-center">
-                    <Users className="w-4 h-4 text-white" />
+                {ownedBands.length === 0 ? (
+                  <div className="bg-card rounded-lg p-8 text-center">
+                    <Music className="w-12 h-12 text-medium mx-auto mb-4" />
+                    <h3 className="text-xl font-semibold text-white mb-2">No bands yet</h3>
+                    <p className="text-secondary mb-4">Create your first band and start recruiting musicians</p>
+                    <Link
+                      href="/bands/create"
+                      className="inline-flex items-center gap-2 bg-accent-teal hover:bg-opacity-90 text-black font-medium px-6 py-3 rounded-lg transition-colors"
+                    >
+                      <Plus className="w-4 h-4" />
+                      Start a Band
+                    </Link>
                   </div>
-                  <h2 className="text-xl md:text-2xl font-bold text-white">Bands I'm In</h2>
-                  <span className="text-medium">({memberBands.length} bands)</span>
-                </div>
+                ) : (
+                  <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 md:gap-6">
+                    {ownedBands.map((band) => (
+                      <BandCard key={band.id} band={band} isOwner={true} />
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
 
-                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 md:gap-6">
-                  {memberBands.map((band) => (
-                    <BandCard key={band.id} band={band} isOwner={false} />
-                  ))}
-                </div>
+            {activeTab === 'member' && (
+              <div className="mb-8">
+                {memberBands.length === 0 ? (
+                  <div className="bg-card rounded-lg p-8 text-center">
+                    <Users className="w-12 h-12 text-medium mx-auto mb-4" />
+                    <h3 className="text-xl font-semibold text-white mb-2">Not in any bands yet</h3>
+                    <p className="text-secondary mb-4">Join a band or get accepted to see them here</p>
+                    <Link
+                      href="/find-bands"
+                      className="inline-flex items-center gap-2 bg-accent-teal hover:bg-opacity-90 text-black font-medium px-6 py-3 rounded-lg transition-colors"
+                    >
+                      <Eye className="w-4 h-4" />
+                      Find Bands
+                    </Link>
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 md:gap-6">
+                    {memberBands.map((band) => (
+                      <BandCard key={band.id} band={band} isOwner={false} />
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
+
+            {activeTab === 'applications' && (
+              <div className="mb-8">
+                {applications.length === 0 ? (
+                  <div className="bg-card rounded-lg p-8 text-center">
+                    <Calendar className="w-12 h-12 text-medium mx-auto mb-4" />
+                    <h3 className="text-xl font-semibold text-white mb-2">No applications yet</h3>
+                    <p className="text-secondary mb-4">Apply to bands to see your applications here</p>
+                    <Link
+                      href="/find-bands"
+                      className="inline-flex items-center gap-2 bg-accent-teal hover:bg-opacity-90 text-black font-medium px-6 py-3 rounded-lg transition-colors"
+                    >
+                      <Plus className="w-4 h-4" />
+                      Find Bands
+                    </Link>
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    {applications.map((app) => (
+                      <div key={app.id} className="bg-card rounded-lg p-6">
+                        <div className="flex items-center justify-between mb-4">
+                          <div>
+                            <Link
+                              href={`/bands/${app.band_slug}`}
+                              className="text-lg font-semibold text-white hover:text-accent-teal transition-colors"
+                            >
+                              {app.band_name}
+                            </Link>
+                            <p className="text-secondary text-sm">
+                              Applied {new Date(app.created_at).toLocaleDateString()}
+                            </p>
+                          </div>
+                          <div className={`px-3 py-1 rounded-full text-sm font-medium ${
+                            app.status === 'pending' 
+                              ? 'bg-orange-500/20 text-orange-400' 
+                              : app.status === 'accepted'
+                              ? 'bg-success/20 text-success'
+                              : 'bg-red-500/20 text-red-400'
+                          }`}>
+                            {app.status.charAt(0).toUpperCase() + app.status.slice(1)}
+                          </div>
+                        </div>
+                        {app.message && (
+                          <div className="bg-background rounded-lg p-4">
+                            <p className="text-white text-sm font-medium mb-2">Your Message:</p>
+                            <p className="text-secondary text-sm">{app.message}</p>
+                          </div>
+                        )}
+                        <div className="flex gap-3 mt-4">
+                          <Link
+                            href={`/bands/${app.band_slug}`}
+                            className="bg-button-secondary hover:bg-opacity-80 text-white px-4 py-2 rounded-lg transition-colors text-sm"
+                          >
+                            View Band
+                          </Link>
+                          {app.status === 'pending' && (
+                            <button
+                              onClick={async () => {
+                                const success = await bandService.cancelApplication(app.band_id)
+                                if (success) {
+                                  setApplications(prev => prev.filter(a => a.id !== app.id))
+                                  alert('Application cancelled successfully.')
+                                } else {
+                                  alert('Failed to cancel application.')
+                                }
+                              }}
+                              className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition-colors text-sm"
+                            >
+                              Cancel Application
+                            </button>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
             )}
 

@@ -19,6 +19,7 @@ export default function OpportunitiesPage() {
   const [loading, setLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState('')
   const [showFilters, setShowFilters] = useState(false)
+  const [showExpired, setShowExpired] = useState(false)
   const [filters, setFilters] = useState({
     type: 'all' as OpportunityType,
     is_paid: undefined as boolean | undefined,
@@ -29,7 +30,7 @@ export default function OpportunitiesPage() {
 
   useEffect(() => {
     loadOpportunities()
-  }, [activeTab, filters, searchTerm])
+  }, [activeTab, filters, searchTerm, showExpired])
 
   const loadOpportunities = async () => {
     setLoading(true)
@@ -64,20 +65,65 @@ export default function OpportunitiesPage() {
     loadOpportunities()
   }
 
+  const filterExpiredOpportunities = (opportunities: Opportunity[]) => {
+    if (showExpired) {
+      return opportunities
+    }
+    
+    return opportunities.filter(opportunity => {
+      const isExpired = opportunity.deadline && new Date(opportunity.deadline) < new Date()
+      return !isExpired
+    })
+  }
+
   const getActiveData = () => {
+    let data: Opportunity[] = []
+    
     switch (activeTab) {
       case 'browse':
-        return opportunities
+        data = opportunities
+        break
       case 'saved':
-        return savedOpportunities
+        data = savedOpportunities
+        break
       case 'mine':
-        return myOpportunities
+        data = myOpportunities
+        break
       default:
-        return []
+        data = []
     }
+    
+    return filterExpiredOpportunities(data)
+  }
+
+  const getFilteredCounts = () => {
+    let data: Opportunity[] = []
+    
+    switch (activeTab) {
+      case 'browse':
+        data = opportunities
+        break
+      case 'saved':
+        data = savedOpportunities
+        break
+      case 'mine':
+        data = myOpportunities
+        break
+      default:
+        data = []
+    }
+    
+    const total = data.length
+    const expired = data.filter(opportunity => {
+      const isExpired = opportunity.deadline && new Date(opportunity.deadline) < new Date()
+      return isExpired
+    }).length
+    
+    return { total, expired, active: total - expired }
   }
 
   const activeData = getActiveData()
+  const counts = getFilteredCounts()
 
   const OpportunityCard = ({ opportunity, showSaveButton = true }: { opportunity: Opportunity; showSaveButton?: boolean }) => {
     const [isSaved, setIsSaved] = useState(false)
@@ -342,13 +388,33 @@ export default function OpportunitiesPage() {
               </div>
 
               {/* Filter Toggle */}
-              <button
-                onClick={() => setShowFilters(!showFilters)}
-                className="flex items-center gap-2 text-secondary hover:text-white transition-colors"
-              >
-                <Filter className="w-4 h-4" />
-                Filters
-              </button>
+              <div className="flex items-center gap-4">
+                <button
+                  onClick={() => setShowFilters(!showFilters)}
+                  className="flex items-center gap-2 text-secondary hover:text-white transition-colors"
+                >
+                  <Filter className="w-4 h-4" />
+                  Filters
+                </button>
+                
+                {/* Show Expired Toggle */}
+                <label className="flex items-center gap-2 text-secondary hover:text-white transition-colors cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={showExpired}
+                    onChange={(e) => setShowExpired(e.target.checked)}
+                    className="w-4 h-4 rounded border border-card bg-background text-accent-teal focus:ring-accent-teal focus:ring-2"
+                  />
+                  <span className="text-sm">Show expired</span>
+                </label>
+              </div>
+
+              {/* Expired Filter Info */}
+              {!showExpired && counts.expired > 0 && (
+                <div className="text-sm text-medium">
+                  <span>{counts.expired} expired opportunity{counts.expired === 1 ? '' : 's'} hidden</span>
+                </div>
+              )}
 
               {/* Filters */}
               {showFilters && (

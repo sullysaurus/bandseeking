@@ -2,12 +2,12 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter, useParams } from 'next/navigation'
-import { ArrowLeft, Music, MapPin, Calendar, Globe, Instagram, Twitter, Youtube, Music2, Plus, X, Users, Mail, Trash2 } from 'lucide-react'
+import { ArrowLeft, Music, MapPin, Calendar, Globe, Instagram, Twitter, Youtube, Music2, Plus, X, Users, Mail, Trash2, UserPlus } from 'lucide-react'
 import Sidebar from '@/components/Sidebar'
 import ProtectedRoute from '@/components/ProtectedRoute'
 import AvatarUpload from '@/components/AvatarUpload'
 import { bandService, Band, BandUpdate, BandMember, BandApplication } from '@/lib/bands'
-import { profileService } from '@/lib/profiles'
+import { profileService, Profile } from '@/lib/profiles'
 import { useAuth } from '@/contexts/AuthContext'
 
 const genres = [
@@ -31,11 +31,16 @@ export default function EditBandPage() {
 
   const [band, setBand] = useState<Band | null>(null)
   const [members, setMembers] = useState<BandMember[]>([])
+  const [memberProfiles, setMemberProfiles] = useState<Record<string, Profile>>({})
   const [applications, setApplications] = useState<BandApplication[]>([])
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
   const [activeTab, setActiveTab] = useState<'details' | 'members' | 'applications'>('details')
+  const [showInviteModal, setShowInviteModal] = useState(false)
+  const [inviteUsername, setInviteUsername] = useState('')
+  const [inviteRole, setInviteRole] = useState('')
+  const [inviting, setInviting] = useState(false)
 
   const [bandData, setBandData] = useState<BandUpdate>({
     name: '',
@@ -100,6 +105,22 @@ export default function EditBandPage() {
       
       setMembers(membersData)
       setApplications(applicationsData)
+
+      // Load member profiles
+      if (membersData.length > 0) {
+        const profiles: Record<string, Profile> = {}
+        for (const member of membersData) {
+          try {
+            const profile = await profileService.getProfileById(member.user_id)
+            if (profile) {
+              profiles[member.user_id] = profile
+            }
+          } catch (error) {
+            console.warn(`Failed to load profile for user ${member.user_id}:`, error)
+          }
+        }
+        setMemberProfiles(profiles)
+      }
 
     } catch (err) {
       setError('Failed to load band')
@@ -178,9 +199,63 @@ export default function EditBandPage() {
         // Reload members to show the new member
         const updatedMembers = await bandService.getBandMembers(band!.id)
         setMembers(updatedMembers)
+        
+        // Load profile for new member
+        const newMember = updatedMembers.find(m => !members.find(em => em.id === m.id))
+        if (newMember) {
+          try {
+            const profile = await profileService.getProfileById(newMember.user_id)
+            if (profile) {
+              setMemberProfiles(prev => ({ ...prev, [newMember.user_id]: profile }))
+            }
+          } catch (error) {
+            console.warn(`Failed to load profile for new member:`, error)
+          }
+        }
       }
     } else {
       alert(`Failed to ${status === 'accepted' ? 'accept' : 'reject'} application`)
+    }
+  }
+
+  const handleInviteMember = async () => {
+    if (!inviteUsername.trim() || !band) return
+
+    setInviting(true)
+    setError('')
+
+    try {
+      const success = await bandService.inviteUserToBand(band.id, inviteUsername.trim(), inviteRole.trim() || undefined)
+      
+      if (success) {
+        // Reload members
+        const updatedMembers = await bandService.getBandMembers(band.id)
+        setMembers(updatedMembers)
+        
+        // Load profile for new member
+        const newMember = updatedMembers.find(m => !members.find(em => em.id === m.id))
+        if (newMember) {
+          try {
+            const profile = await profileService.getProfileById(newMember.user_id)
+            if (profile) {
+              setMemberProfiles(prev => ({ ...prev, [newMember.user_id]: profile }))
+            }
+          } catch (error) {
+            console.warn(`Failed to load profile for invited member:`, error)
+          }
+        }
+        
+        setShowInviteModal(false)
+        setInviteUsername('')
+        setInviteRole('')
+        alert('User invited successfully!')
+      } else {
+        setError('Failed to invite user. Please check the username and try again.')
+      }
+    } catch (error: any) {
+      setError(error.message || 'Failed to invite user')
+    } finally {
+      setInviting(false)
     }
   }
 
@@ -533,43 +608,77 @@ export default function EditBandPage() {
                 <div className="bg-card rounded-lg p-6">
                   <div className="flex items-center justify-between mb-6">
                     <h2 className="text-xl font-semibold text-white">Band Members ({members.length})</h2>
+                    <button
+                      onClick={() => setShowInviteModal(true)}
+                      className="flex items-center gap-2 bg-accent-teal hover:bg-opacity-90 text-black font-medium px-4 py-2 rounded-lg transition-colors"
+                    >
+                      <UserPlus className="w-4 h-4" />
+                      Invite Member
+                    </button>
                   </div>
 
                   {members.length === 0 ? (
                     <div className="text-center py-8">
                       <Users className="w-12 h-12 text-medium mx-auto mb-4" />
                       <h3 className="text-lg font-semibold text-white mb-2">No members yet</h3>
-                      <p className="text-secondary">Members will appear here when they join your band</p>
+                      <p className="text-secondary mb-4">Members will appear here when they join your band</p>
+                      <button
+                        onClick={() => setShowInviteModal(true)}
+                        className="inline-flex items-center gap-2 bg-accent-teal hover:bg-opacity-90 text-black font-medium px-4 py-2 rounded-lg transition-colors"
+                      >
+                        <UserPlus className="w-4 h-4" />
+                        Invite Your First Member
+                      </button>
                     </div>
                   ) : (
                     <div className="space-y-4">
-                      {members.map((member) => (
-                        <div key={member.id} className="flex items-center justify-between p-4 bg-background rounded-lg">
-                          <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 bg-accent-teal rounded-full flex items-center justify-center text-black font-bold">
-                              U
-                            </div>
-                            <div>
-                              <div className="text-white font-medium">User {member.user_id}</div>
-                              {member.role && (
-                                <div className="text-sm text-secondary">{member.role}</div>
-                              )}
-                              <div className="text-xs text-medium">
-                                Joined {new Date(member.joined_at).toLocaleDateString()}
+                      {members.map((member) => {
+                        const profile = memberProfiles[member.user_id]
+                        return (
+                          <div key={member.id} className="flex items-center justify-between p-4 bg-background rounded-lg">
+                            <div className="flex items-center gap-3">
+                              <div className="w-10 h-10 bg-accent-teal rounded-full flex items-center justify-center text-black font-bold">
+                                {profile?.avatar_url ? (
+                                  <img 
+                                    src={profile.avatar_url} 
+                                    alt={profile.full_name || profile.username} 
+                                    className="w-full h-full object-cover rounded-full"
+                                  />
+                                ) : (
+                                  (profile?.full_name || profile?.username || 'U').charAt(0).toUpperCase()
+                                )}
+                              </div>
+                              <div>
+                                <div className="text-white font-medium">
+                                  {profile?.full_name || profile?.username || `User ${member.user_id}`}
+                                  {member.user_id === band.owner_id && (
+                                    <span className="ml-2 text-xs bg-accent-purple px-2 py-1 rounded-full text-white">Owner</span>
+                                  )}
+                                </div>
+                                {member.role && (
+                                  <div className="text-sm text-secondary">{member.role}</div>
+                                )}
+                                {profile?.location && (
+                                  <div className="text-xs text-medium">{profile.location}</div>
+                                )}
+                                <div className="text-xs text-medium">
+                                  Joined {new Date(member.joined_at).toLocaleDateString()}
+                                </div>
                               </div>
                             </div>
+                            
+                            {member.user_id !== band.owner_id && (
+                              <button
+                                onClick={() => handleRemoveMember(member.id, member.user_id)}
+                                className="bg-red-500 hover:bg-red-600 text-white p-2 rounded-lg transition-colors"
+                                title="Remove member"
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </button>
+                            )}
                           </div>
-                          
-                          {member.user_id !== band.owner_id && (
-                            <button
-                              onClick={() => handleRemoveMember(member.id, member.user_id)}
-                              className="bg-red-500 hover:bg-red-600 text-white p-2 rounded-lg transition-colors"
-                            >
-                              <Trash2 className="w-4 h-4" />
-                            </button>
-                          )}
-                        </div>
-                      ))}
+                        )
+                      })}
                     </div>
                   )}
                 </div>
@@ -650,6 +759,69 @@ export default function EditBandPage() {
           </div>
         </main>
       </div>
+
+      {/* Invite Member Modal */}
+      {showInviteModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+          <div className="bg-card rounded-lg p-6 w-full max-w-md">
+            <h3 className="text-xl font-semibold text-white mb-4">Invite Member</h3>
+            
+            <div className="space-y-4">
+              <div>
+                <label className="block text-white mb-2">
+                  Username <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="text"
+                  value={inviteUsername}
+                  onChange={(e) => setInviteUsername(e.target.value)}
+                  className="w-full bg-background border border-border rounded-lg px-4 py-2 text-white placeholder-medium focus:outline-none focus:ring-2 focus:ring-accent-teal"
+                  placeholder="Enter username to invite"
+                  disabled={inviting}
+                />
+              </div>
+
+              <div>
+                <label className="block text-white mb-2">Role (optional)</label>
+                <input
+                  type="text"
+                  value={inviteRole}
+                  onChange={(e) => setInviteRole(e.target.value)}
+                  className="w-full bg-background border border-border rounded-lg px-4 py-2 text-white placeholder-medium focus:outline-none focus:ring-2 focus:ring-accent-teal"
+                  placeholder="e.g., Lead Guitar, Drummer, Vocals"
+                  disabled={inviting}
+                />
+              </div>
+
+              {error && (
+                <div className="text-red-400 text-sm">{error}</div>
+              )}
+            </div>
+
+            <div className="flex gap-3 mt-6">
+              <button
+                onClick={() => {
+                  setShowInviteModal(false)
+                  setInviteUsername('')
+                  setInviteRole('')
+                  setError('')
+                }}
+                disabled={inviting}
+                className="flex-1 bg-button-secondary hover:bg-opacity-80 text-white py-2 px-4 rounded-lg transition-colors disabled:opacity-50"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleInviteMember}
+                disabled={inviting || !inviteUsername.trim()}
+                className="flex-1 bg-accent-teal hover:bg-opacity-90 text-black font-medium py-2 px-4 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {inviting ? 'Inviting...' : 'Send Invite'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </ProtectedRoute>
   )
 }

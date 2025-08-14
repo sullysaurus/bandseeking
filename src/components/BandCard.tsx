@@ -1,7 +1,7 @@
 'use client'
 
-import { useState } from 'react'
-import { MapPin, Eye, Plus, Check, Music } from 'lucide-react'
+import { useState, useEffect } from 'react'
+import { MapPin, Eye, Plus, Check, Music, X, UserMinus, Clock } from 'lucide-react'
 import Link from 'next/link'
 import { bandService } from '@/lib/bands'
 import { useAuth } from '@/contexts/AuthContext'
@@ -34,9 +34,42 @@ export default function BandCard({
 }: BandCardProps) {
   const { user } = useAuth()
   const [applying, setApplying] = useState(false)
+  const [leaving, setLeaving] = useState(false)
   const [hasApplied, setHasApplied] = useState(isApplied)
+  const [isMember, setIsMember] = useState(false)
+  const [applicationStatus, setApplicationStatus] = useState<string>('')
   const [showApplicationModal, setShowApplicationModal] = useState(false)
   const [applicationMessage, setApplicationMessage] = useState('')
+  const [loading, setLoading] = useState(true)
+
+  // Load membership and application status
+  useEffect(() => {
+    if (user) {
+      loadUserStatus()
+    } else {
+      setLoading(false)
+    }
+  }, [user, id])
+
+  const loadUserStatus = async () => {
+    try {
+      setLoading(true)
+      
+      // Check if user is a member
+      const memberStatus = await bandService.isMemberOfBand(id)
+      setIsMember(memberStatus)
+      
+      // Check if user has applied
+      const applicationStatus = await bandService.hasAppliedToBand(id)
+      setHasApplied(applicationStatus.applied)
+      setApplicationStatus(applicationStatus.status || '')
+      
+    } catch (error) {
+      console.error('Error loading user status:', error)
+    } finally {
+      setLoading(false)
+    }
+  }
 
   const handleApply = async () => {
     if (!user || !applicationMessage.trim()) return
@@ -47,11 +80,53 @@ export default function BandCard({
     
     if (application) {
       setHasApplied(true)
+      setApplicationStatus('pending')
       setShowApplicationModal(false)
       setApplicationMessage('')
       alert('Application sent successfully!')
     } else {
       alert('Failed to send application. Please try again.')
+    }
+    
+    setApplying(false)
+  }
+
+  const handleLeaveBand = async () => {
+    if (!user) return
+
+    const confirmed = confirm(`Are you sure you want to leave ${name}? This action cannot be undone.`)
+    if (!confirmed) return
+
+    setLeaving(true)
+    
+    const success = await bandService.leaveBand(id)
+    
+    if (success) {
+      setIsMember(false)
+      alert('You have successfully left the band.')
+    } else {
+      alert('Failed to leave band. Please try again.')
+    }
+    
+    setLeaving(false)
+  }
+
+  const handleCancelApplication = async () => {
+    if (!user) return
+
+    const confirmed = confirm('Are you sure you want to cancel your application?')
+    if (!confirmed) return
+
+    setApplying(true)
+    
+    const success = await bandService.cancelApplication(id)
+    
+    if (success) {
+      setHasApplied(false)
+      setApplicationStatus('')
+      alert('Application cancelled successfully.')
+    } else {
+      alert('Failed to cancel application. Please try again.')
     }
     
     setApplying(false)
@@ -177,18 +252,57 @@ export default function BandCard({
           <Eye className="w-4 h-4" />
           View Band
         </Link>
-        {status === 'recruiting' && !hasApplied ? (
+        
+        {loading ? (
+          <button className="flex-1 bg-medium text-white py-3 px-4 rounded-lg flex items-center justify-center gap-2" disabled>
+            <Clock className="w-4 h-4" />
+            Loading...
+          </button>
+        ) : isMember ? (
+          // User is a member - show Leave Band button
+          <button 
+            onClick={handleLeaveBand}
+            disabled={leaving}
+            className="flex-1 bg-red-600 hover:bg-red-700 text-white py-3 px-4 rounded-lg transition-colors flex items-center justify-center gap-2 disabled:opacity-50"
+          >
+            <UserMinus className="w-4 h-4" />
+            {leaving ? 'Leaving...' : 'Leave Band'}
+          </button>
+        ) : hasApplied ? (
+          // User has applied - show status and cancel option
+          <div className="flex-1 flex gap-1">
+            <button 
+              className={`flex-1 py-3 px-2 rounded-lg flex items-center justify-center gap-1 text-sm ${
+                applicationStatus === 'pending' 
+                  ? 'bg-orange-500/20 text-orange-400' 
+                  : applicationStatus === 'accepted'
+                  ? 'bg-success/20 text-success'
+                  : 'bg-red-500/20 text-red-400'
+              }`}
+              disabled
+            >
+              <Check className="w-4 h-4" />
+              {applicationStatus === 'pending' ? 'Pending' : applicationStatus === 'accepted' ? 'Accepted' : 'Rejected'}
+            </button>
+            {applicationStatus === 'pending' && (
+              <button
+                onClick={handleCancelApplication}
+                disabled={applying}
+                className="bg-red-600 hover:bg-red-700 text-white px-3 py-3 rounded-lg transition-colors disabled:opacity-50"
+                title="Cancel application"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            )}
+          </div>
+        ) : status === 'recruiting' ? (
+          // Band is recruiting and user hasn't applied - show Apply button
           <button 
             onClick={openApplicationModal}
             className="flex-1 bg-accent-teal hover:bg-opacity-90 text-black font-medium py-3 px-4 rounded-lg transition-colors flex items-center justify-center gap-2"
           >
             <Plus className="w-4 h-4" />
             Apply
-          </button>
-        ) : hasApplied ? (
-          <button className="flex-1 bg-success text-white py-3 px-4 rounded-lg flex items-center justify-center gap-2">
-            <Check className="w-4 h-4" />
-            Applied
           </button>
         ) : status === 'complete' ? (
           <button className="flex-1 bg-complete text-white py-3 px-4 rounded-lg flex items-center justify-center gap-2" disabled>
@@ -197,7 +311,7 @@ export default function BandCard({
           </button>
         ) : (
           <button className="flex-1 bg-orange-500 text-white py-3 px-4 rounded-lg flex items-center justify-center gap-2" disabled>
-            <Check className="w-4 h-4" />
+            <Clock className="w-4 h-4" />
             On Hold
           </button>
         )}

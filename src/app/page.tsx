@@ -1,14 +1,48 @@
 'use client'
 
+import { useState, useEffect } from 'react'
 import { useAuth } from '@/contexts/AuthContext'
 import { useRouter } from 'next/navigation'
 import { Music, Users, Calendar, Search, ArrowRight, Star, MapPin, Guitar, Mic, Headphones } from 'lucide-react'
 import Logo from '@/components/Logo'
 import Link from 'next/link'
+import { profileService } from '@/lib/profiles'
+import { bandService } from '@/lib/bands'
+import { opportunityService } from '@/lib/opportunities'
 
 export default function Home() {
   const { user, loading } = useAuth()
   const router = useRouter()
+  const [stats, setStats] = useState({
+    musicians: 0,
+    bands: 0,
+    opportunities: 0
+  })
+  const [statsLoading, setStatsLoading] = useState(true)
+
+  useEffect(() => {
+    loadStats()
+  }, [])
+
+  const loadStats = async () => {
+    try {
+      const [musiciansCount, bandsCount, opportunitiesCount] = await Promise.all([
+        profileService.getMusiciansCount(),
+        bandService.getBandsCount(),
+        opportunityService.getOpportunitiesCount()
+      ])
+      
+      setStats({
+        musicians: musiciansCount,
+        bands: bandsCount,
+        opportunities: opportunitiesCount
+      })
+    } catch (error) {
+      console.error('Error loading homepage stats:', error)
+    } finally {
+      setStatsLoading(false)
+    }
+  }
 
   const handleGetStarted = () => {
     if (user) {
@@ -177,21 +211,27 @@ export default function Home() {
               <div className="bg-accent-teal/20 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
                 <Users className="w-8 h-8 text-accent-teal" />
               </div>
-              <h3 className="text-3xl font-bold text-white mb-2">1,000+</h3>
+              <h3 className="text-3xl font-bold text-white mb-2">
+                {statsLoading ? '...' : `${stats.musicians}+`}
+              </h3>
               <p className="text-secondary">Musicians Connected</p>
             </div>
             <div>
               <div className="bg-accent-purple/20 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
                 <Music className="w-8 h-8 text-accent-purple" />
               </div>
-              <h3 className="text-3xl font-bold text-white mb-2">500+</h3>
+              <h3 className="text-3xl font-bold text-white mb-2">
+                {statsLoading ? '...' : `${stats.bands}+`}
+              </h3>
               <p className="text-secondary">Bands Formed</p>
             </div>
             <div>
               <div className="bg-success/20 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
                 <Calendar className="w-8 h-8 text-success" />
               </div>
-              <h3 className="text-3xl font-bold text-white mb-2">2,000+</h3>
+              <h3 className="text-3xl font-bold text-white mb-2">
+                {statsLoading ? '...' : `${stats.opportunities}+`}
+              </h3>
               <p className="text-secondary">Opportunities Posted</p>
             </div>
           </div>

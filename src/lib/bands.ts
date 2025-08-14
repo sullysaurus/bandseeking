@@ -175,6 +175,31 @@ class BandService {
     }
   }
 
+  // Get count of all bands
+  async getBandsCount(): Promise<number> {
+    try {
+      const { count, error } = await supabase
+        .from('bands')
+        .select('*', { count: 'exact', head: true })
+
+      if (error) {
+        // Handle case where table doesn't exist yet
+        if (error.code === '42P01') {
+          console.warn('Bands table does not exist yet. Please run database migrations.')
+          return 0
+        }
+        throw error
+      }
+      return count || 0
+    } catch (error: any) {
+      // Don't log table missing errors as they're expected
+      if (error && error.code !== '42P01' && !error.message?.includes('does not exist')) {
+        console.error('Error fetching bands count:', error)
+      }
+      return 0
+    }
+  }
+
   // Get bands owned by current user
   async getMyBands(): Promise<Band[]> {
     try {
@@ -377,6 +402,80 @@ class BandService {
     }
   }
 
+  // Check if current user is a member of a band
+  async isMemberOfBand(bandId: string): Promise<boolean> {
+    try {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) return false
+
+      const { data, error } = await supabase
+        .from('band_members')
+        .select('id')
+        .eq('band_id', bandId)
+        .eq('user_id', user.id)
+        .eq('is_active', true)
+        .single()
+
+      if (error) return false
+      return !!data
+    } catch (error) {
+      return false
+    }
+  }
+
+  // Check if current user has applied to a band
+  async hasAppliedToBand(bandId: string): Promise<{ applied: boolean; status?: string }> {
+    try {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) return { applied: false }
+
+      const { data, error } = await supabase
+        .from('band_applications')
+        .select('status')
+        .eq('band_id', bandId)
+        .eq('user_id', user.id)
+        .single()
+
+      if (error) return { applied: false }
+      return { applied: true, status: data.status }
+    } catch (error) {
+      return { applied: false }
+    }
+  }
+
+  // Leave a band (self-removal)
+  async leaveBand(bandId: string): Promise<boolean> {
+    try {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) throw new Error('Not authenticated')
+
+      return await this.removeMember(bandId, user.id)
+    } catch (error) {
+      console.error('Error leaving band:', error)
+      return false
+    }
+  }
+
+  // Cancel application to a band
+  async cancelApplication(bandId: string): Promise<boolean> {
+    try {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) throw new Error('Not authenticated')
+
+      const { error } = await supabase
+        .from('band_applications')
+        .delete()
+        .eq('band_id', bandId)
+        .eq('user_id', user.id)
+
+      if (error) throw error
+      return true
+    } catch (error) {
+      console.error('Error canceling application:', error)
+      return false
+    }
+  }
+
   // Apply to join a band
   async applyToBand(bandId: string, message?: string): Promise<BandApplication | null> {
     try {
@@ -418,6 +517,36 @@ class BandService {
     }
   }
 
+  // Get current user's applications to bands
+  async getMyApplications(): Promise<(BandApplication & { band_name: string; band_slug: string })[]> {
+    try {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) return []
+
+      const { data, error } = await supabase
+        .from('band_applications')
+        .select(`
+          *,
+          bands (
+            name,
+            slug
+          )
+        `)
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false })
+
+      if (error) throw error
+      return data?.map(app => ({
+        ...app,
+        band_name: app.bands?.name || 'Unknown Band',
+        band_slug: app.bands?.slug || ''
+      })) || []
+    } catch (error) {
+      console.error('Error fetching my applications:', error)
+      return []
+    }
+  }
+
   // Update application status
   async updateApplicationStatus(
     applicationId: string, 
@@ -447,6 +576,45 @@ class BandService {
       return true
     } catch (error) {
       console.error('Error updating application status:', error)
+      return false
+    }
+  }
+
+  // Invite user to band by username
+  async inviteUserToBand(bandId: string, username: string, role?: string): Promise<boolean> {
+    try {
+      const { data: { user: currentUser } } = await supabase.auth.getUser()
+      if (!currentUser) throw new Error('Not authenticated')
+
+      // First check if user exists
+      const { data: userProfile, error: userError } = await supabase
+        .from('profiles')
+        .select('id')
+        .eq('username', username)
+        .single()
+
+      if (userError || !userProfile) {
+        throw new Error('User not found')
+      }
+
+      // Check if user is already a member
+      const { data: existingMember } = await supabase
+        .from('band_members')
+        .select('id')
+        .eq('band_id', bandId)
+        .eq('user_id', userProfile.id)
+        .eq('is_active', true)
+        .single()
+
+      if (existingMember) {
+        throw new Error('User is already a member of this band')
+      }
+
+      // Add as member directly (no application needed for invites)
+      const success = await this.addMember(bandId, userProfile.id, role)
+      return !!success
+    } catch (error) {
+      console.error('Error inviting user to band:', error)
       return false
     }
   }
