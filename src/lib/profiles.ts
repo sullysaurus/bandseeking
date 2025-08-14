@@ -56,7 +56,10 @@ class ProfileService {
         .single()
 
       if (error) {
-        console.error('Error fetching profile:', error)
+        // Don't log if user is not authenticated
+        if (!error.message?.includes('JWT')) {
+          console.error('Error fetching profile:', error.message || 'Unknown error')
+        }
         return null
       }
 

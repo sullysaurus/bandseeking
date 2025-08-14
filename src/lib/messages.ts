@@ -56,8 +56,7 @@ class MessageService {
         .select(`
           *,
           participants:conversation_participants(
-            *,
-            user:auth.users(id, email, raw_user_meta_data)
+            *
           ),
           messages:messages(*)
         `)
@@ -71,6 +70,23 @@ class MessageService {
         }
         throw error
       }
+
+      // Get profile data for all participants
+      const participantIds = new Set<string>()
+      conversations?.forEach(conv => {
+        conv.participants?.forEach(p => participantIds.add(p.user_id))
+      })
+
+      let profiles: any[] = []
+      if (participantIds.size > 0) {
+        const { data } = await supabase
+          .from('profiles')
+          .select('id, username, full_name, avatar_url')
+          .in('id', Array.from(participantIds))
+        profiles = data || []
+      }
+
+      const profileMap = new Map(profiles?.map(p => [p.id, p]) || [])
 
       // Process conversations to add unread count and last message
       const processedConversations = conversations?.map(conv => {
@@ -87,8 +103,15 @@ class MessageService {
           (!lastReadAt || new Date(msg.created_at) > new Date(lastReadAt))
         ).length
 
+        // Add profile data to participants
+        const participantsWithProfiles = conv.participants?.map(p => ({
+          ...p,
+          profile: profileMap.get(p.user_id)
+        }))
+
         return {
           ...conv,
+          participants: participantsWithProfiles,
           last_message: lastMessage,
           unread_count: unreadCount
         }
@@ -96,9 +119,12 @@ class MessageService {
 
       return processedConversations
     } catch (error: any) {
-      // Don't log table missing errors as they're expected
-      if (error && error.code !== '42P01' && !error.message?.includes('does not exist')) {
-        console.error('Error fetching conversations:', error)
+      // Don't log table missing errors or auth errors as they're expected
+      if (error && 
+          error.code !== '42P01' && 
+          !error.message?.includes('does not exist') &&
+          !error.message?.includes('Not authenticated')) {
+        console.error('Error fetching conversations:', error.message || 'Unknown error', error)
       }
       return []
     }
@@ -121,7 +147,7 @@ class MessageService {
       if (error) throw error
       return { ...conversation, unread_count: 0 }
     } catch (error) {
-      console.error('Error fetching conversation:', error)
+      console.error('Error fetching conversation:', error?.message || 'Unknown error')
       return null
     }
   }
@@ -149,7 +175,7 @@ class MessageService {
     } catch (error: any) {
       // Don't log table missing errors as they're expected
       if (error.code !== '42P01' && !error.message?.includes('does not exist')) {
-        console.error('Error fetching messages:', error)
+        console.error('Error fetching messages:', error?.message || 'Unknown error')
       }
       return []
     }
@@ -186,7 +212,7 @@ class MessageService {
     } catch (error: any) {
       // Don't log table missing errors as they're expected
       if (error.code !== '42P01' && !error.message?.includes('does not exist')) {
-        console.error('Error sending message:', error)
+        console.error('Error sending message:', error?.message || 'Unknown error')
       }
       return null
     }
@@ -226,7 +252,7 @@ class MessageService {
 
       return await this.getConversation(conversation.id)
     } catch (error) {
-      console.error('Error creating conversation:', error)
+      console.error('Error creating conversation:', error?.message || 'Unknown error')
       return null
     }
   }
@@ -245,7 +271,7 @@ class MessageService {
       if (error) throw error
       return true
     } catch (error) {
-      console.error('Error marking conversation as read:', error)
+      console.error('Error marking conversation as read:', error?.message || 'Unknown error')
       return false
     }
   }
@@ -281,7 +307,7 @@ class MessageService {
       // Create new conversation
       return await this.createConversation([otherUserId])
     } catch (error) {
-      console.error('Error finding or creating conversation:', error)
+      console.error('Error finding or creating conversation:', error?.message || 'Unknown error')
       return null
     }
   }
