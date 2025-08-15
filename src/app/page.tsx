@@ -2,7 +2,7 @@
 
 import { useAuth } from '@/contexts/AuthContext'
 import { useRouter } from 'next/navigation'
-import { ArrowRight, MessageSquare, Clock, Users, CheckCircle } from 'lucide-react'
+import { ArrowRight, MessageSquare, Clock, Users, CheckCircle, Sparkles, Share2, Shield, TrendingUp, Music2 } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 
@@ -146,6 +146,89 @@ export default function Home() {
           </p>
         </div>
       </main>
+
+      {/* Coming Soon Section */}
+      <section className="py-16 px-6 bg-card/30">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-12">
+            <div className="inline-flex items-center gap-2 bg-accent-teal/20 text-accent-teal px-4 py-2 rounded-full text-sm font-medium mb-4">
+              <Sparkles className="w-4 h-4" />
+              Coming Soon
+            </div>
+            <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
+              Exciting Features in Development
+            </h2>
+            <p className="text-secondary max-w-2xl mx-auto">
+              We're building the future of music discovery and collaboration
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="bg-card/50 rounded-xl p-6 border border-accent-teal/10 relative overflow-hidden">
+              <div className="absolute top-3 right-3">
+                <span className="bg-accent-teal/20 text-accent-teal text-xs px-2 py-1 rounded-full">Soon</span>
+              </div>
+              <div className="bg-accent-teal/20 w-10 h-10 rounded-lg flex items-center justify-center mb-4">
+                <Music2 className="w-5 h-5 text-accent-teal" />
+              </div>
+              <h3 className="text-lg font-semibold text-white mb-2">AI Smart Matching</h3>
+              <p className="text-secondary text-sm">Match with musicians based on your Spotify listening history and musical preferences</p>
+            </div>
+
+            <div className="bg-card/50 rounded-xl p-6 border border-accent-purple/10 relative overflow-hidden">
+              <div className="absolute top-3 right-3">
+                <span className="bg-accent-purple/20 text-accent-purple text-xs px-2 py-1 rounded-full">Soon</span>
+              </div>
+              <div className="bg-accent-purple/20 w-10 h-10 rounded-lg flex items-center justify-center mb-4">
+                <Share2 className="w-5 h-5 text-accent-purple" />
+              </div>
+              <h3 className="text-lg font-semibold text-white mb-2">Auto-Post to Craigslist</h3>
+              <p className="text-secondary text-sm">Instantly cross-post your band openings to Craigslist to reach even more musicians</p>
+            </div>
+
+            <div className="bg-card/50 rounded-xl p-6 border border-success/10 relative overflow-hidden">
+              <div className="absolute top-3 right-3">
+                <span className="bg-success/20 text-success text-xs px-2 py-1 rounded-full">Soon</span>
+              </div>
+              <div className="bg-success/20 w-10 h-10 rounded-lg flex items-center justify-center mb-4">
+                <Share2 className="w-5 h-5 text-success" />
+              </div>
+              <h3 className="text-lg font-semibold text-white mb-2">Social Media Showcase</h3>
+              <p className="text-secondary text-sm">Import TikTok & Instagram content to showcase your playing and musical style</p>
+            </div>
+
+            <div className="bg-card/50 rounded-xl p-6 border border-accent-teal/10 relative overflow-hidden">
+              <div className="absolute top-3 right-3">
+                <span className="bg-accent-teal/20 text-accent-teal text-xs px-2 py-1 rounded-full">Soon</span>
+              </div>
+              <div className="bg-accent-teal/20 w-10 h-10 rounded-lg flex items-center justify-center mb-4">
+                <Shield className="w-5 h-5 text-accent-teal" />
+              </div>
+              <h3 className="text-lg font-semibold text-white mb-2">Verified Profiles</h3>
+              <p className="text-secondary text-sm">Phone & email verification ensures authentic connections with real musicians</p>
+            </div>
+
+            <div className="bg-card/50 rounded-xl p-6 border border-accent-purple/10 relative overflow-hidden">
+              <div className="absolute top-3 right-3">
+                <span className="bg-accent-purple/20 text-accent-purple text-xs px-2 py-1 rounded-full">Soon</span>
+              </div>
+              <div className="bg-accent-purple/20 w-10 h-10 rounded-lg flex items-center justify-center mb-4">
+                <TrendingUp className="w-5 h-5 text-accent-purple" />
+              </div>
+              <h3 className="text-lg font-semibold text-white mb-2">Profile & Band Boosts</h3>
+              <p className="text-secondary text-sm">Increase your visibility and get discovered by more musicians in your area</p>
+            </div>
+
+            <div className="bg-card/50 rounded-xl p-6 border border-success/10 relative overflow-hidden flex items-center justify-center text-center">
+              <div>
+                <Sparkles className="w-8 h-8 text-success mx-auto mb-3" />
+                <h3 className="text-lg font-semibold text-white mb-2">More Features</h3>
+                <p className="text-secondary text-sm">Got ideas? We're always building based on musician feedback</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
 
       {/* Footer */}
       <footer className="bg-card border-t border-card py-12 px-6">
