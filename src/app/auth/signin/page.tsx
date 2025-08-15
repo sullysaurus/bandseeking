@@ -3,9 +3,9 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import Image from 'next/image'
 import { Mail, Lock, Eye, EyeOff } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
-import { StylizedLogo } from '@/components/Logo'
 
 export default function SignIn() {
   const [email, setEmail] = useState('')
@@ -39,34 +39,40 @@ export default function SignIn() {
   }
 
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center p-8">
+    <div className="min-h-screen bg-background flex items-center justify-center p-4 md:p-8">
       <div className="w-full max-w-md">
         {/* Logo/Brand */}
         <div className="text-center mb-8">
-          <div className="mb-6">
-            <StylizedLogo size="lg" className="justify-center" />
+          <div className="mb-6 flex justify-center">
+            <Image
+              src="/logo-eyes-bottom.png"
+              alt="BandSeeking Logo"
+              width={120}
+              height={120}
+              className="w-auto h-16 md:h-20 max-w-none"
+              priority
+            />
           </div>
-          <h1 className="text-3xl font-bold text-white mb-2">Welcome Back</h1>
-          <p className="text-secondary">Sign in to your BandSeeking account</p>
+          <p className="text-secondary text-lg">Sign in to your BandSeeking account</p>
         </div>
 
         {/* Sign In Form */}
-        <div className="bg-card rounded-lg p-8">
+        <div className="bg-card rounded-xl p-6 md:p-8 shadow-2xl border border-card/50">
           <form onSubmit={handleSignIn} className="space-y-6">
             {/* Email Field */}
             <div>
-              <label htmlFor="email" className="block text-white font-medium mb-2">
-                Email
+              <label htmlFor="email" className="block text-white font-medium mb-3 text-sm">
+                Email Address
               </label>
               <div className="relative">
-                <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-medium w-5 h-5" />
+                <Mail className="absolute left-4 top-1/2 transform -translate-y-1/2 text-medium w-5 h-5" />
                 <input
                   id="email"
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
-                  className="w-full bg-background border border-card rounded-lg pl-12 pr-4 py-3 text-white placeholder-medium focus:outline-none focus:ring-2 focus:ring-accent-teal"
+                  className="w-full bg-background border border-card hover:border-accent-teal/50 rounded-lg pl-12 pr-4 py-4 text-white placeholder-medium focus:outline-none focus:ring-2 focus:ring-accent-teal focus:border-transparent transition-colors"
                   placeholder="Enter your email"
                 />
               </div>
@@ -74,24 +80,24 @@ export default function SignIn() {
 
             {/* Password Field */}
             <div>
-              <label htmlFor="password" className="block text-white font-medium mb-2">
+              <label htmlFor="password" className="block text-white font-medium mb-3 text-sm">
                 Password
               </label>
               <div className="relative">
-                <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-medium w-5 h-5" />
+                <Lock className="absolute left-4 top-1/2 transform -translate-y-1/2 text-medium w-5 h-5" />
                 <input
                   id="password"
                   type={showPassword ? 'text' : 'password'}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
-                  className="w-full bg-background border border-card rounded-lg pl-12 pr-12 py-3 text-white placeholder-medium focus:outline-none focus:ring-2 focus:ring-accent-teal"
+                  className="w-full bg-background border border-card hover:border-accent-teal/50 rounded-lg pl-12 pr-12 py-4 text-white placeholder-medium focus:outline-none focus:ring-2 focus:ring-accent-teal focus:border-transparent transition-colors"
                   placeholder="Enter your password"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-medium hover:text-secondary"
+                  className="absolute right-4 top-1/2 transform -translate-y-1/2 text-medium hover:text-accent-teal transition-colors"
                 >
                   {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                 </button>
@@ -109,28 +115,28 @@ export default function SignIn() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-accent-teal hover:bg-opacity-90 text-white font-medium py-3 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full bg-accent-teal hover:bg-accent-teal/90 text-black font-semibold py-4 rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-[1.02] active:scale-[0.98]"
             >
               {loading ? 'Signing In...' : 'Sign In'}
             </button>
           </form>
 
           {/* Forgot Password Link */}
-          <div className="mt-4 text-center">
+          <div className="mt-6 text-center">
             <Link 
               href="/auth/forgot-password" 
-              className="text-accent-teal hover:text-opacity-80 text-sm"
+              className="text-accent-teal hover:text-accent-teal/80 text-sm transition-colors"
             >
               Forgot your password?
             </Link>
           </div>
 
           {/* Sign Up Link */}
-          <div className="mt-6 text-center pt-6 border-t border-card">
-            <p className="text-secondary text-sm mb-2">Don't have an account?</p>
+          <div className="mt-8 text-center pt-6 border-t border-card/50">
+            <p className="text-secondary text-sm mb-4">Don't have an account?</p>
             <Link 
               href="/auth/signup" 
-              className="inline-flex items-center justify-center w-full bg-button-secondary hover:bg-opacity-80 text-white font-medium py-3 rounded-lg transition-colors"
+              className="inline-flex items-center justify-center w-full bg-card border border-accent-teal/30 hover:border-accent-teal/60 text-white font-medium py-4 rounded-lg transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98]"
             >
               Create Account
             </Link>

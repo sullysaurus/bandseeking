@@ -3,9 +3,9 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import Image from 'next/image'
 import { Mail, Lock, User, Eye, EyeOff } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
-import { StylizedLogo } from '@/components/Logo'
 
 export default function SignUp() {
   const [email, setEmail] = useState('')
@@ -72,10 +72,16 @@ export default function SignUp() {
       <div className="w-full max-w-md">
         {/* Logo/Brand */}
         <div className="text-center mb-8">
-          <div className="mb-6">
-            <StylizedLogo size="lg" className="justify-center" />
+          <div className="mb-6 flex justify-center">
+            <Image
+              src="/logo-eyes-bottom.png"
+              alt="BandSeeking Logo"
+              width={120}
+              height={120}
+              className="w-auto h-16 md:h-20 max-w-none"
+              priority
+            />
           </div>
-          <h1 className="text-3xl font-bold text-white mb-2">Join BandSeeking</h1>
           <p className="text-secondary">Create your account to find bands and musicians</p>
         </div>
 

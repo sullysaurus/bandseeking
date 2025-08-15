@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { Search, Filter, Plus, Users } from 'lucide-react'
+import { useRouter } from 'next/navigation'
 import Sidebar from '@/components/Sidebar'
 import MusicianCard from '@/components/MusicianCard'
 import ProtectedRoute from '@/components/ProtectedRoute'
@@ -116,6 +117,7 @@ import { profileService, Profile } from '@/lib/profiles'
 ] */
 
 export default function FindMusicians() {
+  const router = useRouter()
   const [musicians, setMusicians] = useState<Profile[]>([])
   const [loading, setLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState('')
@@ -138,6 +140,10 @@ export default function FindMusicians() {
     const data = await profileService.getAllMusicians()
     setMusicians(data)
     setLoading(false)
+  }
+
+  const handlePostOpportunity = () => {
+    router.push('/opportunities/create')
   }
   
   const applyFilters = (musician: Profile): boolean => {
@@ -232,27 +238,40 @@ export default function FindMusicians() {
         <main className="flex-1 p-4 md:p-8 pb-20 md:pb-8">
           {/* Header */}
           <div className="mb-6 md:mb-8">
-            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 md:gap-0 mb-4">
-              <div>
-                <h1 className="text-2xl md:text-4xl font-bold text-white mb-2">Find Musicians</h1>
-                <p className="text-secondary text-base md:text-lg">Connect with talented musicians and build your next project</p>
+            <div className="flex flex-col gap-4 mb-4">
+              <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
+                <div className="flex-1 min-w-0">
+                  <h1 className="text-2xl md:text-4xl font-bold text-white mb-2">Find Musicians</h1>
+                  <p className="text-secondary text-base md:text-lg">Connect with talented musicians and build your next project</p>
+                </div>
+              
+                {/* Desktop controls */}
+                <div className="hidden md:flex items-center gap-3 flex-shrink-0">
+                  <button 
+                    onClick={handlePostOpportunity}
+                    className="flex items-center gap-2 bg-accent-teal hover:bg-opacity-90 text-black font-medium px-4 py-3 rounded-lg transition-colors whitespace-nowrap"
+                  >
+                    <Plus className="w-5 h-5" />
+                    Post Opportunity
+                  </button>
+                </div>
               </div>
               
-              {/* Desktop controls */}
+              {/* Desktop search and filters row */}
               <div className="hidden md:flex items-center gap-4">
-                <div className="relative">
+                <div className="relative flex-1 max-w-md">
                   <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-medium w-5 h-5" />
                   <input 
                     type="text" 
                     placeholder="Search musicians..." 
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    className="bg-card border-0 rounded-lg pl-12 pr-4 py-3 text-white placeholder-medium focus:outline-none focus:ring-2 focus:ring-accent-teal w-96"
+                    className="bg-card border-0 rounded-lg pl-12 pr-4 py-3 text-white placeholder-medium focus:outline-none focus:ring-2 focus:ring-accent-teal w-full"
                   />
                 </div>
                 <button 
                   onClick={() => setIsFilterOpen(true)}
-                  className="flex items-center gap-2 bg-card hover:bg-opacity-80 text-white px-4 py-3 rounded-lg transition-colors relative"
+                  className="flex items-center gap-2 bg-card hover:bg-opacity-80 text-white px-4 py-3 rounded-lg transition-colors relative whitespace-nowrap"
                 >
                   <Filter className="w-5 h-5" />
                   Filters
@@ -261,10 +280,6 @@ export default function FindMusicians() {
                       {getActiveFilterCount()}
                     </span>
                   )}
-                </button>
-                <button className="flex items-center gap-2 bg-accent-teal hover:bg-opacity-90 text-black font-medium px-6 py-3 rounded-lg transition-colors">
-                  <Plus className="w-5 h-5" />
-                  Post Opportunity
                 </button>
               </div>
               
@@ -293,9 +308,13 @@ export default function FindMusicians() {
                       </span>
                     )}
                   </button>
-                  <button className="flex items-center gap-2 bg-accent-teal hover:bg-opacity-90 text-black font-medium px-4 py-3 rounded-lg transition-colors">
+                  <button 
+                    onClick={handlePostOpportunity}
+                    className="flex items-center gap-2 bg-accent-teal hover:bg-opacity-90 text-black font-medium px-4 py-3 rounded-lg transition-colors whitespace-nowrap"
+                  >
                     <Plus className="w-4 h-4" />
-                    Post
+                    <span className="hidden sm:inline">Post</span>
+                    <span className="sm:hidden">+</span>
                   </button>
                 </div>
               </div>
