@@ -86,11 +86,8 @@ export default function SignUp() {
       if (error) {
         setError(error.message)
       } else {
-        setSuccess('Account created successfully! Check your email to confirm your account.')
-        // Optionally redirect to sign-in page after a delay
-        setTimeout(() => {
-          router.push('/auth/signin')
-        }, 3000)
+        setSuccess('Account created successfully! Please check your email and click the confirmation link before signing in.')
+        // Don't auto-redirect - let user read the message and go to email
       }
     } catch (err: any) {
       setError('An unexpected error occurred')
@@ -119,6 +116,8 @@ export default function SignUp() {
 
         {/* Sign Up Form */}
         <div className="bg-card rounded-lg p-8">
+          {!success ? (
+          <>
           <form onSubmit={handleSignUp} className="space-y-6">
             {/* Full Name Field */}
             <div>
@@ -230,12 +229,6 @@ export default function SignUp() {
               </div>
             </div>
 
-            {/* Success Message */}
-            {success && (
-              <div className="bg-success/10 border border-success/20 text-success px-4 py-3 rounded-lg text-sm">
-                {success}
-              </div>
-            )}
 
             {/* Error Message */}
             {error && (
@@ -254,16 +247,41 @@ export default function SignUp() {
             </button>
           </form>
 
-          {/* Sign In Link */}
-          <div className="mt-6 text-center pt-6 border-t border-card">
-            <p className="text-secondary text-sm mb-2">Already have an account?</p>
-            <Link 
-              href="/auth/signin" 
-              className="text-accent-teal hover:text-opacity-80 font-medium"
-            >
-              Sign In
-            </Link>
-          </div>
+            <div className="mt-6 text-center pt-6 border-t border-card">
+              <p className="text-secondary text-sm mb-2">Already have an account?</p>
+              <Link 
+                href="/auth/signin" 
+                className="text-accent-teal hover:text-opacity-80 font-medium"
+              >
+                Sign In
+              </Link>
+            </div>
+            </>
+          ) : (
+            <div className="text-center">
+              <div className="w-16 h-16 bg-success/20 rounded-full flex items-center justify-center mx-auto mb-6">
+                <svg className="w-8 h-8 text-success" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                </svg>
+              </div>
+              <h3 className="text-2xl font-bold text-white mb-4">Check Your Email!</h3>
+              <p className="text-secondary mb-6">
+                We've sent a confirmation email to <strong className="text-white">{email}</strong>. 
+                Click the link in the email to activate your account.
+              </p>
+              <div className="space-y-4">
+                <Link
+                  href="/auth/signin"
+                  className="block w-full bg-accent-teal hover:bg-opacity-90 text-black font-medium py-3 rounded-lg transition-colors"
+                >
+                  Go to Sign In
+                </Link>
+                <p className="text-xs text-secondary">
+                  Didn't receive the email? Check your spam folder or contact support.
+                </p>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>
