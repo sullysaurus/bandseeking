@@ -6,7 +6,6 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { Mail, Lock, User, Eye, EyeOff } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
-import { createClient } from '@supabase/supabase-js'
 
 export default function SignUp() {
   const [email, setEmail] = useState('')
@@ -73,19 +72,7 @@ export default function SignUp() {
     }
 
     try {
-      // Create a fresh Supabase client for signup to avoid any existing session headers
-      const signupClient = createClient(
-        process.env.NEXT_PUBLIC_SUPABASE_URL!,
-        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-        {
-          auth: {
-            persistSession: false,
-            autoRefreshToken: false,
-          }
-        }
-      )
-      
-      const { error } = await signupClient.auth.signUp({
+      const { error } = await supabase.auth.signUp({
         email: cleanEmail,
         password,
         options: {
@@ -100,7 +87,6 @@ export default function SignUp() {
         setError(error.message)
       } else {
         setSuccess('Account created successfully! Please check your email and click the confirmation link before signing in.')
-        // Don't auto-redirect - let user read the message and go to email
       }
     } catch (err: any) {
       setError('An unexpected error occurred')

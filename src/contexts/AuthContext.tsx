@@ -52,12 +52,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
               })
             }
             
-            // Always redirect to profile on sign in for onboarding experience
-            router.push('/profile')
+            // Always redirect to dashboard on sign in
+            router.push('/dashboard')
           } catch (error) {
             console.error('Error handling sign in:', error)
-            // Still redirect to profile even if there's an error - profile page will handle creation
-            router.push('/profile')
+            // Still redirect to dashboard even if there's an error
+            router.push('/dashboard')
           }
         }
       }

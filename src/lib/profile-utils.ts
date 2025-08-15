@@ -51,3 +51,19 @@ export function getProfileCompletionTasks(profile: Profile | null): string[] {
   
   return tasks
 }
+
+export function getProfileCompletionPercentage(profile: Profile | null): number {
+  if (!profile) return 0
+  
+  const totalFields = 6 // full_name, bio, instruments, genres, looking_for, location
+  let completedFields = 0
+  
+  if (profile.full_name) completedFields++
+  if (profile.bio) completedFields++
+  if (profile.instruments && profile.instruments.length > 0) completedFields++
+  if (profile.genres && profile.genres.length > 0) completedFields++
+  if (profile.looking_for && profile.looking_for.length > 0) completedFields++
+  if (profile.location) completedFields++
+  
+  return (completedFields / totalFields) * 100
+}

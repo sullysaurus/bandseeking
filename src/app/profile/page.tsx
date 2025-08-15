@@ -9,7 +9,7 @@ import TagInput from '@/components/TagInput'
 import { profileService, Profile, ProfileUpdate } from '@/lib/profiles'
 import { useAuth } from '@/contexts/AuthContext'
 import { COMMON_INSTRUMENTS, MUSIC_GENRES, LOOKING_FOR_OPTIONS } from '@/lib/constants/music'
-import { isProfileComplete, getProfileCompletionTasks } from '@/lib/profile-utils'
+import { isProfileComplete, getProfileCompletionTasks, getProfileCompletionPercentage } from '@/lib/profile-utils'
 
 export default function ProfilePage() {
   const { user } = useAuth()
@@ -172,42 +172,28 @@ export default function ProfilePage() {
       
       <main className="flex-1 p-4 md:p-8 pb-20 md:pb-8">
         <div className="max-w-4xl mx-auto">
-          {/* Welcome Banner for Incomplete Profiles */}
-          {!isProfileComplete(profile) && (
-            <div className="bg-accent-teal/10 border border-accent-teal rounded-lg p-4 md:p-6 mb-6">
-              <div className="flex items-start gap-4">
-                <div className="w-8 h-8 bg-accent-teal rounded-full flex items-center justify-center flex-shrink-0 mt-1">
-                  <span className="text-black font-bold text-sm">!</span>
-                </div>
-                <div className="flex-1">
-                  <h2 className="text-lg font-semibold text-accent-teal mb-2">Complete Your Profile</h2>
-                  <p className="text-secondary text-sm mb-3">
-                    Welcome to BandSeeking! Complete your profile to start connecting with other musicians and bands.
-                  </p>
-                  <div className="space-y-1">
-                    {getProfileCompletionTasks(profile).map((task, index) => (
-                      <div key={index} className="flex items-center gap-2 text-sm">
-                        <div className="w-1.5 h-1.5 bg-accent-teal rounded-full flex-shrink-0"></div>
-                        <span className="text-secondary">{task}</span>
-                      </div>
-                    ))}
-                  </div>
-                  {!isEditing && (
-                    <button
-                      onClick={() => setIsEditing(true)}
-                      className="mt-4 bg-accent-teal text-black px-4 py-2 rounded-lg font-medium hover:bg-opacity-90 transition-colors"
-                    >
-                      Complete Profile
-                    </button>
-                  )}
-                </div>
-              </div>
-            </div>
-          )}
 
           {/* Header */}
           <div className="flex items-center justify-between mb-6 md:mb-8">
-            <h1 className="text-2xl md:text-4xl font-bold text-white">My Profile</h1>
+            <div className="flex items-center gap-4">
+              <h1 className="text-2xl md:text-4xl font-bold text-white">My Profile</h1>
+              {!isProfileComplete(profile) && (
+                <div className="flex items-center gap-4 text-accent-teal text-sm bg-accent-teal/5 px-4 py-2 rounded-lg border border-accent-teal/20">
+                  <div className="flex items-center gap-2">
+                    <div className="w-20 h-2 bg-background rounded-full overflow-hidden">
+                      <div 
+                        className="h-full bg-gradient-to-r from-accent-teal to-accent-teal/80 rounded-full transition-all duration-500 ease-out"
+                        style={{ width: `${getProfileCompletionPercentage(profile)}%` }}
+                      />
+                    </div>
+                    <span className="text-xs font-bold min-w-[2rem]">
+                      {Math.round(getProfileCompletionPercentage(profile))}%
+                    </span>
+                  </div>
+                  <span className="font-medium">Profile incomplete</span>
+                </div>
+              )}
+            </div>
             {!isEditing ? (
               <button 
                 onClick={handleEdit}

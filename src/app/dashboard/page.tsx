@@ -23,6 +23,7 @@ import { bandService, Band } from '@/lib/bands'
 import { profileService, Profile } from '@/lib/profiles'
 import { messageService, Conversation } from '@/lib/messages'
 import { useAuth } from '@/contexts/AuthContext'
+import { getProfileCompletionPercentage } from '@/lib/profile-utils'
 
 interface DashboardStats {
   totalBands: number
@@ -133,12 +134,38 @@ export default function DashboardPage() {
           <div className="max-w-7xl mx-auto">
             {/* Welcome Header */}
             <div className="mb-8">
-              <h1 className="text-3xl md:text-4xl font-bold text-white mb-2">
-                {getGreeting()}, {getDisplayName()}!
-              </h1>
-              <p className="text-secondary text-lg">
-                Welcome back to your music community. Here's what's happening today.
-              </p>
+              <div className="flex items-center justify-between flex-wrap gap-4">
+                <div>
+                  <h1 className="text-3xl md:text-4xl font-bold text-white mb-2">
+                    {getGreeting()}, {getDisplayName()}!
+                  </h1>
+                  <p className="text-secondary text-lg">
+                    Welcome back to your music community. Here's what's happening today.
+                  </p>
+                </div>
+                
+                {/* Subtle Profile Completion */}
+                {(!profile || getProfileCompletionPercentage(profile) < 100) && (
+                  <Link
+                    href="/profile"
+                    className="flex items-center gap-3 text-accent-teal hover:text-white transition-all group text-sm bg-accent-teal/5 hover:bg-accent-teal/10 px-4 py-2 rounded-lg border border-accent-teal/20"
+                  >
+                    <div className="flex items-center gap-2">
+                      <div className="w-16 h-2 bg-background rounded-full overflow-hidden">
+                        <div 
+                          className="h-full bg-gradient-to-r from-accent-teal to-accent-teal/80 rounded-full transition-all duration-500 ease-out"
+                          style={{ width: `${getProfileCompletionPercentage(profile)}%` }}
+                        />
+                      </div>
+                      <span className="text-xs font-bold min-w-[2rem]">
+                        {Math.round(getProfileCompletionPercentage(profile))}%
+                      </span>
+                    </div>
+                    <span className="font-medium">Complete profile</span>
+                    <ChevronRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
+                  </Link>
+                )}
+              </div>
             </div>
 
             {/* Stats Cards */}
@@ -370,7 +397,7 @@ export default function DashboardPage() {
                             </div>
                             <div className="flex-1 min-w-0">
                               <p className="text-white text-sm font-medium truncate">
-                                {otherUser?.user?.raw_user_meta_data?.username || 
+                                {otherUser?.user?.username || 
                                  otherUser?.user?.email?.split('@')[0] || 
                                  'Unknown User'}
                               </p>
@@ -397,30 +424,6 @@ export default function DashboardPage() {
                   )}
                 </div>
 
-                {/* Profile Completion */}
-                <div className="bg-card rounded-lg p-6">
-                  <h2 className="text-lg font-semibold text-white mb-4">Profile</h2>
-                  <div className="space-y-3">
-                    <div className="flex items-center justify-between">
-                      <span className="text-secondary text-sm">Profile Complete</span>
-                      <span className="text-white font-semibold">
-                        {profile ? '85%' : '45%'}
-                      </span>
-                    </div>
-                    <div className="w-full bg-background rounded-full h-2">
-                      <div 
-                        className="bg-accent-teal h-2 rounded-full transition-all" 
-                        style={{ width: profile ? '85%' : '45%' }}
-                      />
-                    </div>
-                    <Link
-                      href="/profile"
-                      className="inline-flex items-center text-accent-teal hover:text-opacity-80 text-sm font-medium"
-                    >
-                      Complete Profile <ChevronRight className="w-4 h-4 ml-1" />
-                    </Link>
-                  </div>
-                </div>
 
                 {/* Tips */}
                 <div className="bg-card rounded-lg p-6">

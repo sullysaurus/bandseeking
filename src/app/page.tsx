@@ -2,6 +2,7 @@
 
 import { useAuth } from '@/contexts/AuthContext'
 import { useRouter } from 'next/navigation'
+import { useEffect } from 'react'
 import { ArrowRight, MessageSquare, Clock, Users, CheckCircle, Sparkles, Share2, Shield, TrendingUp, Music2, MapPin } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -18,6 +19,13 @@ export default function Home() {
     }
   }
 
+  // Handle redirect in useEffect to avoid setState during render
+  useEffect(() => {
+    if (!loading && user) {
+      router.push('/find-bands')
+    }
+  }, [user, loading, router])
+
   if (loading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
@@ -26,10 +34,13 @@ export default function Home() {
     )
   }
 
-  // If user is logged in, redirect to dashboard
+  // If user is logged in, show loading while redirecting
   if (user) {
-    router.push('/find-bands')
-    return null
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-white">Redirecting...</div>
+      </div>
+    )
   }
 
   return (
