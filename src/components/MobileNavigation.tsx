@@ -4,6 +4,7 @@ import { Users, Music, User, MessageSquare, Plus, Home } from 'lucide-react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useState } from 'react'
+import { useAuth } from '@/contexts/AuthContext'
 
 const navigationItems = [
   {
@@ -36,8 +37,14 @@ const navigationItems = [
 ]
 
 export default function MobileNavigation() {
+  const { user, loading } = useAuth()
   const pathname = usePathname()
   const [showCreateMenu, setShowCreateMenu] = useState(false)
+
+  // Don't show mobile navigation if user is not logged in or still loading
+  if (loading || !user) {
+    return null
+  }
 
   const handleCreateClick = () => {
     setShowCreateMenu(!showCreateMenu)
