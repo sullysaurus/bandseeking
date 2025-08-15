@@ -2,7 +2,7 @@
 
 import { useAuth } from '@/contexts/AuthContext'
 import { useRouter } from 'next/navigation'
-import { ArrowRight, MessageSquare, Clock, Users, CheckCircle, Sparkles, Share2, Shield, TrendingUp, Music2 } from 'lucide-react'
+import { ArrowRight, MessageSquare, Clock, Users, CheckCircle, Sparkles, Share2, Shield, TrendingUp, Music2, MapPin } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 
@@ -219,12 +219,15 @@ export default function Home() {
               <p className="text-secondary text-sm">Increase your visibility and get discovered by more musicians in your area</p>
             </div>
 
-            <div className="bg-card/50 rounded-xl p-6 border border-success/10 relative overflow-hidden flex items-center justify-center text-center">
-              <div>
-                <Sparkles className="w-8 h-8 text-success mx-auto mb-3" />
-                <h3 className="text-lg font-semibold text-white mb-2">More Features</h3>
-                <p className="text-secondary text-sm">Got ideas? We're always building based on musician feedback</p>
+            <div className="bg-card/50 rounded-xl p-6 border border-success/10 relative overflow-hidden">
+              <div className="absolute top-3 right-3">
+                <span className="bg-success/20 text-success text-xs px-2 py-1 rounded-full">Soon</span>
               </div>
+              <div className="bg-success/20 w-10 h-10 rounded-lg flex items-center justify-center mb-4">
+                <MapPin className="w-5 h-5 text-success" />
+              </div>
+              <h3 className="text-lg font-semibold text-white mb-2">Music Venue Database</h3>
+              <p className="text-secondary text-sm">Stop googling for random venues - find and book gigs at curated local music spots</p>
             </div>
           </div>
         </div>

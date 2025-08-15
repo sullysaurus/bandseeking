@@ -1,11 +1,12 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
 import { Mail, Lock, User, Eye, EyeOff } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
+import { createClient } from '@supabase/supabase-js'
 
 export default function SignUp() {
   const [email, setEmail] = useState('')
@@ -20,23 +21,11 @@ export default function SignUp() {
   const [success, setSuccess] = useState('')
   const router = useRouter()
 
-  useEffect(() => {
-    // Clear any existing session when the signup page loads
-    // This prevents old auth tokens from interfering with signup
-    const clearSession = async () => {
-      await supabase.auth.signOut()
-    }
-    clearSession()
-  }, [])
-
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
     setError('')
     setSuccess('')
-
-    // Clear any existing session before signup to prevent authorization header issues
-    await supabase.auth.signOut()
 
     // Validation
     if (password !== confirmPassword) {
@@ -84,7 +73,19 @@ export default function SignUp() {
     }
 
     try {
-      const { error } = await supabase.auth.signUp({
+      // Create a fresh Supabase client for signup to avoid any existing session headers
+      const signupClient = createClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+        {
+          auth: {
+            persistSession: false,
+            autoRefreshToken: false,
+          }
+        }
+      )
+      
+      const { error } = await signupClient.auth.signUp({
         email: cleanEmail,
         password,
         options: {
