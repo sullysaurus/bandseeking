@@ -39,14 +39,25 @@ export default function SignUp() {
       return
     }
 
+    // Clean and validate inputs
+    const cleanEmail = email.trim().toLowerCase()
+    const cleanFullName = fullName.trim()
+    const cleanUsername = username.trim() || cleanEmail.split('@')[0]
+
+    if (!cleanEmail || !cleanFullName) {
+      setError('Please fill in all required fields')
+      setLoading(false)
+      return
+    }
+
     try {
       const { data, error } = await supabase.auth.signUp({
-        email,
+        email: cleanEmail,
         password,
         options: {
           data: {
-            full_name: fullName,
-            username: username || email.split('@')[0],
+            full_name: cleanFullName,
+            username: cleanUsername,
           }
         }
       })
