@@ -100,63 +100,42 @@ export default function FindBands() {
         <Sidebar />
         
         <main className="flex-1 p-4 md:p-8 pb-20 md:pb-8">
-        {/* Header */}
-        <div className="mb-6 md:mb-8">
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 md:gap-0 mb-4">
-            <div>
-              <h1 className="text-2xl md:text-4xl font-bold text-white mb-2">Find Bands</h1>
-              <p className="text-secondary text-base md:text-lg">Discover bands looking for new members and explore the local music scene</p>
-            </div>
-            
-            {/* Desktop controls */}
-            <div className="hidden md:flex items-center gap-4">
-              <div className="relative">
-                <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-medium w-5 h-5" />
-                <input 
-                  type="text" 
-                  placeholder="Search bands..." 
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="bg-card border-0 rounded-lg pl-12 pr-4 py-3 text-white placeholder-medium focus:outline-none focus:ring-2 focus:ring-accent-teal w-96"
-                />
+          {/* Header */}
+          <div className="mb-6 md:mb-8">
+            <div className="flex flex-col gap-4 mb-4">
+              <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
+                <div className="flex-1 min-w-0">
+                  <h1 className="text-2xl md:text-4xl font-bold text-white mb-2">Find Bands</h1>
+                  <p className="text-secondary text-base md:text-lg">Discover bands looking for new members and explore the local music scene</p>
+                </div>
+              
+                {/* Desktop controls */}
+                <div className="hidden md:flex items-center gap-3 flex-shrink-0">
+                  <Link 
+                    href="/bands/create"
+                    className="flex items-center gap-2 bg-accent-teal hover:bg-opacity-90 text-black font-medium px-4 py-3 rounded-lg transition-colors whitespace-nowrap"
+                  >
+                    <Plus className="w-5 h-5" />
+                    Start a Band
+                  </Link>
+                </div>
               </div>
-              <button 
-                onClick={() => setIsFilterOpen(true)}
-                className="flex items-center gap-2 bg-card hover:bg-opacity-80 text-white px-4 py-3 rounded-lg transition-colors relative"
-              >
-                <Filter className="w-5 h-5" />
-                Filters
-                {getActiveFilterCount() > 0 && (
-                  <span className="absolute -top-2 -right-2 bg-accent-teal text-black text-xs rounded-full w-5 h-5 flex items-center justify-center">
-                    {getActiveFilterCount()}
-                  </span>
-                )}
-              </button>
-              <Link 
-                href="/bands/create"
-                className="flex items-center gap-2 bg-accent-teal hover:bg-opacity-90 text-white font-medium px-6 py-3 rounded-lg transition-colors"
-              >
-                <Plus className="w-5 h-5" />
-                Start a Band
-              </Link>
-            </div>
-            
-            {/* Mobile search and filters */}
-            <div className="md:hidden space-y-3">
-              <div className="relative">
-                <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-medium w-5 h-5" />
-                <input 
-                  type="text" 
-                  placeholder="Search bands..." 
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="bg-card border-0 rounded-lg pl-12 pr-4 py-3 text-white placeholder-medium focus:outline-none focus:ring-2 focus:ring-accent-teal w-full"
-                />
-              </div>
-              <div className="flex gap-3">
+              
+              {/* Desktop search and filters row */}
+              <div className="hidden md:flex items-center gap-4">
+                <div className="relative flex-1 max-w-md">
+                  <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-medium w-5 h-5" />
+                  <input 
+                    type="text" 
+                    placeholder="Search bands..." 
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="bg-card border-0 rounded-lg pl-12 pr-4 py-3 text-white placeholder-medium focus:outline-none focus:ring-2 focus:ring-accent-teal w-full"
+                  />
+                </div>
                 <button 
                   onClick={() => setIsFilterOpen(true)}
-                  className="flex items-center gap-2 bg-card hover:bg-opacity-80 text-white px-4 py-3 rounded-lg transition-colors relative flex-1"
+                  className="flex items-center gap-2 bg-card hover:bg-opacity-80 text-white px-4 py-3 rounded-lg transition-colors relative whitespace-nowrap"
                 >
                   <Filter className="w-5 h-5" />
                   Filters
@@ -166,17 +145,44 @@ export default function FindBands() {
                     </span>
                   )}
                 </button>
-                <Link 
-                  href="/bands/create"
-                  className="flex items-center gap-2 bg-accent-teal hover:bg-opacity-90 text-white font-medium px-4 py-3 rounded-lg transition-colors"
-                >
-                  <Plus className="w-4 h-4" />
-                  Start
-                </Link>
+              </div>
+              
+              {/* Mobile search and filters */}
+              <div className="md:hidden space-y-3">
+                <div className="relative">
+                  <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-medium w-5 h-5" />
+                  <input 
+                    type="text" 
+                    placeholder="Search bands..." 
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="bg-card border-0 rounded-lg pl-12 pr-4 py-3 text-white placeholder-medium focus:outline-none focus:ring-2 focus:ring-accent-teal w-full"
+                  />
+                </div>
+                <div className="flex gap-3">
+                  <button 
+                    onClick={() => setIsFilterOpen(true)}
+                    className="flex items-center gap-2 bg-card hover:bg-opacity-80 text-white px-4 py-3 rounded-lg transition-colors relative flex-1"
+                  >
+                    <Filter className="w-5 h-5" />
+                    Filters
+                    {getActiveFilterCount() > 0 && (
+                      <span className="absolute -top-2 -right-2 bg-accent-teal text-black text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                        {getActiveFilterCount()}
+                      </span>
+                    )}
+                  </button>
+                  <Link 
+                    href="/bands/create"
+                    className="flex items-center gap-2 bg-accent-teal hover:bg-opacity-90 text-black font-medium px-4 py-3 rounded-lg transition-colors whitespace-nowrap"
+                  >
+                    <Plus className="w-4 h-4" />
+                    Start
+                  </Link>
+                </div>
               </div>
             </div>
           </div>
-        </div>
 
         {/* All Bands Section */}
         <div className="mb-8">

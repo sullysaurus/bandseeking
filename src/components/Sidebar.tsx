@@ -95,9 +95,9 @@ export default function Sidebar() {
           size="small"
           editable={false}
         />
-        <div>
-          <div className="text-white font-medium">{getDisplayName()}</div>
-          <div className="text-secondary text-sm">{user?.email}</div>
+        <div className="flex-1 min-w-0">
+          <div className="text-white font-medium truncate">{getDisplayName()}</div>
+          <div className="text-secondary text-sm truncate">{user?.email}</div>
         </div>
       </div>
 
