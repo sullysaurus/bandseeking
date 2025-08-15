@@ -3,7 +3,7 @@ import { cookies } from 'next/headers'
 
 export async function GET() {
   // Clear all Supabase cookies
-  const cookieStore = cookies()
+  const cookieStore = await cookies()
   
   // Clear common Supabase cookie names
   const supabaseCookies = [
