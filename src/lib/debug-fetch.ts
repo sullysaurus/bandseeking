@@ -1,8 +1,8 @@
 // Debug wrapper for fetch to capture problematic requests
-const originalFetch = window.fetch;
-
 export function enableFetchDebugging() {
   if (typeof window === 'undefined') return; // Skip on server-side
+  
+  const originalFetch = window.fetch;
 
   window.fetch = async function debugFetch(input: RequestInfo | URL, init?: RequestInit) {
     const url = typeof input === 'string' ? input : input.toString();
