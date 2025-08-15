@@ -14,11 +14,6 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
     autoRefreshToken: true,
     detectSessionInUrl: true,
   },
-  global: {
-    headers: {
-      'x-application-name': 'bandseeking',
-    },
-  },
 })
 
 // Helper function to create a fresh client (useful for signup/auth operations)
@@ -28,11 +23,6 @@ export function createSupabaseClient() {
       persistSession: false,
       autoRefreshToken: false,
       detectSessionInUrl: false,
-    },
-    global: {
-      headers: {
-        'x-application-name': 'bandseeking',
-      },
     },
   })
 }
