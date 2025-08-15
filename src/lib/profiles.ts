@@ -207,6 +207,13 @@ class ProfileService {
   // Get count of all musicians
   async getMusiciansCount(): Promise<number> {
     try {
+      // Check authentication first
+      const { data: { user }, error: authError } = await supabase.auth.getUser()
+      if (authError || !user) {
+        console.log('User not authenticated, returning 0 for musicians count')
+        return 0
+      }
+
       const { count, error } = await supabase
         .from('profiles')
         .select('*', { count: 'exact', head: true })

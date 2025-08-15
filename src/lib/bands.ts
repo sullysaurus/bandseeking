@@ -178,6 +178,13 @@ class BandService {
   // Get count of all bands
   async getBandsCount(): Promise<number> {
     try {
+      // Check authentication first
+      const { data: { user }, error: authError } = await supabase.auth.getUser()
+      if (authError || !user) {
+        console.log('User not authenticated, returning 0 for bands count')
+        return 0
+      }
+
       const { count, error } = await supabase
         .from('bands')
         .select('*', { count: 'exact', head: true })

@@ -42,10 +42,31 @@ export default function SignUp() {
     // Clean and validate inputs
     const cleanEmail = email.trim().toLowerCase()
     const cleanFullName = fullName.trim()
-    const cleanUsername = username.trim() || cleanEmail.split('@')[0]
+    const cleanUsername = (username.trim() || cleanEmail.split('@')[0]).replace(/[^a-zA-Z0-9_-]/g, '')
 
     if (!cleanEmail || !cleanFullName) {
       setError('Please fill in all required fields')
+      setLoading(false)
+      return
+    }
+
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    if (!emailRegex.test(cleanEmail)) {
+      setError('Please enter a valid email address')
+      setLoading(false)
+      return
+    }
+
+    // Validate name length and characters
+    if (cleanFullName.length > 100) {
+      setError('Full name must be less than 100 characters')
+      setLoading(false)
+      return
+    }
+
+    if (cleanUsername.length > 50) {
+      setError('Username must be less than 50 characters')
       setLoading(false)
       return
     }

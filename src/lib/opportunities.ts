@@ -389,6 +389,13 @@ class OpportunityService {
   // Get count of all opportunities
   async getOpportunitiesCount(): Promise<number> {
     try {
+      // Check authentication first
+      const { data: { user }, error: authError } = await supabase.auth.getUser()
+      if (authError || !user) {
+        console.log('User not authenticated, returning 0 for opportunities count')
+        return 0
+      }
+
       const { count, error } = await supabase
         .from('opportunities')
         .select('*', { count: 'exact', head: true })
