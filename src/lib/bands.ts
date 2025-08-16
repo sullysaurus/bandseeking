@@ -19,6 +19,7 @@ export interface Band {
   looking_for: string[]
   created_at: string
   updated_at: string
+  member_count?: number
 }
 
 export interface BandMember {
@@ -165,7 +166,15 @@ class BandService {
         }
         throw error
       }
-      return data || []
+
+      // For now, set member_count to 1 (the owner) for all bands
+      // This can be enhanced later to query actual member counts
+      const bandsWithMemberCount = (data || []).map(band => ({
+        ...band,
+        member_count: 1
+      }))
+
+      return bandsWithMemberCount
     } catch (error: any) {
       // Don't log table missing errors as they're expected
       if (error && error.code !== '42P01' && !error.message?.includes('does not exist')) {

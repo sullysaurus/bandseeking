@@ -19,6 +19,7 @@ interface BandCardProps {
   looking_for: string[]
   created_at: string
   avatar_url?: string | null
+  member_count?: number
   isApplied?: boolean
 }
 
@@ -33,6 +34,7 @@ export default function BandCard({
   formed_year,
   looking_for,
   avatar_url,
+  member_count,
   isApplied = false 
 }: BandCardProps) {
   const { user } = useAuth()
@@ -216,7 +218,7 @@ export default function BandCard({
       {/* Stats */}
       <div className="grid grid-cols-3 gap-4 py-4">
         <div className="text-center">
-          <div className="text-2xl font-bold text-white">--</div>
+          <div className="text-2xl font-bold text-white">{member_count || 1}</div>
           <div className="text-xs text-medium">Members</div>
         </div>
         <div className="text-center">

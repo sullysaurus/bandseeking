@@ -226,6 +226,7 @@ export default function FindBands() {
                       looking_for={band.looking_for || []}
                       created_at={band.created_at}
                       avatar_url={band.avatar_url}
+                      member_count={band.member_count}
                     />
                   ))}
                 </div>
