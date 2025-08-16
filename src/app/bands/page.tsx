@@ -115,13 +115,20 @@ export default function MyBandsPage() {
         </div>
       </div>
 
-      {/* Genre */}
-      {band.genre && (
-        <div className="inline-flex items-center px-3 py-1 rounded-full bg-accent-purple/20 text-accent-purple text-sm">
-          <Music className="w-4 h-4 mr-1" />
-          {band.genre}
-        </div>
-      )}
+      {/* Genre and Band Type */}
+      <div className="flex flex-wrap gap-2">
+        {band.genre && (
+          <div className="inline-flex items-center px-3 py-1 rounded-full bg-accent-purple/20 text-accent-purple text-sm">
+            <Music className="w-4 h-4 mr-1" />
+            {band.genre}
+          </div>
+        )}
+        {band.band_type && (
+          <div className="inline-flex items-center px-3 py-1 rounded-full bg-accent-teal/20 text-accent-teal text-sm">
+            {band.band_type}
+          </div>
+        )}
+      </div>
 
       {/* Description */}
       {band.description && (

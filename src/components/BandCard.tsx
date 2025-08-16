@@ -14,6 +14,7 @@ interface BandCardProps {
   location: string | null
   status: 'recruiting' | 'complete' | 'on_hold'
   genre: string | null
+  band_type?: string | null
   description: string | null
   formed_year: number | null
   looking_for: string[]
@@ -29,7 +30,8 @@ export default function BandCard({
   slug,
   location, 
   status, 
-  genre, 
+  genre,
+  band_type,
   description,
   formed_year,
   looking_for,
@@ -202,13 +204,20 @@ export default function BandCard({
         </div>
       </div>
 
-      {/* Genre Tag */}
-      {genre && (
-        <div className={`inline-flex items-center px-3 py-1 rounded-full text-white text-sm ${genreColor}`}>
-          <Music className="w-4 h-4 mr-1" />
-          {genre}
-        </div>
-      )}
+      {/* Genre and Band Type Tags */}
+      <div className="flex flex-wrap gap-2">
+        {genre && (
+          <div className={`inline-flex items-center px-3 py-1 rounded-full text-white text-sm ${genreColor}`}>
+            <Music className="w-4 h-4 mr-1" />
+            {genre}
+          </div>
+        )}
+        {band_type && (
+          <div className="inline-flex items-center px-3 py-1 rounded-full bg-accent-teal/20 text-accent-teal text-sm">
+            {band_type}
+          </div>
+        )}
+      </div>
 
       {/* Description */}
       {description && (

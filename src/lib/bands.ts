@@ -8,6 +8,7 @@ export interface Band {
   description: string | null
   location: string | null
   genre: string | null
+  band_type: string | null
   status: 'recruiting' | 'complete' | 'on_hold'
   formed_year: number | null
   website: string | null
@@ -46,6 +47,7 @@ export interface BandCreate {
   description?: string
   location?: string
   genre?: string
+  band_type?: string
   status?: 'recruiting' | 'complete' | 'on_hold'
   formed_year?: number
   website?: string
@@ -153,28 +155,54 @@ class BandService {
   // Get all bands
   async getAllBands(): Promise<Band[]> {
     try {
-      const { data, error } = await supabase
+      const { data: bandsData, error: bandsError } = await supabase
         .from('bands')
         .select('*')
         .order('created_at', { ascending: false })
 
-      if (error) {
+      if (bandsError) {
         // Handle case where table doesn't exist yet
-        if (error.code === '42P01') {
+        if (bandsError.code === '42P01') {
           console.warn('Bands table does not exist yet. Please run database migrations.')
           return []
         }
-        throw error
+        throw bandsError
       }
 
-      // For now, set member_count to 1 (the owner) for all bands
-      // This can be enhanced later to query actual member counts
-      const bandsWithMemberCount = (data || []).map(band => ({
-        ...band,
-        member_count: 1
-      }))
+      if (!bandsData || bandsData.length === 0) {
+        return []
+      }
 
-      return bandsWithMemberCount
+      // Get member counts for all bands
+      try {
+        const { data: memberCounts, error: memberError } = await supabase
+          .from('band_members')
+          .select('band_id')
+          .eq('is_active', true)
+
+        // Count members per band
+        const memberCountsByBand: Record<string, number> = {}
+        if (memberCounts && !memberError) {
+          memberCounts.forEach(member => {
+            memberCountsByBand[member.band_id] = (memberCountsByBand[member.band_id] || 0) + 1
+          })
+        }
+
+        // Add member counts to bands
+        const bandsWithMemberCount = bandsData.map(band => ({
+          ...band,
+          member_count: memberCountsByBand[band.id] || 1 // Default to 1 (the owner)
+        }))
+
+        return bandsWithMemberCount
+      } catch (memberError) {
+        // If band_members table doesn't exist, just return bands with default count
+        console.warn('Band members table not available, using default count')
+        return bandsData.map(band => ({
+          ...band,
+          member_count: 1
+        }))
+      }
     } catch (error: any) {
       // Don't log table missing errors as they're expected
       if (error && error.code !== '42P01' && !error.message?.includes('does not exist')) {

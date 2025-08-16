@@ -7,7 +7,7 @@ import Sidebar from '@/components/Sidebar'
 import ProtectedRoute from '@/components/ProtectedRoute'
 import { bandService, BandCreate } from '@/lib/bands'
 import { useAuth } from '@/contexts/AuthContext'
-import { MUSIC_GENRES, BAND_ROLES } from '@/lib/constants/music'
+import { MUSIC_GENRES, BAND_ROLES, BAND_TYPES } from '@/lib/constants/music'
 
 export default function CreateBandPage() {
   const router = useRouter()
@@ -20,6 +20,7 @@ export default function CreateBandPage() {
     description: '',
     location: '',
     genre: '',
+    band_type: '',
     status: 'recruiting',
     formed_year: new Date().getFullYear(),
     website: '',
@@ -183,6 +184,24 @@ export default function CreateBandPage() {
                       <option value="">Select a genre</option>
                       {MUSIC_GENRES.map(genre => (
                         <option key={genre} value={genre}>{genre}</option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-white mb-2">
+                      <Music className="inline w-4 h-4 mr-1" />
+                      Band Type
+                    </label>
+                    <select
+                      name="band_type"
+                      value={bandData.band_type}
+                      onChange={handleInputChange}
+                      className="w-full bg-background border border-border rounded-lg px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-accent-teal"
+                    >
+                      <option value="">Select band type</option>
+                      {BAND_TYPES.map(type => (
+                        <option key={type} value={type}>{type}</option>
                       ))}
                     </select>
                   </div>

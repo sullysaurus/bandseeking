@@ -117,3 +117,18 @@ export const EXPERIENCE_LEVELS = [
   { value: 'Advanced', label: 'Advanced', description: 'Highly skilled, extensive performance experience' },
   { value: 'Professional', label: 'Professional', description: 'Making a living from music' },
 ]
+
+export const BAND_TYPES = [
+  'Original',
+  'Tribute', 
+  'Cover',
+  'Wedding',
+  'Corporate',
+  'Jam Band',
+  'Session',
+  'Studio Project',
+  'Live Performance',
+  'Recording Project',
+  'Side Project',
+  'Duo/Acoustic'
+]

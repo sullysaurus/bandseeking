@@ -19,6 +19,7 @@ export default function FindBands() {
   const [filters, setFilters] = useState<FilterOptions>({
     instruments: [],
     genres: [],
+    bandTypes: [],
     lookingFor: [],
     location: '',
     status: 'all'
@@ -43,6 +44,7 @@ export default function FindBands() {
         band.name.toLowerCase().includes(searchLower) ||
         band.description?.toLowerCase().includes(searchLower) ||
         band.genre?.toLowerCase().includes(searchLower) ||
+        band.band_type?.toLowerCase().includes(searchLower) ||
         band.location?.toLowerCase().includes(searchLower) ||
         band.looking_for?.some(role => role.toLowerCase().includes(searchLower))
       )
@@ -62,6 +64,14 @@ export default function FindBands() {
         band.genre?.toLowerCase().includes(filterGenre.toLowerCase())
       )
       if (!hasMatchingGenre) return false
+    }
+
+    // Band type filter
+    if (filters.bandTypes?.length && band.band_type) {
+      const hasMatchingBandType = filters.bandTypes.some(filterType =>
+        band.band_type?.toLowerCase().includes(filterType.toLowerCase())
+      )
+      if (!hasMatchingBandType) return false
     }
 
     // Looking for filter (instruments/roles they need)
@@ -221,6 +231,7 @@ export default function FindBands() {
                       location={band.location}
                       status={band.status}
                       genre={band.genre}
+                      band_type={band.band_type}
                       description={band.description}
                       formed_year={band.formed_year}
                       looking_for={band.looking_for || []}

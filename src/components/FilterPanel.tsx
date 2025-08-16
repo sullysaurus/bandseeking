@@ -2,11 +2,12 @@
 
 import { useState } from 'react'
 import { X, ChevronDown } from 'lucide-react'
-import { COMMON_INSTRUMENTS, MUSIC_GENRES, EXPERIENCE_LEVELS, LOOKING_FOR_OPTIONS, BAND_ROLES } from '@/lib/constants/music'
+import { COMMON_INSTRUMENTS, MUSIC_GENRES, EXPERIENCE_LEVELS, LOOKING_FOR_OPTIONS, BAND_ROLES, BAND_TYPES } from '@/lib/constants/music'
 
 export interface FilterOptions {
   instruments?: string[]
   genres?: string[]
+  bandTypes?: string[]
   experienceLevel?: string[]
   lookingFor?: string[]
   location?: string
@@ -171,6 +172,34 @@ export default function FilterPanel({ isOpen, onClose, filters, onFiltersChange,
               </div>
             )}
           </div>
+
+          {/* Band Types Filter (Bands only) */}
+          {type === 'bands' && (
+            <div>
+              <button
+                onClick={() => toggleDropdown('bandTypes')}
+                className="w-full flex items-center justify-between text-white font-medium mb-3 p-2 bg-background rounded-lg border border-card hover:border-accent-teal transition-colors"
+              >
+                <span>Band Types ({(localFilters.bandTypes || []).length})</span>
+                <ChevronDown className={`w-4 h-4 transition-transform ${openDropdowns.has('bandTypes') ? 'rotate-180' : ''}`} />
+              </button>
+              {openDropdowns.has('bandTypes') && (
+                <div className="bg-background rounded-lg border border-card max-h-48 overflow-y-auto p-3 space-y-2">
+                  {BAND_TYPES.map(bandType => (
+                    <label key={bandType} className="flex items-center space-x-3 cursor-pointer hover:bg-card/50 p-1 rounded">
+                      <input
+                        type="checkbox"
+                        checked={(localFilters.bandTypes || []).includes(bandType)}
+                        onChange={() => handleArrayFilterChange('bandTypes', bandType)}
+                        className="rounded border-card bg-background text-accent-teal focus:ring-accent-teal focus:ring-offset-0"
+                      />
+                      <span className="text-white text-sm">{bandType}</span>
+                    </label>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
 
           {/* Experience Level Filter (Musicians only) */}
           {type === 'musicians' && (

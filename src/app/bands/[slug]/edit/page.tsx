@@ -9,13 +9,7 @@ import AvatarUpload from '@/components/AvatarUpload'
 import { bandService, Band, BandUpdate, BandMember, BandApplication } from '@/lib/bands'
 import { profileService, Profile } from '@/lib/profiles'
 import { useAuth } from '@/contexts/AuthContext'
-
-const genres = [
-  'Rock', 'Alternative Rock', 'Indie', 'Pop', 'Electronic', 
-  'Hip Hop', 'R&B', 'Jazz', 'Blues', 'Country', 
-  'Folk', 'Metal', 'Punk', 'Reggae', 'Classical',
-  'Experimental', 'Funk', 'Soul', 'Gospel', 'Latin'
-]
+import { MUSIC_GENRES, BAND_TYPES } from '@/lib/constants/music'
 
 const instruments = [
   'Guitar', 'Bass', 'Drums', 'Vocals', 'Keyboard',
@@ -41,12 +35,17 @@ export default function EditBandPage() {
   const [inviteUsername, setInviteUsername] = useState('')
   const [inviteRole, setInviteRole] = useState('')
   const [inviting, setInviting] = useState(false)
+  const [searchQuery, setSearchQuery] = useState('')
+  const [searchResults, setSearchResults] = useState<Profile[]>([])
+  const [isSearching, setIsSearching] = useState(false)
+  const [selectedUser, setSelectedUser] = useState<Profile | null>(null)
 
   const [bandData, setBandData] = useState<BandUpdate>({
     name: '',
     description: '',
     location: '',
     genre: '',
+    band_type: '',
     status: 'recruiting',
     formed_year: new Date().getFullYear(),
     website: '',
@@ -87,6 +86,7 @@ export default function EditBandPage() {
         description: bandData.description || '',
         location: bandData.location || '',
         genre: bandData.genre || '',
+        band_type: bandData.band_type || '',
         status: bandData.status,
         formed_year: bandData.formed_year || new Date().getFullYear(),
         website: bandData.website || '',
@@ -218,6 +218,37 @@ export default function EditBandPage() {
     }
   }
 
+  const searchUsers = async (query: string) => {
+    if (!query.trim()) {
+      setSearchResults([])
+      return
+    }
+
+    setIsSearching(true)
+    try {
+      const results = await profileService.searchProfiles(query)
+      // Filter out current members and the band owner
+      const currentMemberIds = new Set([
+        ...members.map(m => m.user_id),
+        band?.owner_id
+      ])
+      const filteredResults = results.filter(profile => !currentMemberIds.has(profile.id))
+      setSearchResults(filteredResults)
+    } catch (error) {
+      console.error('Error searching users:', error)
+      setSearchResults([])
+    } finally {
+      setIsSearching(false)
+    }
+  }
+
+  const handleUserSelect = (profile: Profile) => {
+    setSelectedUser(profile)
+    setInviteUsername(profile.username)
+    setSearchQuery(profile.full_name || profile.username)
+    setSearchResults([])
+  }
+
   const handleInviteMember = async () => {
     if (!inviteUsername.trim() || !band) return
 
@@ -248,6 +279,9 @@ export default function EditBandPage() {
         setShowInviteModal(false)
         setInviteUsername('')
         setInviteRole('')
+        setSearchQuery('')
+        setSearchResults([])
+        setSelectedUser(null)
         alert('User invited successfully!')
       } else {
         setError('Failed to invite user. Please check the username and try again.')
@@ -434,8 +468,26 @@ export default function EditBandPage() {
                         className="w-full bg-background border border-border rounded-lg px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-accent-teal"
                       >
                         <option value="">Select a genre</option>
-                        {genres.map(genre => (
+                        {MUSIC_GENRES.map(genre => (
                           <option key={genre} value={genre}>{genre}</option>
+                        ))}
+                      </select>
+                    </div>
+
+                    <div>
+                      <label className="block text-white mb-2">
+                        <Music className="inline w-4 h-4 mr-1" />
+                        Band Type
+                      </label>
+                      <select
+                        name="band_type"
+                        value={bandData.band_type}
+                        onChange={handleInputChange}
+                        className="w-full bg-background border border-border rounded-lg px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-accent-teal"
+                      >
+                        <option value="">Select band type</option>
+                        {BAND_TYPES.map(type => (
+                          <option key={type} value={type}>{type}</option>
                         ))}
                       </select>
                     </div>
@@ -769,16 +821,120 @@ export default function EditBandPage() {
             <div className="space-y-4">
               <div>
                 <label className="block text-white mb-2">
-                  Username <span className="text-red-500">*</span>
+                  Search User <span className="text-red-500">*</span>
                 </label>
-                <input
-                  type="text"
-                  value={inviteUsername}
-                  onChange={(e) => setInviteUsername(e.target.value)}
-                  className="w-full bg-background border border-border rounded-lg px-4 py-2 text-white placeholder-medium focus:outline-none focus:ring-2 focus:ring-accent-teal"
-                  placeholder="Enter username to invite"
-                  disabled={inviting}
-                />
+                <div className="relative">
+                  <input
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) => {
+                      setSearchQuery(e.target.value)
+                      searchUsers(e.target.value)
+                      setSelectedUser(null)
+                      setInviteUsername('')
+                    }}
+                    className="w-full bg-background border border-border rounded-lg px-4 py-2 text-white placeholder-medium focus:outline-none focus:ring-2 focus:ring-accent-teal"
+                    placeholder="Search for user by name or username"
+                    disabled={inviting}
+                  />
+                  
+                  {/* Search Results Dropdown */}
+                  {searchResults.length > 0 && !selectedUser && (
+                    <div className="absolute top-full left-0 right-0 bg-card border border-border rounded-lg mt-1 max-h-60 overflow-y-auto z-10">
+                      {searchResults.map((profile) => (
+                        <button
+                          key={profile.id}
+                          onClick={() => handleUserSelect(profile)}
+                          className="w-full flex items-center gap-3 p-3 hover:bg-background text-left transition-colors"
+                        >
+                          <div className="w-8 h-8 bg-accent-teal rounded-full flex items-center justify-center text-black font-bold flex-shrink-0">
+                            {profile.avatar_url ? (
+                              <img 
+                                src={profile.avatar_url} 
+                                alt={profile.full_name || profile.username} 
+                                className="w-full h-full object-cover rounded-full"
+                              />
+                            ) : (
+                              (profile.full_name || profile.username).charAt(0).toUpperCase()
+                            )}
+                          </div>
+                          <div className="min-w-0 flex-1">
+                            <div className="text-white font-medium truncate">
+                              {profile.full_name || profile.username}
+                            </div>
+                            {profile.full_name && (
+                              <div className="text-secondary text-sm truncate">
+                                @{profile.username}
+                              </div>
+                            )}
+                            {profile.location && (
+                              <div className="text-medium text-xs truncate">
+                                {profile.location}
+                              </div>
+                            )}
+                          </div>
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                  
+                  {/* Loading indicator */}
+                  {isSearching && !selectedUser && (
+                    <div className="absolute top-full left-0 right-0 bg-card border border-border rounded-lg mt-1 p-3 text-center text-secondary">
+                      Searching...
+                    </div>
+                  )}
+                  
+                  {/* No results with invite link option */}
+                  {searchQuery && !isSearching && searchResults.length === 0 && !selectedUser && (
+                    <div className="absolute top-full left-0 right-0 bg-card border border-border rounded-lg mt-1 p-3 text-center">
+                      <div className="text-secondary mb-3">No users found</div>
+                      <div className="text-white text-sm mb-2">
+                        "{searchQuery}" is not in the app yet
+                      </div>
+                      <button
+                        onClick={() => {
+                          // Generate invite link and copy to clipboard
+                          const inviteLink = `${window.location.origin}/signup?invited_by=${user?.id}&band=${band?.slug}`
+                          navigator.clipboard.writeText(inviteLink)
+                          alert(`Invite link copied to clipboard!\nSend this to ${searchQuery}: ${inviteLink}`)
+                          setSearchQuery('')
+                          setSearchResults([])
+                        }}
+                        className="bg-accent-teal hover:bg-accent-teal/90 text-black px-3 py-2 rounded-lg text-sm font-medium transition-colors"
+                      >
+                        Send Invite Link to "{searchQuery}"
+                      </button>
+                    </div>
+                  )}
+                </div>
+                
+                {/* Selected User Display */}
+                {selectedUser && (
+                  <div className="mt-3 p-3 bg-accent-teal/10 border border-accent-teal rounded-lg">
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 bg-accent-teal rounded-full flex items-center justify-center text-black font-bold">
+                        {selectedUser.avatar_url ? (
+                          <img 
+                            src={selectedUser.avatar_url} 
+                            alt={selectedUser.full_name || selectedUser.username} 
+                            className="w-full h-full object-cover rounded-full"
+                          />
+                        ) : (
+                          (selectedUser.full_name || selectedUser.username).charAt(0).toUpperCase()
+                        )}
+                      </div>
+                      <div>
+                        <div className="text-accent-teal font-medium">
+                          {selectedUser.full_name || selectedUser.username}
+                        </div>
+                        <div className="text-secondary text-sm">
+                          @{selectedUser.username}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
 
               <div>
@@ -804,6 +960,9 @@ export default function EditBandPage() {
                   setShowInviteModal(false)
                   setInviteUsername('')
                   setInviteRole('')
+                  setSearchQuery('')
+                  setSearchResults([])
+                  setSelectedUser(null)
                   setError('')
                 }}
                 disabled={inviting}
