@@ -134,7 +134,7 @@ export default function ConversationList({
             <div className="text-center py-8">
               <MessageSquare className="w-8 h-8 text-medium mx-auto mb-2" />
               <p className="text-secondary text-sm">No conversations yet</p>
-              <p className="text-medium text-xs">Go to find-musicians and click "Contact" to start chatting</p>
+              <p className="text-medium text-xs">Go to find-musicians and click "Message" to start chatting</p>
             </div>
           ) : (
             conversations.map((conversation) => {

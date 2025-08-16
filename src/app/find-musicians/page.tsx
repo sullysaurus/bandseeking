@@ -255,14 +255,14 @@ export default function FindMusicians() {
       <div className="flex min-h-screen bg-background">
         <Sidebar />
         
-        <main className="flex-1 p-4 md:p-8 pb-20 md:pb-8">
+        <main className="flex-1 p-4 md:p-8 pb-24 md:pb-8">
           {/* Header */}
-          <div className="mb-6 md:mb-8">
-            <div className="flex flex-col gap-4 mb-4">
-              <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
+          <div className="mb-4 md:mb-6">
+            <div className="flex flex-col gap-3 mb-3">
+              <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-3">
                 <div className="flex-1 min-w-0">
-                  <h1 className="text-2xl md:text-4xl font-bold text-white mb-2">Find Musicians</h1>
-                  <p className="text-secondary text-base md:text-lg">Connect with talented musicians and build your next project</p>
+                  <h1 className="text-xl md:text-3xl font-bold text-white mb-1">Find Musicians</h1>
+                  <p className="text-secondary text-sm md:text-base hidden md:block">Connect with talented musicians and build your next project</p>
                 </div>
               
                 {/* Desktop controls */}
@@ -304,70 +304,70 @@ export default function FindMusicians() {
               </div>
               
               {/* Mobile search and filters */}
-              <div className="md:hidden space-y-4">
-                <div className="relative">
-                  <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-medium w-5 h-5" />
-                  <input 
-                    type="text" 
-                    placeholder="Search musicians..." 
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    className="bg-card border-0 rounded-lg pl-12 pr-4 py-3 text-white placeholder-medium focus:outline-none focus:ring-2 focus:ring-accent-teal w-full"
-                  />
-                </div>
-                <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
+              <div className="md:hidden space-y-3">
+                <div className="flex gap-2">
+                  <div className="relative flex-1">
+                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-medium w-4 h-4" />
+                    <input 
+                      type="text" 
+                      placeholder="Search musicians..." 
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                      className="bg-card border-0 rounded-lg pl-10 pr-3 py-2.5 text-white placeholder-medium focus:outline-none focus:ring-2 focus:ring-accent-teal w-full text-sm"
+                    />
+                  </div>
                   <button 
                     onClick={() => setIsFilterOpen(true)}
-                    className="flex items-center justify-center gap-2 bg-card hover:bg-opacity-80 text-white px-4 py-3 rounded-lg transition-colors relative flex-1 min-h-[48px]"
+                    className="flex items-center justify-center gap-1 bg-card hover:bg-opacity-80 text-white px-3 py-2.5 rounded-lg transition-colors relative min-w-[80px]"
                   >
-                    <Filter className="w-5 h-5" />
-                    <span>Filters</span>
+                    <Filter className="w-4 h-4" />
+                    <span className="text-sm">Filters</span>
                     {getActiveFilterCount() > 0 && (
-                      <span className="absolute -top-2 -right-2 bg-accent-teal text-black text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                      <span className="absolute -top-1 -right-1 bg-accent-teal text-black text-xs rounded-full w-4 h-4 flex items-center justify-center">
                         {getActiveFilterCount()}
                       </span>
                     )}
                   </button>
-                  <button 
-                    onClick={handlePostOpportunity}
-                    className="flex items-center justify-center gap-2 bg-accent-teal hover:bg-opacity-90 text-black font-medium px-6 py-3 rounded-lg transition-colors sm:whitespace-nowrap flex-1 sm:flex-initial min-h-[48px]"
-                  >
-                    <Plus className="w-5 h-5" />
-                    <span>Post Opportunity</span>
-                  </button>
                 </div>
+                <button 
+                  onClick={handlePostOpportunity}
+                  className="flex items-center justify-center gap-2 bg-accent-teal hover:bg-opacity-90 text-black font-medium px-4 py-2.5 rounded-lg transition-colors w-full"
+                >
+                  <Plus className="w-4 h-4" />
+                  <span className="text-sm">Post Opportunity</span>
+                </button>
               </div>
             </div>
           </div>
 
           {/* Stats */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6 md:mb-8">
-            <div className="bg-card rounded-lg p-4 text-center">
-              <div className="text-2xl font-bold text-white">{totalMusicians}</div>
-              <div className="text-sm text-medium">Total Musicians</div>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4 md:mb-6">
+            <div className="bg-card rounded-lg p-3 text-center">
+              <div className="text-lg md:text-2xl font-bold text-white">{totalMusicians}</div>
+              <div className="text-xs md:text-sm text-medium">Total Musicians</div>
             </div>
-            <div className="bg-card rounded-lg p-4 text-center">
-              <div className="text-2xl font-bold text-success">{availableMusicians}</div>
-              <div className="text-sm text-medium">Available Now</div>
+            <div className="bg-card rounded-lg p-3 text-center">
+              <div className="text-lg md:text-2xl font-bold text-success">{availableMusicians}</div>
+              <div className="text-xs md:text-sm text-medium">Available Now</div>
             </div>
-            <div className="bg-card rounded-lg p-4 text-center">
-              <div className="text-2xl font-bold text-accent-teal">12</div>
-              <div className="text-sm text-medium">Instruments</div>
+            <div className="bg-card rounded-lg p-3 text-center">
+              <div className="text-lg md:text-2xl font-bold text-accent-teal">12</div>
+              <div className="text-xs md:text-sm text-medium">Instruments</div>
             </div>
-            <div className="bg-card rounded-lg p-4 text-center">
-              <div className="text-2xl font-bold text-accent-purple">8</div>
-              <div className="text-sm text-medium">Genres</div>
+            <div className="bg-card rounded-lg p-3 text-center">
+              <div className="text-lg md:text-2xl font-bold text-accent-purple">8</div>
+              <div className="text-xs md:text-sm text-medium">Genres</div>
             </div>
           </div>
 
           {/* All Musicians Section */}
           <div className="mb-8">
-            <div className="flex items-center gap-3 mb-6">
-              <div className="w-8 h-8 bg-accent-teal rounded-lg flex items-center justify-center">
-                <Users className="w-4 h-4 text-black" />
+            <div className="flex items-center gap-2 mb-4">
+              <div className="w-6 h-6 md:w-8 md:h-8 bg-accent-teal rounded-lg flex items-center justify-center">
+                <Users className="w-3 h-3 md:w-4 md:h-4 text-black" />
               </div>
-              <h2 className="text-2xl font-bold text-white">All Musicians</h2>
-              <span className="text-medium">({totalMusicians} musicians)</span>
+              <h2 className="text-lg md:text-2xl font-bold text-white">All Musicians</h2>
+              <span className="text-xs md:text-sm text-medium">({totalMusicians})</span>
             </div>
 
             {/* Musicians Grid */}

@@ -173,7 +173,7 @@ export default function MusicianCard({ profile, onContact }: MusicianCardProps) 
           className="flex-1 bg-accent-teal hover:bg-opacity-90 text-black font-medium py-3 px-4 rounded-lg transition-colors flex items-center justify-center gap-2 disabled:opacity-50"
         >
           <MessageSquare className="w-4 h-4" />
-          {isContacting ? 'Contacting...' : 'Contact'}
+          {isContacting ? 'Messaging...' : 'Message'}
         </button>
       </div>
     </div>

@@ -127,7 +127,7 @@ export default function PublicProfilePage() {
                     </button>
                     <button className="flex items-center gap-2 bg-accent-teal hover:bg-opacity-90 text-black font-medium px-4 py-2 rounded-lg transition-colors">
                       <MessageSquare className="w-4 h-4" />
-                      Contact
+                      Message
                     </button>
                   </>
                 )}

@@ -112,7 +112,7 @@ function MessagesContent() {
                     <MessageSquare className="w-12 h-12 text-medium mb-4" />
                     <h3 className="text-white font-medium mb-2">Welcome to Messages</h3>
                     <p className="text-secondary text-center max-w-sm">
-                      Select a conversation from the sidebar or go to find-musicians and click "Contact" to start chatting with other musicians.
+                      Select a conversation from the sidebar or go to find-musicians and click "Message" to start chatting with other musicians.
                     </p>
                   </div>
                 )}
@@ -123,7 +123,7 @@ function MessagesContent() {
             <div className="mt-6 p-4 bg-card rounded-lg border border-border">
               <h3 className="text-white font-medium mb-2">How to use messaging:</h3>
               <ul className="text-secondary text-sm space-y-1">
-                <li>• <strong>Private Messages:</strong> Click "Contact" on any musician profile to start chatting</li>
+                <li>• <strong>Private Messages:</strong> Click "Message" on any musician profile to start chatting</li>
                 <li>• <strong>Real-time:</strong> Messages are delivered instantly</li>
                 <li>• <strong>Conversations:</strong> All your chats appear in the sidebar</li>
                 <li>• <strong>Keyboard shortcut:</strong> Press Enter to send messages</li>
