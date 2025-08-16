@@ -9,7 +9,7 @@ import { useAuth } from '@/contexts/AuthContext'
 const navigationItems = [
   {
     name: 'Home',
-    href: '/find-bands',
+    href: '/dashboard',
     icon: Home
   },
   {
@@ -88,11 +88,11 @@ export default function MobileNavigation() {
       )}
 
       {/* Bottom Navigation */}
-      <nav className="fixed bottom-0 left-0 right-0 bg-sidebar border-t border-card z-30 md:hidden">
-        <div className="flex items-center justify-around py-2">
+      <nav className="fixed bottom-0 left-0 right-0 bg-sidebar/95 backdrop-blur-md border-t border-card z-30 md:hidden">
+        <div className="flex items-center justify-around py-2 px-2">
           {navigationItems.map((item) => {
             const isActive = pathname === item.href || 
-              (item.href === '/find-bands' && pathname === '/') ||
+              (item.href === '/dashboard' && pathname === '/') ||
               (item.href === '/find-musicians' && pathname.startsWith('/find-musicians'))
             
             if (item.isAction) {
@@ -100,9 +100,9 @@ export default function MobileNavigation() {
                 <button
                   key={item.name}
                   onClick={handleCreateClick}
-                  className="flex flex-col items-center py-2 px-3 min-w-[60px]"
+                  className="flex flex-col items-center py-2 px-2 min-w-[64px] relative"
                 >
-                  <div className="w-11 h-11 bg-accent-teal rounded-full flex items-center justify-center mb-1 shadow-lg">
+                  <div className="w-12 h-12 bg-accent-teal rounded-full flex items-center justify-center mb-1 shadow-lg transform -translate-y-1">
                     <item.icon className="w-6 h-6 text-black" />
                   </div>
                   <span className="text-xs text-white font-medium">Create</span>
@@ -114,7 +114,7 @@ export default function MobileNavigation() {
               <Link
                 key={item.name}
                 href={item.href}
-                className={`flex flex-col items-center py-2 px-3 min-w-[60px] transition-colors ${
+                className={`flex flex-col items-center py-2 px-2 min-w-[64px] transition-colors ${
                   isActive 
                     ? 'text-accent-teal' 
                     : 'text-secondary hover:text-white'
@@ -133,7 +133,7 @@ export default function MobileNavigation() {
         </div>
         
         {/* Safe area padding for devices with home indicator */}
-        <div style={{ height: 'env(safe-area-inset-bottom, 0px)' }} className="bg-sidebar"></div>
+        <div style={{ height: 'env(safe-area-inset-bottom, 0px)' }} className="bg-sidebar/95"></div>
       </nav>
     </>
   )

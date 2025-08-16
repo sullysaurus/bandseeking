@@ -111,7 +111,7 @@ export default function DashboardPage() {
       <ProtectedRoute>
         <div className="flex min-h-screen bg-background">
           <Sidebar />
-          <main className="flex-1 p-4 md:p-8 pb-20 md:pb-8 flex items-center justify-center">
+          <main className="flex-1 p-4 md:p-8 pb-24 md:pb-8 flex items-center justify-center">
             <div className="text-white">Loading dashboard...</div>
           </main>
         </div>
@@ -124,7 +124,7 @@ export default function DashboardPage() {
       <div className="flex min-h-screen bg-background">
         <Sidebar />
         
-        <main className="flex-1 p-4 md:p-8 pb-20 md:pb-8">
+        <main className="flex-1 p-4 md:p-8 pb-24 md:pb-8">
           <div className="max-w-7xl mx-auto">
             {/* Welcome Header */}
             <div className="mb-8">
@@ -164,7 +164,7 @@ export default function DashboardPage() {
 
             {/* Stats Cards */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-8">
-              <div className="bg-card rounded-lg p-6">
+              <div className="bg-card rounded-lg p-4 md:p-6">
                 <div className="flex items-center justify-between mb-4">
                   <div className="bg-accent-teal/20 p-3 rounded-lg">
                     <Music className="w-6 h-6 text-accent-teal" />
@@ -175,7 +175,7 @@ export default function DashboardPage() {
                 <p className="text-secondary text-sm">In your area</p>
               </div>
 
-              <div className="bg-card rounded-lg p-6">
+              <div className="bg-card rounded-lg p-4 md:p-6">
                 <div className="flex items-center justify-between mb-4">
                   <div className="bg-accent-purple/20 p-3 rounded-lg">
                     <Users className="w-6 h-6 text-accent-purple" />
@@ -186,7 +186,7 @@ export default function DashboardPage() {
                 <p className="text-secondary text-sm">Bands you own</p>
               </div>
 
-              <div className="bg-card rounded-lg p-6">
+              <div className="bg-card rounded-lg p-4 md:p-6">
                 <div className="flex items-center justify-between mb-4">
                   <div className="bg-success/20 p-3 rounded-lg">
                     <MessageSquare className="w-6 h-6 text-success" />
@@ -197,7 +197,7 @@ export default function DashboardPage() {
                 <p className="text-secondary text-sm">Unread messages</p>
               </div>
 
-              <div className="bg-card rounded-lg p-6">
+              <div className="bg-card rounded-lg p-4 md:p-6">
                 <div className="flex items-center justify-between mb-4">
                   <div className="bg-orange-500/20 p-3 rounded-lg">
                     <Briefcase className="w-6 h-6 text-orange-500" />
@@ -213,46 +213,46 @@ export default function DashboardPage() {
               {/* Recent Activity */}
               <div className="lg:col-span-2 space-y-6">
                 {/* Quick Actions */}
-                <div className="bg-card rounded-lg p-6">
+                <div className="bg-card rounded-lg p-4 md:p-6">
                   <h2 className="text-xl font-semibold text-white mb-4">Quick Actions</h2>
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 md:gap-4">
                     <Link
                       href="/bands/create"
-                      className="bg-accent-teal hover:bg-opacity-90 text-black p-4 rounded-lg transition-colors text-center"
+                      className="bg-accent-teal hover:bg-opacity-90 text-black p-3 md:p-4 rounded-lg transition-colors text-center"
                     >
-                      <Plus className="w-6 h-6 mx-auto mb-2" />
-                      <span className="text-sm font-medium">Start a Band</span>
+                      <Plus className="w-5 h-5 md:w-6 md:h-6 mx-auto mb-2" />
+                      <span className="text-xs md:text-sm font-medium">Start a Band</span>
                     </Link>
                     
                     <Link
                       href="/find-bands"
-                      className="bg-accent-purple hover:bg-opacity-90 text-white p-4 rounded-lg transition-colors text-center"
+                      className="bg-accent-purple hover:bg-opacity-90 text-white p-3 md:p-4 rounded-lg transition-colors text-center"
                     >
-                      <Music className="w-6 h-6 mx-auto mb-2" />
-                      <span className="text-sm font-medium">Find Bands</span>
+                      <Music className="w-5 h-5 md:w-6 md:h-6 mx-auto mb-2" />
+                      <span className="text-xs md:text-sm font-medium">Find Bands</span>
                     </Link>
                     
                     <Link
                       href="/find-musicians"
-                      className="bg-success hover:bg-opacity-90 text-white p-4 rounded-lg transition-colors text-center"
+                      className="bg-success hover:bg-opacity-90 text-white p-3 md:p-4 rounded-lg transition-colors text-center"
                     >
-                      <Users className="w-6 h-6 mx-auto mb-2" />
-                      <span className="text-sm font-medium">Find Musicians</span>
+                      <Users className="w-5 h-5 md:w-6 md:h-6 mx-auto mb-2" />
+                      <span className="text-xs md:text-sm font-medium">Find Musicians</span>
                     </Link>
                     
                     <Link
                       href="/profile"
-                      className="bg-card hover:bg-opacity-80 border border-border text-white p-4 rounded-lg transition-colors text-center"
+                      className="bg-card hover:bg-opacity-80 border border-border text-white p-3 md:p-4 rounded-lg transition-colors text-center"
                     >
-                      <User className="w-6 h-6 mx-auto mb-2" />
-                      <span className="text-sm font-medium">Edit Profile</span>
+                      <User className="w-5 h-5 md:w-6 md:h-6 mx-auto mb-2" />
+                      <span className="text-xs md:text-sm font-medium">Edit Profile</span>
                     </Link>
                   </div>
                 </div>
 
                 {/* My Bands */}
                 {ownedBands.length > 0 && (
-                  <div className="bg-card rounded-lg p-6">
+                  <div className="bg-card rounded-lg p-4 md:p-6">
                     <div className="flex items-center justify-between mb-4">
                       <h2 className="text-xl font-semibold text-white">My Bands</h2>
                       <Link
@@ -315,7 +315,7 @@ export default function DashboardPage() {
                 )}
 
                 {/* Recent Bands */}
-                <div className="bg-card rounded-lg p-6">
+                <div className="bg-card rounded-lg p-4 md:p-6">
                   <div className="flex items-center justify-between mb-4">
                     <h2 className="text-xl font-semibold text-white">Recent Bands</h2>
                     <Link
@@ -370,7 +370,7 @@ export default function DashboardPage() {
               {/* Sidebar Content */}
               <div className="space-y-6">
                 {/* Chat Room */}
-                <div className="bg-card rounded-lg p-6">
+                <div className="bg-card rounded-lg p-4 md:p-6">
                   <div className="flex items-center justify-between mb-4">
                     <h2 className="text-lg font-semibold text-white">Community Chat</h2>
                     <Link
@@ -394,7 +394,7 @@ export default function DashboardPage() {
 
 
                 {/* Tips */}
-                <div className="bg-card rounded-lg p-6">
+                <div className="bg-card rounded-lg p-4 md:p-6">
                   <h2 className="text-lg font-semibold text-white mb-4">Pro Tips</h2>
                   <div className="space-y-3">
                     <div className="flex items-start gap-3">
