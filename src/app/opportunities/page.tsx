@@ -5,6 +5,7 @@ import { Briefcase, Search, Filter, MapPin, Calendar, DollarSign, Clock, Eye, Us
 import Link from 'next/link'
 import Sidebar from '@/components/Sidebar'
 import ProtectedRoute from '@/components/ProtectedRoute'
+import MobilePageHeader from '@/components/MobilePageHeader'
 import { opportunityService, Opportunity } from '@/lib/opportunities'
 import { MUSIC_GENRES, COMMON_INSTRUMENTS } from '@/lib/constants/music'
 
@@ -323,11 +324,12 @@ export default function OpportunitiesPage() {
         
         <main className="flex-1 p-4 md:p-8 pb-20 md:pb-8">
           {/* Header */}
-          <div className="flex items-center justify-between mb-6 md:mb-8">
-            <div>
-              <h1 className="text-2xl md:text-4xl font-bold text-white mb-2">Opportunities</h1>
-              <p className="text-secondary">Find gigs, sessions, and collaborations</p>
-            </div>
+          <div className="mb-6 md:mb-8">
+            <MobilePageHeader 
+              title="Opportunities"
+              subtitle="Find gigs, sessions, and collaborations"
+            />
+            <div className="flex items-center justify-between mt-4">
             
             <Link
               href="/opportunities/create"
@@ -336,6 +338,7 @@ export default function OpportunitiesPage() {
               <Plus className="w-4 h-4" />
               Post Opportunity
             </Link>
+            </div>
           </div>
 
           {/* Tabs */}

@@ -5,6 +5,7 @@ import { MapPin, Eye, Plus, Check, Music, X, UserMinus, Clock } from 'lucide-rea
 import Link from 'next/link'
 import { bandService } from '@/lib/bands'
 import { useAuth } from '@/contexts/AuthContext'
+import Avatar from './Avatar'
 
 interface BandCardProps {
   id: string
@@ -17,6 +18,7 @@ interface BandCardProps {
   formed_year: number | null
   looking_for: string[]
   created_at: string
+  avatar_url?: string | null
   isApplied?: boolean
 }
 
@@ -30,6 +32,7 @@ export default function BandCard({
   description,
   formed_year,
   looking_for,
+  avatar_url,
   isApplied = false 
 }: BandCardProps) {
   const { user } = useAuth()
@@ -161,14 +164,22 @@ export default function BandCard({
     <div className="bg-card rounded-lg p-4 md:p-6 space-y-3 md:space-y-4">
       {/* Header */}
       <div className="flex items-start justify-between">
-        <div className="min-w-0 flex-1 pr-2">
-          <h3 className="text-lg md:text-xl font-semibold text-white mb-1 truncate">{name}</h3>
-          {location && (
-            <div className="flex items-center gap-1 text-muted text-sm">
-              <MapPin className="w-4 h-4" />
-              <span className="truncate">{location}</span>
-            </div>
-          )}
+        <div className="flex items-start gap-3 min-w-0 flex-1 pr-2">
+          <Avatar 
+            src={avatar_url}
+            name={name}
+            size="md"
+            className="flex-shrink-0"
+          />
+          <div className="min-w-0 flex-1">
+            <h3 className="text-lg md:text-xl font-semibold text-white mb-1 truncate">{name}</h3>
+            {location && (
+              <div className="flex items-center gap-1 text-muted text-sm">
+                <MapPin className="w-4 h-4" />
+                <span className="truncate">{location}</span>
+              </div>
+            )}
+          </div>
         </div>
         
         <div className={`flex items-center gap-2 px-3 py-1 rounded-full text-sm ${

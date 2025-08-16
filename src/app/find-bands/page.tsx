@@ -8,6 +8,7 @@ import BandCard from '@/components/BandCard'
 import ProtectedRoute from '@/components/ProtectedRoute'
 import FilterPanel, { FilterOptions } from '@/components/FilterPanel'
 import { bandService, Band } from '@/lib/bands'
+import MobilePageHeader from '@/components/MobilePageHeader'
 
 
 export default function FindBands() {
@@ -99,26 +100,24 @@ export default function FindBands() {
       <div className="flex min-h-screen bg-background">
         <Sidebar />
         
-        <main className="flex-1 p-4 md:p-8 pb-24 md:pb-8">
+        <main className="flex-1 pb-24 md:pb-8">
           {/* Header */}
-          <div className="mb-4 md:mb-6">
+          <div className="p-4 md:p-8 pt-6 md:pt-12 pb-6 md:pb-8">
             <div className="flex flex-col gap-3 mb-3">
-              <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-3">
-                <div className="flex-1 min-w-0">
-                  <h1 className="text-xl md:text-3xl font-bold text-white mb-1">Find Bands</h1>
-                  <p className="text-secondary text-sm md:text-base hidden md:block">Discover bands looking for new members and explore the local music scene</p>
-                </div>
+              <MobilePageHeader 
+                title="Find Bands"
+                subtitle="Discover bands looking for new members and explore the local music scene"
+              />
               
-                {/* Desktop controls */}
-                <div className="hidden md:flex items-center gap-3 flex-shrink-0">
-                  <Link 
-                    href="/bands/create"
-                    className="flex items-center gap-2 bg-accent-teal hover:bg-opacity-90 text-black font-medium px-4 py-3 rounded-lg transition-colors whitespace-nowrap"
-                  >
-                    <Plus className="w-5 h-5" />
-                    Start a Band
-                  </Link>
-                </div>
+              {/* Desktop controls */}
+              <div className="hidden md:flex items-center gap-3 flex-shrink-0">
+                <Link 
+                  href="/bands/create"
+                  className="flex items-center gap-2 bg-accent-teal hover:bg-opacity-90 text-black font-medium px-4 py-3 rounded-lg transition-colors whitespace-nowrap"
+                >
+                  <Plus className="w-5 h-5" />
+                  Start a Band
+                </Link>
               </div>
               
               {/* Desktop search and filters row */}
@@ -183,52 +182,56 @@ export default function FindBands() {
               </div>
             </div>
           </div>
+          
+          {/* Main Content */}
+          <div className="p-4 md:p-8 pt-0">
+            {/* All Bands Section */}
+            <div className="mb-8">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="w-8 h-8 bg-accent-teal rounded-lg flex items-center justify-center">
+                  <div className="w-4 h-4 bg-black rounded" />
+                </div>
+                <h2 className="text-2xl font-bold text-white">All Bands</h2>
+                <span className="text-medium">({totalBands} bands)</span>
+              </div>
 
-        {/* All Bands Section */}
-        <div className="mb-8">
-          <div className="flex items-center gap-3 mb-6">
-            <div className="w-8 h-8 bg-accent-teal rounded-lg flex items-center justify-center">
-              <div className="w-4 h-4 bg-black rounded" />
+              {/* Band Grid */}
+              {loading ? (
+                <div className="flex items-center justify-center py-12">
+                  <div className="text-white">Loading bands...</div>
+                </div>
+              ) : filteredBands.length === 0 ? (
+                <div className="text-center py-12">
+                  <Music className="w-12 h-12 text-medium mx-auto mb-4" />
+                  <h3 className="text-lg font-semibold text-white mb-2">
+                    {searchTerm ? 'No bands found' : 'No bands yet'}
+                  </h3>
+                  <p className="text-secondary">
+                    {searchTerm ? 'Try adjusting your search terms' : 'Be the first to create a band!'}
+                  </p>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 md:gap-6">
+                  {filteredBands.map((band) => (
+                    <BandCard 
+                      key={band.id} 
+                      id={band.id}
+                      name={band.name}
+                      slug={band.slug}
+                      location={band.location}
+                      status={band.status}
+                      genre={band.genre}
+                      description={band.description}
+                      formed_year={band.formed_year}
+                      looking_for={band.looking_for || []}
+                      created_at={band.created_at}
+                      avatar_url={band.avatar_url}
+                    />
+                  ))}
+                </div>
+              )}
             </div>
-            <h2 className="text-2xl font-bold text-white">All Bands</h2>
-            <span className="text-medium">({totalBands} bands)</span>
           </div>
-
-          {/* Band Grid */}
-          {loading ? (
-            <div className="flex items-center justify-center py-12">
-              <div className="text-white">Loading bands...</div>
-            </div>
-          ) : filteredBands.length === 0 ? (
-            <div className="text-center py-12">
-              <Music className="w-12 h-12 text-medium mx-auto mb-4" />
-              <h3 className="text-lg font-semibold text-white mb-2">
-                {searchTerm ? 'No bands found' : 'No bands yet'}
-              </h3>
-              <p className="text-secondary">
-                {searchTerm ? 'Try adjusting your search terms' : 'Be the first to create a band!'}
-              </p>
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 md:gap-6">
-              {filteredBands.map((band) => (
-                <BandCard 
-                  key={band.id} 
-                  id={band.id}
-                  name={band.name}
-                  slug={band.slug}
-                  location={band.location}
-                  status={band.status}
-                  genre={band.genre}
-                  description={band.description}
-                  formed_year={band.formed_year}
-                  looking_for={band.looking_for || []}
-                  created_at={band.created_at}
-                />
-              ))}
-            </div>
-          )}
-        </div>
         </main>
       </div>
 

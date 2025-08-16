@@ -1,6 +1,6 @@
 'use client'
 
-import { Users, Music, User, MessageSquare, Plus, Home } from 'lucide-react'
+import { Users, Music, User, MessageSquare, Plus, Home, Briefcase } from 'lucide-react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useState } from 'react'
@@ -18,7 +18,7 @@ const navigationItems = [
     icon: Users
   },
   {
-    name: 'Create',
+    name: 'Menu',
     href: '#',
     icon: Plus,
     isAction: true
@@ -58,30 +58,78 @@ export default function MobileNavigation() {
           className="fixed inset-0 bg-black/50 z-40 md:hidden"
           onClick={() => setShowCreateMenu(false)}
         >
-          <div className="absolute bottom-20 left-1/2 transform -translate-x-1/2 bg-card rounded-2xl p-4 shadow-2xl">
-            <div className="flex flex-col gap-3 min-w-[200px]">
+          <div className="absolute bottom-20 left-1/2 transform -translate-x-1/2 bg-card rounded-2xl p-4 shadow-2xl max-w-xs w-full mx-4">
+            <div className="flex flex-col gap-2">
+              {/* Create Actions */}
+              <div className="text-xs text-medium uppercase tracking-wider mb-2 px-4">Create</div>
               <a 
                 href="/bands/create"
                 className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-background transition-colors text-left"
                 onClick={() => setShowCreateMenu(false)}
               >
                 <div className="w-10 h-10 bg-accent-teal rounded-full flex items-center justify-center">
-                  <Music className="w-5 h-5 text-black" />
+                  <Plus className="w-5 h-5 text-black" />
                 </div>
                 <div>
                   <div className="text-white font-medium">Start a Band</div>
-                  <div className="text-secondary text-sm">Create your band profile</div>
+                  <div className="text-secondary text-xs">Create your band profile</div>
                 </div>
               </a>
-              <button className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-background transition-colors text-left">
+              <a 
+                href="/opportunities/create"
+                className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-background transition-colors text-left"
+                onClick={() => setShowCreateMenu(false)}
+              >
                 <div className="w-10 h-10 bg-accent-purple rounded-full flex items-center justify-center">
-                  <Users className="w-5 h-5 text-white" />
+                  <Plus className="w-5 h-5 text-white" />
                 </div>
                 <div>
                   <div className="text-white font-medium">Post Opportunity</div>
-                  <div className="text-secondary text-sm">Find musicians to join</div>
+                  <div className="text-secondary text-xs">List a gig or collaboration</div>
                 </div>
-              </button>
+              </a>
+              
+              {/* Quick Access */}
+              <div className="text-xs text-medium uppercase tracking-wider mt-2 mb-2 px-4 pt-2 border-t border-border">Quick Access</div>
+              <a 
+                href="/bands"
+                className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-background transition-colors text-left"
+                onClick={() => setShowCreateMenu(false)}
+              >
+                <div className="w-10 h-10 bg-background rounded-full flex items-center justify-center">
+                  <Music className="w-5 h-5 text-accent-teal" />
+                </div>
+                <div>
+                  <div className="text-white font-medium">My Bands</div>
+                  <div className="text-secondary text-xs">Manage your bands</div>
+                </div>
+              </a>
+              <a 
+                href="/find-bands"
+                className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-background transition-colors text-left"
+                onClick={() => setShowCreateMenu(false)}
+              >
+                <div className="w-10 h-10 bg-background rounded-full flex items-center justify-center">
+                  <Users className="w-5 h-5 text-accent-purple" />
+                </div>
+                <div>
+                  <div className="text-white font-medium">Find Bands</div>
+                  <div className="text-secondary text-xs">Discover bands to join</div>
+                </div>
+              </a>
+              <a 
+                href="/opportunities"
+                className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-background transition-colors text-left"
+                onClick={() => setShowCreateMenu(false)}
+              >
+                <div className="w-10 h-10 bg-background rounded-full flex items-center justify-center">
+                  <Briefcase className="w-5 h-5 text-success" />
+                </div>
+                <div>
+                  <div className="text-white font-medium">Opportunities</div>
+                  <div className="text-secondary text-xs">Browse gigs & collabs</div>
+                </div>
+              </a>
             </div>
           </div>
         </div>
@@ -105,7 +153,7 @@ export default function MobileNavigation() {
                   <div className="w-12 h-12 bg-accent-teal rounded-full flex items-center justify-center mb-1 shadow-lg transform -translate-y-1">
                     <item.icon className="w-6 h-6 text-black" />
                   </div>
-                  <span className="text-xs text-white font-medium">Create</span>
+                  <span className="text-xs text-white font-medium">Menu</span>
                 </button>
               )
             }

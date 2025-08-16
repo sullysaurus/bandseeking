@@ -8,6 +8,7 @@ import MusicianCard from '@/components/MusicianCard'
 import ProtectedRoute from '@/components/ProtectedRoute'
 import FilterPanel, { FilterOptions } from '@/components/FilterPanel'
 import { profileService, Profile } from '@/lib/profiles'
+import MobilePageHeader from '@/components/MobilePageHeader'
 
 /* const mockMusicians = [
   {
@@ -255,26 +256,24 @@ export default function FindMusicians() {
       <div className="flex min-h-screen bg-background">
         <Sidebar />
         
-        <main className="flex-1 p-4 md:p-8 pb-24 md:pb-8">
+        <main className="flex-1 pb-24 md:pb-8">
           {/* Header */}
-          <div className="mb-4 md:mb-6">
+          <div className="p-4 md:p-8 pt-6 md:pt-12 pb-6 md:pb-8">
             <div className="flex flex-col gap-3 mb-3">
-              <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-3">
-                <div className="flex-1 min-w-0">
-                  <h1 className="text-xl md:text-3xl font-bold text-white mb-1">Find Musicians</h1>
-                  <p className="text-secondary text-sm md:text-base hidden md:block">Connect with talented musicians and build your next project</p>
-                </div>
+              <MobilePageHeader 
+                title="Find Musicians"
+                subtitle="Connect with talented musicians and build your next project"
+              />
               
-                {/* Desktop controls */}
-                <div className="hidden md:flex items-center gap-3 flex-shrink-0">
-                  <button 
-                    onClick={handlePostOpportunity}
-                    className="flex items-center gap-2 bg-accent-teal hover:bg-opacity-90 text-black font-medium px-4 py-3 rounded-lg transition-colors whitespace-nowrap"
-                  >
-                    <Plus className="w-5 h-5" />
-                    Post Opportunity
-                  </button>
-                </div>
+              {/* Desktop controls */}
+              <div className="hidden md:flex items-center gap-3 flex-shrink-0">
+                <button 
+                  onClick={handlePostOpportunity}
+                  className="flex items-center gap-2 bg-accent-teal hover:bg-opacity-90 text-black font-medium px-4 py-3 rounded-lg transition-colors whitespace-nowrap"
+                >
+                  <Plus className="w-5 h-5" />
+                  Post Opportunity
+                </button>
               </div>
               
               {/* Desktop search and filters row */}
@@ -339,6 +338,9 @@ export default function FindMusicians() {
               </div>
             </div>
           </div>
+          
+          {/* Main Content */}
+          <div className="p-4 md:p-8 pt-0">
 
           {/* Stats */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4 md:mb-6">
@@ -392,6 +394,7 @@ export default function FindMusicians() {
                 ))}
               </div>
             )}
+          </div>
           </div>
         </main>
       </div>

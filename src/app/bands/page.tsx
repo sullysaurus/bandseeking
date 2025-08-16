@@ -5,8 +5,10 @@ import Link from 'next/link'
 import { Plus, Users, Calendar, MapPin, Music, Settings, Eye, Trash2 } from 'lucide-react'
 import Sidebar from '@/components/Sidebar'
 import ProtectedRoute from '@/components/ProtectedRoute'
+import MobilePageHeader from '@/components/MobilePageHeader'
 import { bandService, Band } from '@/lib/bands'
 import { useAuth } from '@/contexts/AuthContext'
+import Avatar from '@/components/Avatar'
 
 export default function MyBandsPage() {
   const { user } = useAuth()
@@ -67,21 +69,29 @@ export default function MyBandsPage() {
     <div className="bg-card rounded-lg p-6 space-y-4">
       {/* Header */}
       <div className="flex items-start justify-between">
-        <div className="min-w-0 flex-1">
-          <h3 className="text-xl font-semibold text-white truncate">{band.name}</h3>
-          <div className="flex items-center gap-4 text-sm text-secondary mt-1">
-            {band.location && (
-              <div className="flex items-center gap-1">
-                <MapPin className="w-4 h-4" />
-                <span>{band.location}</span>
-              </div>
-            )}
-            {band.formed_year && (
-              <div className="flex items-center gap-1">
-                <Calendar className="w-4 h-4" />
-                <span>Est. {band.formed_year}</span>
-              </div>
-            )}
+        <div className="flex items-start gap-3 min-w-0 flex-1">
+          <Avatar 
+            src={band.avatar_url}
+            name={band.name}
+            size="md"
+            className="flex-shrink-0"
+          />
+          <div className="min-w-0 flex-1">
+            <h3 className="text-xl font-semibold text-white truncate">{band.name}</h3>
+            <div className="flex items-center gap-4 text-sm text-secondary mt-1">
+              {band.location && (
+                <div className="flex items-center gap-1">
+                  <MapPin className="w-4 h-4" />
+                  <span>{band.location}</span>
+                </div>
+              )}
+              {band.formed_year && (
+                <div className="flex items-center gap-1">
+                  <Calendar className="w-4 h-4" />
+                  <span>Est. {band.formed_year}</span>
+                </div>
+              )}
+            </div>
           </div>
         </div>
         
@@ -193,11 +203,12 @@ export default function MyBandsPage() {
         <main className="flex-1 p-4 md:p-8 pb-20 md:pb-8">
           <div className="max-w-6xl mx-auto">
             {/* Header */}
-            <div className="flex items-center justify-between mb-6 md:mb-8">
-              <div>
-                <h1 className="text-2xl md:text-4xl font-bold text-white mb-2">My Bands</h1>
-                <p className="text-secondary">Manage your bands and collaborations</p>
-              </div>
+            <div className="mb-6 md:mb-8">
+              <MobilePageHeader 
+                title="My Bands"
+                subtitle="Manage your bands and collaborations"
+              />
+              <div className="flex items-center justify-between mt-4">
               <Link
                 href="/bands/create"
                 className="flex items-center gap-2 bg-accent-teal hover:bg-opacity-90 text-black font-medium px-4 py-2 rounded-lg transition-colors"
@@ -205,6 +216,7 @@ export default function MyBandsPage() {
                 <Plus className="w-4 h-4" />
                 Start a Band
               </Link>
+              </div>
             </div>
 
             {error && (

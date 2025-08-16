@@ -21,6 +21,8 @@ import Sidebar from '@/components/Sidebar'
 import ProtectedRoute from '@/components/ProtectedRoute'
 import { bandService, Band } from '@/lib/bands'
 import { profileService, Profile } from '@/lib/profiles'
+import Avatar from '@/components/Avatar'
+import MobilePageHeader from '@/components/MobilePageHeader'
 // Removed old messaging import
 import { useAuth } from '@/contexts/AuthContext'
 import { getProfileCompletionPercentage } from '@/lib/profile-utils'
@@ -37,6 +39,7 @@ export default function DashboardPage() {
   const { user } = useAuth()
   const [profile, setProfile] = useState<Profile | null>(null)
   const [recentBands, setRecentBands] = useState<Band[]>([])
+  const [recentMusicians, setRecentMusicians] = useState<Profile[]>([])
   const [ownedBands, setOwnedBands] = useState<Band[]>([])
   const [stats, setStats] = useState<DashboardStats>({
     totalBands: 0,
@@ -61,17 +64,20 @@ export default function DashboardPage() {
       const [
         userProfile,
         allBands,
+        allMusicians,
         myBands,
         memberBands
       ] = await Promise.all([
         profileService.getProfile(),
         bandService.getAllBands(),
+        profileService.getAllMusicians(),
         bandService.getMyBands(),
         bandService.getBandsAsMember()
       ])
 
       setProfile(userProfile)
       setRecentBands(allBands.slice(0, 6)) // Show 6 most recent bands
+      setRecentMusicians(allMusicians.slice(0, 6)) // Show 6 most recent musicians
       setOwnedBands(myBands)
 
       // Calculate stats
@@ -124,98 +130,103 @@ export default function DashboardPage() {
       <div className="flex min-h-screen bg-background">
         <Sidebar />
         
-        <main className="flex-1 p-4 md:p-8 pb-24 md:pb-8">
-          <div className="max-w-7xl mx-auto">
-            {/* Welcome Header */}
-            <div className="mb-8">
-              <div className="flex items-center justify-between flex-wrap gap-4">
-                <div>
-                  <h1 className="text-3xl md:text-4xl font-bold text-white mb-2">
-                    {getGreeting()}, {getDisplayName()}!
-                  </h1>
-                  <p className="text-secondary text-lg">
-                    Welcome back to your music community. Here's what's happening today.
-                  </p>
-                </div>
-                
-                {/* Subtle Profile Completion */}
-                {(!profile || getProfileCompletionPercentage(profile) < 100) && (
-                  <Link
-                    href="/profile"
-                    className="flex items-center gap-3 text-accent-teal hover:text-white transition-all group text-sm bg-accent-teal/5 hover:bg-accent-teal/10 px-4 py-2 rounded-lg border border-accent-teal/20"
-                  >
-                    <div className="flex items-center gap-2">
-                      <div className="w-16 h-2 bg-background rounded-full overflow-hidden">
-                        <div 
-                          className="h-full bg-gradient-to-r from-accent-teal to-accent-teal/80 rounded-full transition-all duration-500 ease-out"
-                          style={{ width: `${getProfileCompletionPercentage(profile)}%` }}
-                        />
+        <main className="flex-1 pb-24 md:pb-8">
+          {/* Header */}
+          <div className="p-4 md:p-8 pt-6 md:pt-12 pb-6 md:pb-8">
+              <div className="max-w-7xl mx-auto">
+                {/* Welcome Header */}
+                <div className="flex items-center justify-between gap-4">
+                  <div className="flex-1">
+                    <MobilePageHeader 
+                      title={`${getGreeting()}, ${getDisplayName()}!`}
+                      subtitle="Welcome back to your music community"
+                    />
+                  </div>
+                  
+                  {/* Profile Completion - Mobile Optimized */}
+                  {(!profile || getProfileCompletionPercentage(profile) < 100) && (
+                    <Link
+                      href="/profile"
+                      className="flex items-center gap-2 md:gap-3 text-accent-teal hover:text-white transition-all group text-xs md:text-sm bg-accent-teal/5 hover:bg-accent-teal/10 px-3 py-2 rounded-lg border border-accent-teal/20"
+                    >
+                      <div className="flex items-center gap-1 md:gap-2">
+                        <div className="w-12 md:w-16 h-1.5 md:h-2 bg-background rounded-full overflow-hidden">
+                          <div 
+                            className="h-full bg-gradient-to-r from-accent-teal to-accent-teal/80 rounded-full transition-all duration-500 ease-out"
+                            style={{ width: `${getProfileCompletionPercentage(profile)}%` }}
+                          />
+                        </div>
+                        <span className="text-xs font-bold min-w-[1.5rem] md:min-w-[2rem]">
+                          {Math.round(getProfileCompletionPercentage(profile))}%
+                        </span>
                       </div>
-                      <span className="text-xs font-bold min-w-[2rem]">
-                        {Math.round(getProfileCompletionPercentage(profile))}%
-                      </span>
-                    </div>
-                    <span className="font-medium">Complete profile</span>
-                    <ChevronRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
-                  </Link>
-                )}
+                      <span className="font-medium hidden md:inline">Complete profile</span>
+                      <span className="font-medium md:hidden">Profile</span>
+                      <ChevronRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
+                    </Link>
+                  )}
+                </div>
+              </div>
+            </div>
+          
+          {/* Main Content */}
+          <div className="p-4 md:p-8 pt-0">
+            <div className="max-w-7xl mx-auto">
+
+            {/* Stats Cards - Mobile Optimized */}
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4 mb-6">
+              <div className="bg-card rounded-lg p-3 md:p-4">
+                <div className="flex items-center justify-between mb-2 md:mb-3">
+                  <div className="bg-accent-teal/20 p-2 md:p-3 rounded-lg">
+                    <Music className="w-4 h-4 md:w-5 md:h-5 text-accent-teal" />
+                  </div>
+                  <span className="text-lg md:text-2xl font-bold text-white">{stats.totalBands}</span>
+                </div>
+                <h3 className="text-white font-semibold mb-0.5 text-sm md:text-base">Total Bands</h3>
+                <p className="text-secondary text-xs md:text-sm">In your area</p>
+              </div>
+
+              <div className="bg-card rounded-lg p-3 md:p-4">
+                <div className="flex items-center justify-between mb-2 md:mb-3">
+                  <div className="bg-accent-purple/20 p-2 md:p-3 rounded-lg">
+                    <Users className="w-4 h-4 md:w-5 md:h-5 text-accent-purple" />
+                  </div>
+                  <span className="text-lg md:text-2xl font-bold text-white">{stats.ownedBands}</span>
+                </div>
+                <h3 className="text-white font-semibold mb-0.5 text-sm md:text-base">My Bands</h3>
+                <p className="text-secondary text-xs md:text-sm">Bands you own</p>
+              </div>
+
+              <div className="bg-card rounded-lg p-3 md:p-4">
+                <div className="flex items-center justify-between mb-2 md:mb-3">
+                  <div className="bg-success/20 p-2 md:p-3 rounded-lg">
+                    <MessageSquare className="w-4 h-4 md:w-5 md:h-5 text-success" />
+                  </div>
+                  <span className="text-lg md:text-2xl font-bold text-white">{stats.unreadMessages}</span>
+                </div>
+                <h3 className="text-white font-semibold mb-0.5 text-sm md:text-base">Messages</h3>
+                <p className="text-secondary text-xs md:text-sm">Unread messages</p>
+              </div>
+
+              <div className="bg-card rounded-lg p-3 md:p-4">
+                <div className="flex items-center justify-between mb-2 md:mb-3">
+                  <div className="bg-orange-500/20 p-2 md:p-3 rounded-lg">
+                    <Briefcase className="w-4 h-4 md:w-5 md:h-5 text-orange-500" />
+                  </div>
+                  <span className="text-lg md:text-2xl font-bold text-white">{stats.memberBands}</span>
+                </div>
+                <h3 className="text-white font-semibold mb-0.5 text-sm md:text-base">Member Of</h3>
+                <p className="text-secondary text-xs md:text-sm">Bands you've joined</p>
               </div>
             </div>
 
-            {/* Stats Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-8">
-              <div className="bg-card rounded-lg p-4 md:p-6">
-                <div className="flex items-center justify-between mb-4">
-                  <div className="bg-accent-teal/20 p-3 rounded-lg">
-                    <Music className="w-6 h-6 text-accent-teal" />
-                  </div>
-                  <span className="text-2xl font-bold text-white">{stats.totalBands}</span>
-                </div>
-                <h3 className="text-white font-semibold mb-1">Total Bands</h3>
-                <p className="text-secondary text-sm">In your area</p>
-              </div>
-
-              <div className="bg-card rounded-lg p-4 md:p-6">
-                <div className="flex items-center justify-between mb-4">
-                  <div className="bg-accent-purple/20 p-3 rounded-lg">
-                    <Users className="w-6 h-6 text-accent-purple" />
-                  </div>
-                  <span className="text-2xl font-bold text-white">{stats.ownedBands}</span>
-                </div>
-                <h3 className="text-white font-semibold mb-1">My Bands</h3>
-                <p className="text-secondary text-sm">Bands you own</p>
-              </div>
-
-              <div className="bg-card rounded-lg p-4 md:p-6">
-                <div className="flex items-center justify-between mb-4">
-                  <div className="bg-success/20 p-3 rounded-lg">
-                    <MessageSquare className="w-6 h-6 text-success" />
-                  </div>
-                  <span className="text-2xl font-bold text-white">{stats.unreadMessages}</span>
-                </div>
-                <h3 className="text-white font-semibold mb-1">Messages</h3>
-                <p className="text-secondary text-sm">Unread messages</p>
-              </div>
-
-              <div className="bg-card rounded-lg p-4 md:p-6">
-                <div className="flex items-center justify-between mb-4">
-                  <div className="bg-orange-500/20 p-3 rounded-lg">
-                    <Briefcase className="w-6 h-6 text-orange-500" />
-                  </div>
-                  <span className="text-2xl font-bold text-white">{stats.memberBands}</span>
-                </div>
-                <h3 className="text-white font-semibold mb-1">Member Of</h3>
-                <p className="text-secondary text-sm">Bands you've joined</p>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6">
               {/* Recent Activity */}
-              <div className="lg:col-span-2 space-y-6">
+              <div className="lg:col-span-2 space-y-4 md:space-y-6">
                 {/* Quick Actions */}
                 <div className="bg-card rounded-lg p-4 md:p-6">
-                  <h2 className="text-xl font-semibold text-white mb-4">Quick Actions</h2>
-                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 md:gap-4">
+                  <h2 className="text-lg md:text-xl font-semibold text-white mb-3 md:mb-4">Quick Actions</h2>
+                  <div className="grid grid-cols-2 gap-3 md:gap-4">
                     <Link
                       href="/bands/create"
                       className="bg-accent-teal hover:bg-opacity-90 text-black p-3 md:p-4 rounded-lg transition-colors text-center"
@@ -314,10 +325,10 @@ export default function DashboardPage() {
                   </div>
                 )}
 
-                {/* Recent Bands */}
+                {/* New Bands */}
                 <div className="bg-card rounded-lg p-4 md:p-6">
                   <div className="flex items-center justify-between mb-4">
-                    <h2 className="text-xl font-semibold text-white">Recent Bands</h2>
+                    <h2 className="text-xl font-semibold text-white">New Bands</h2>
                     <Link
                       href="/find-bands"
                       className="text-accent-teal hover:text-opacity-80 text-sm font-medium flex items-center gap-1"
@@ -365,30 +376,99 @@ export default function DashboardPage() {
                     ))}
                   </div>
                 </div>
+
+                {/* New Musicians */}
+                <div className="bg-card rounded-lg p-4 md:p-6">
+                  <div className="flex items-center justify-between mb-4">
+                    <h2 className="text-xl font-semibold text-white">New Musicians</h2>
+                    <Link
+                      href="/find-musicians"
+                      className="text-accent-teal hover:text-opacity-80 text-sm font-medium flex items-center gap-1"
+                    >
+                      View All <ChevronRight className="w-4 h-4" />
+                    </Link>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {recentMusicians.map((musician) => (
+                      <div key={musician.id} className="p-4 bg-background rounded-lg">
+                        <div className="flex items-start gap-3 mb-2">
+                          <Avatar 
+                            src={musician.avatar_url}
+                            name={musician.full_name || musician.username}
+                            size="md"
+                            className="flex-shrink-0"
+                          />
+                          <div className="min-w-0 flex-1">
+                            <h3 className="text-white font-medium">{musician.full_name || musician.username}</h3>
+                            <p className="text-secondary text-sm">@{musician.username}</p>
+                          </div>
+                        </div>
+                        {musician.instruments && musician.instruments.length > 0 && (
+                          <div className="flex flex-wrap gap-1 mb-2">
+                            {musician.instruments.slice(0, 2).map((instrument, index) => (
+                              <span key={index} className="bg-accent-teal/20 text-accent-teal px-2 py-1 rounded-full text-xs">
+                                {instrument}
+                              </span>
+                            ))}
+                            {musician.instruments.length > 2 && (
+                              <span className="text-medium text-xs px-2 py-1">
+                                +{musician.instruments.length - 2} more
+                              </span>
+                            )}
+                          </div>
+                        )}
+                        {musician.looking_for && musician.looking_for.length > 0 && (
+                          <div className="flex flex-wrap gap-1 mb-3">
+                            {musician.looking_for.slice(0, 2).map((item, index) => (
+                              <span key={index} className="bg-success/20 text-success px-2 py-1 rounded-full text-xs">
+                                {item}
+                              </span>
+                            ))}
+                            {musician.looking_for.length > 2 && (
+                              <span className="text-medium text-xs px-2 py-1">
+                                +{musician.looking_for.length - 2} more
+                              </span>
+                            )}
+                          </div>
+                        )}
+                        <Link
+                          href={`/profile/${musician.username}`}
+                          className="text-accent-teal hover:text-opacity-80 text-sm font-medium"
+                        >
+                          View Profile →
+                        </Link>
+                      </div>
+                    ))}
+                  </div>
+                </div>
               </div>
 
               {/* Sidebar Content */}
-              <div className="space-y-6">
-                {/* Chat Room */}
+              <div className="space-y-4 md:space-y-6">
+                {/* Recent Messages */}
                 <div className="bg-card rounded-lg p-4 md:p-6">
                   <div className="flex items-center justify-between mb-4">
-                    <h2 className="text-lg font-semibold text-white">Community Chat</h2>
+                    <h2 className="text-lg font-semibold text-white">Recent Messages</h2>
                     <Link
                       href="/messages"
                       className="text-accent-teal hover:text-opacity-80 text-sm font-medium"
                     >
-                      Join Chat
+                      View All
                     </Link>
                   </div>
-                  <div className="text-center py-4">
-                    <MessageSquare className="w-8 h-8 text-medium mx-auto mb-2" />
-                    <p className="text-secondary text-sm mb-3">Connect with musicians in real-time</p>
-                    <Link
-                      href="/messages"
-                      className="bg-accent-teal hover:bg-opacity-90 text-black text-sm font-medium px-4 py-2 rounded-lg transition-colors"
-                    >
-                      Open Chat
-                    </Link>
+                  <div className="space-y-3">
+                    {/* Example of recent message preview - you can replace with actual data */}
+                    <div className="text-center py-4">
+                      <MessageSquare className="w-8 h-8 text-medium mx-auto mb-2" />
+                      <p className="text-secondary text-sm mb-3">No recent messages</p>
+                      <p className="text-secondary text-xs mb-3">Start connecting with other musicians</p>
+                      <Link
+                        href="/find-musicians"
+                        className="bg-accent-teal hover:bg-opacity-90 text-black text-sm font-medium px-4 py-2 rounded-lg transition-colors"
+                      >
+                        Find Musicians
+                      </Link>
+                    </div>
                   </div>
                 </div>
 
@@ -428,6 +508,7 @@ export default function DashboardPage() {
                 </div>
               </div>
             </div>
+          </div>
           </div>
         </main>
       </div>

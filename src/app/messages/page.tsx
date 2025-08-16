@@ -6,6 +6,7 @@ import { MessageSquare } from 'lucide-react'
 import { useAuth } from '@/contexts/AuthContext'
 import Sidebar from '@/components/Sidebar'
 import ProtectedRoute from '@/components/ProtectedRoute'
+import MobilePageHeader from '@/components/MobilePageHeader'
 import RealtimeChat from '@/components/RealtimeChat'
 import ConversationList from '@/components/ConversationList'
 import { conversationService } from '@/lib/conversations'
@@ -77,8 +78,10 @@ function MessagesContent() {
           <div className="max-w-6xl mx-auto">
             {/* Header */}
             <div className="mb-6">
-              <h1 className="text-2xl md:text-4xl font-bold text-white mb-2">Messages</h1>
-              <p className="text-secondary">Connect with musicians in real-time</p>
+              <MobilePageHeader 
+                title="Messages"
+                subtitle="Connect with musicians in real-time"
+              />
             </div>
 
             {/* Chat Interface */}

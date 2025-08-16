@@ -6,6 +6,7 @@ import { Profile } from '@/lib/profiles'
 import { getActivityStatus, getResponseSpeedInfo } from '@/lib/activity-utils'
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import Avatar from './Avatar'
 
 interface MusicianCardProps {
   profile: Profile
@@ -46,9 +47,11 @@ export default function MusicianCard({ profile, onContact }: MusicianCardProps) 
       {/* Header */}
       <div className="flex items-start justify-between">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 md:w-12 md:h-12 bg-accent-teal rounded-full flex items-center justify-center text-black font-bold text-base md:text-lg">
-            {profile.full_name?.charAt(0).toUpperCase() || profile.username.charAt(0).toUpperCase()}
-          </div>
+          <Avatar 
+            src={profile.avatar_url}
+            name={profile.full_name || profile.username}
+            size="lg"
+          />
           <div className="min-w-0 flex-1">
             <h3 className="text-lg md:text-xl font-semibold text-white truncate">{profile.full_name || profile.username}</h3>
             <p className="text-secondary text-sm truncate">@{profile.username}</p>
