@@ -21,7 +21,7 @@ import Sidebar from '@/components/Sidebar'
 import ProtectedRoute from '@/components/ProtectedRoute'
 import { bandService, Band } from '@/lib/bands'
 import { profileService, Profile } from '@/lib/profiles'
-import { messageService, Conversation } from '@/lib/messages'
+// Removed old messaging import
 import { useAuth } from '@/contexts/AuthContext'
 import { getProfileCompletionPercentage } from '@/lib/profile-utils'
 
@@ -38,7 +38,6 @@ export default function DashboardPage() {
   const [profile, setProfile] = useState<Profile | null>(null)
   const [recentBands, setRecentBands] = useState<Band[]>([])
   const [ownedBands, setOwnedBands] = useState<Band[]>([])
-  const [conversations, setConversations] = useState<Conversation[]>([])
   const [stats, setStats] = useState<DashboardStats>({
     totalBands: 0,
     ownedBands: 0,
@@ -63,29 +62,24 @@ export default function DashboardPage() {
         userProfile,
         allBands,
         myBands,
-        memberBands,
-        userConversations
+        memberBands
       ] = await Promise.all([
         profileService.getProfile(),
         bandService.getAllBands(),
         bandService.getMyBands(),
-        bandService.getBandsAsMember(),
-        messageService.getConversations()
+        bandService.getBandsAsMember()
       ])
 
       setProfile(userProfile)
       setRecentBands(allBands.slice(0, 6)) // Show 6 most recent bands
       setOwnedBands(myBands)
-      setConversations(userConversations.slice(0, 5)) // Show 5 recent conversations
 
       // Calculate stats
-      const totalUnread = userConversations.reduce((sum, conv) => sum + conv.unread_count, 0)
-      
       setStats({
         totalBands: allBands.length,
         ownedBands: myBands.length,
         memberBands: memberBands.length,
-        unreadMessages: totalUnread,
+        unreadMessages: 0, // Will be implemented with real chat
         pendingApplications: 0 // Will implement when applications are loaded
       })
 
@@ -375,53 +369,27 @@ export default function DashboardPage() {
 
               {/* Sidebar Content */}
               <div className="space-y-6">
-                {/* Recent Messages */}
+                {/* Chat Room */}
                 <div className="bg-card rounded-lg p-6">
                   <div className="flex items-center justify-between mb-4">
-                    <h2 className="text-lg font-semibold text-white">Recent Messages</h2>
+                    <h2 className="text-lg font-semibold text-white">Community Chat</h2>
                     <Link
                       href="/messages"
                       className="text-accent-teal hover:text-opacity-80 text-sm font-medium"
                     >
-                      View All
+                      Join Chat
                     </Link>
                   </div>
-                  {conversations.length > 0 ? (
-                    <div className="space-y-3">
-                      {conversations.map((conversation) => {
-                        const otherUser = conversation.participants?.find(p => p.user_id !== user?.id)
-                        return (
-                          <div key={conversation.id} className="flex items-center gap-3 p-2 hover:bg-background/50 rounded-lg transition-colors">
-                            <div className="w-8 h-8 bg-accent-teal rounded-full flex items-center justify-center text-black font-bold text-sm">
-                              {otherUser?.user?.email?.charAt(0).toUpperCase() || 'U'}
-                            </div>
-                            <div className="flex-1 min-w-0">
-                              <p className="text-white text-sm font-medium truncate">
-                                {otherUser?.user?.username || 
-                                 otherUser?.user?.email?.split('@')[0] || 
-                                 'Unknown User'}
-                              </p>
-                              {conversation.last_message && (
-                                <p className="text-secondary text-xs truncate">
-                                  {conversation.last_message.content}
-                                </p>
-                              )}
-                            </div>
-                            {conversation.unread_count > 0 && (
-                              <div className="bg-accent-teal text-black text-xs px-2 py-1 rounded-full">
-                                {conversation.unread_count}
-                              </div>
-                            )}
-                          </div>
-                        )
-                      })}
-                    </div>
-                  ) : (
-                    <div className="text-center py-4">
-                      <MessageSquare className="w-8 h-8 text-medium mx-auto mb-2" />
-                      <p className="text-secondary text-sm">No messages yet</p>
-                    </div>
-                  )}
+                  <div className="text-center py-4">
+                    <MessageSquare className="w-8 h-8 text-medium mx-auto mb-2" />
+                    <p className="text-secondary text-sm mb-3">Connect with musicians in real-time</p>
+                    <Link
+                      href="/messages"
+                      className="bg-accent-teal hover:bg-opacity-90 text-black text-sm font-medium px-4 py-2 rounded-lg transition-colors"
+                    >
+                      Open Chat
+                    </Link>
+                  </div>
                 </div>
 
 

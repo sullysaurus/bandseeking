@@ -43,20 +43,33 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         // Handle sign in - redirect to profile for onboarding
         if (event === 'SIGNED_IN' && session?.user) {
           try {
-            // Get or create profile
-            let profile = await profileService.getProfile()
+            console.log('User signed in, checking profile...')
+            // Try to get profile with timeout (increased to 10 seconds)
+            const profilePromise = profileService.getProfile()
+            const timeoutPromise = new Promise((_, reject) => {
+              setTimeout(() => reject(new Error('PROFILE_TIMEOUT')), 10000)
+            })
+            
+            const profile = await Promise.race([profilePromise, timeoutPromise])
+            
             if (!profile) {
-              profile = await profileService.createProfile({
+              console.log('No profile found, creating one...')
+              await profileService.createProfile({
                 username: session.user.email?.split('@')[0] || `user_${Date.now()}`,
                 full_name: session.user.user_metadata?.full_name || session.user.email?.split('@')[0] || 'User'
               })
             }
             
-            // Always redirect to dashboard on sign in
+            console.log('Redirecting to dashboard...')
             router.push('/dashboard')
-          } catch (error) {
-            console.error('Error handling sign in:', error)
+          } catch (error: any) {
+            if (error.message === 'PROFILE_TIMEOUT') {
+              console.log('Profile check timed out, proceeding anyway...')
+            } else {
+              console.error('Error handling sign in:', error)
+            }
             // Still redirect to dashboard even if there's an error
+            console.log('Redirecting to dashboard...')
             router.push('/dashboard')
           }
         }

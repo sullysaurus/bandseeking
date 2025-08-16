@@ -137,9 +137,29 @@ export default function FindMusicians() {
   
   const loadMusicians = async () => {
     setLoading(true)
-    const data = await profileService.getAllMusicians()
-    setMusicians(data)
-    setLoading(false)
+    try {
+      console.log('Loading musicians...')
+      const startTime = Date.now()
+      
+      // Set a timeout to prevent infinite loading
+      const timeoutId = setTimeout(() => {
+        console.log('Loading timeout - setting empty musicians list')
+        setMusicians([])
+        setLoading(false)
+      }, 15000) // 15 second timeout
+      
+      const data = await profileService.getAllMusicians()
+      clearTimeout(timeoutId) // Clear timeout if query succeeds
+      
+      const endTime = Date.now()
+      console.log(`Loaded ${data.length} musicians in ${endTime - startTime}ms`)
+      setMusicians(data)
+    } catch (error) {
+      console.error('Error loading musicians:', error)
+      setMusicians([])
+    } finally {
+      setLoading(false)
+    }
   }
 
   const handlePostOpportunity = () => {
@@ -284,7 +304,7 @@ export default function FindMusicians() {
               </div>
               
               {/* Mobile search and filters */}
-              <div className="md:hidden space-y-3">
+              <div className="md:hidden space-y-4">
                 <div className="relative">
                   <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-medium w-5 h-5" />
                   <input 
@@ -295,13 +315,13 @@ export default function FindMusicians() {
                     className="bg-card border-0 rounded-lg pl-12 pr-4 py-3 text-white placeholder-medium focus:outline-none focus:ring-2 focus:ring-accent-teal w-full"
                   />
                 </div>
-                <div className="flex gap-3">
+                <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
                   <button 
                     onClick={() => setIsFilterOpen(true)}
-                    className="flex items-center gap-2 bg-card hover:bg-opacity-80 text-white px-4 py-3 rounded-lg transition-colors relative flex-1"
+                    className="flex items-center justify-center gap-2 bg-card hover:bg-opacity-80 text-white px-4 py-3 rounded-lg transition-colors relative flex-1 min-h-[48px]"
                   >
                     <Filter className="w-5 h-5" />
-                    Filters
+                    <span>Filters</span>
                     {getActiveFilterCount() > 0 && (
                       <span className="absolute -top-2 -right-2 bg-accent-teal text-black text-xs rounded-full w-5 h-5 flex items-center justify-center">
                         {getActiveFilterCount()}
@@ -310,11 +330,10 @@ export default function FindMusicians() {
                   </button>
                   <button 
                     onClick={handlePostOpportunity}
-                    className="flex items-center gap-2 bg-accent-teal hover:bg-opacity-90 text-black font-medium px-4 py-3 rounded-lg transition-colors whitespace-nowrap"
+                    className="flex items-center justify-center gap-2 bg-accent-teal hover:bg-opacity-90 text-black font-medium px-6 py-3 rounded-lg transition-colors sm:whitespace-nowrap flex-1 sm:flex-initial min-h-[48px]"
                   >
-                    <Plus className="w-4 h-4" />
-                    <span className="hidden sm:inline">Post</span>
-                    <span className="sm:hidden">+</span>
+                    <Plus className="w-5 h-5" />
+                    <span>Post Opportunity</span>
                   </button>
                 </div>
               </div>

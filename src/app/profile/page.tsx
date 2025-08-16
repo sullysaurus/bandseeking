@@ -1,7 +1,8 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Edit, Save, X, MapPin, Music, Calendar, Mail, Phone, Globe, Instagram, Twitter, Github, Upload } from 'lucide-react'
+import { Edit, Save, X, MapPin, Music, Calendar, Mail, Phone, Globe, Instagram, Upload, Eye, Headphones, Radio, Disc3, AudioLines } from 'lucide-react'
+import Link from 'next/link'
 import Sidebar from '@/components/Sidebar'
 import ProtectedRoute from '@/components/ProtectedRoute'
 import AvatarUpload from '@/components/AvatarUpload'
@@ -94,8 +95,10 @@ export default function ProfilePage() {
         looking_for: editedProfile.looking_for,
         website: editedProfile.website,
         instagram: editedProfile.instagram,
-        twitter: editedProfile.twitter,
-        github: editedProfile.github,
+        apple_music: editedProfile.apple_music,
+        spotify: editedProfile.spotify,
+        soundcloud: editedProfile.soundcloud,
+        bandcamp: editedProfile.bandcamp,
         phone: editedProfile.phone,
         avatar_url: editedProfile.avatar_url
       }
@@ -195,13 +198,22 @@ export default function ProfilePage() {
               )}
             </div>
             {!isEditing ? (
-              <button 
-                onClick={handleEdit}
-                className="flex items-center gap-2 bg-accent-teal hover:bg-opacity-90 text-white font-medium px-4 py-2 rounded-lg transition-colors"
-              >
-                <Edit className="w-4 h-4" />
-                Edit Profile
-              </button>
+              <div className="flex gap-2">
+                <Link
+                  href={`/profile/${profile.username}`}
+                  className="flex items-center gap-2 bg-button-secondary hover:bg-opacity-80 text-white font-medium px-4 py-2 rounded-lg transition-colors"
+                >
+                  <Eye className="w-4 h-4" />
+                  View Profile
+                </Link>
+                <button 
+                  onClick={handleEdit}
+                  className="flex items-center gap-2 bg-accent-teal hover:bg-opacity-90 text-white font-medium px-4 py-2 rounded-lg transition-colors"
+                >
+                  <Edit className="w-4 h-4" />
+                  Edit Profile
+                </button>
+              </div>
             ) : (
               <div className="flex gap-2">
                 <button 
@@ -282,33 +294,44 @@ export default function ProfilePage() {
                     <span className="text-secondary text-sm">{user?.email}</span>
                   </div>
                   
-                  <div className="flex items-center gap-3">
-                    <MapPin className="w-4 h-4 text-medium" />
-                    {isEditing ? (
-                      <input
-                        type="text"
-                        value={displayProfile.location || ''}
-                        onChange={(e) => updateField('location', e.target.value)}
-                        className="flex-1 bg-background border border-card rounded px-2 py-1 text-white text-sm focus:outline-none focus:ring-1 focus:ring-accent-teal"
-                      />
-                    ) : (
-                      <span className="text-secondary text-sm">{displayProfile.location}</span>
-                    )}
-                  </div>
+                  {(isEditing || displayProfile.location) && (
+                    <div className="flex items-center gap-3">
+                      <MapPin className="w-4 h-4 text-medium" />
+                      {isEditing ? (
+                        <input
+                          type="text"
+                          value={displayProfile.location || ''}
+                          onChange={(e) => updateField('location', e.target.value)}
+                          placeholder="Location"
+                          className="flex-1 bg-background border border-card rounded px-2 py-1 text-white text-sm focus:outline-none focus:ring-1 focus:ring-accent-teal"
+                        />
+                      ) : (
+                        <span className="text-secondary text-sm">{displayProfile.location}</span>
+                      )}
+                    </div>
+                  )}
 
-                  <div className="flex items-center gap-3">
-                    <Phone className="w-4 h-4 text-medium" />
-                    {isEditing ? (
-                      <input
-                        type="text"
-                        value={displayProfile.phone || ''}
-                        onChange={(e) => updateField('phone', e.target.value)}
-                        className="flex-1 bg-background border border-card rounded px-2 py-1 text-white text-sm focus:outline-none focus:ring-1 focus:ring-accent-teal"
-                      />
-                    ) : (
-                      <span className="text-secondary text-sm">{displayProfile.phone}</span>
-                    )}
-                  </div>
+                  {(isEditing || displayProfile.phone) && (
+                    <div className="flex items-center gap-3">
+                      <Phone className="w-4 h-4 text-medium" />
+                      {isEditing ? (
+                        <input
+                          type="text"
+                          value={displayProfile.phone || ''}
+                          onChange={(e) => updateField('phone', e.target.value)}
+                          placeholder="Phone number"
+                          className="flex-1 bg-background border border-card rounded px-2 py-1 text-white text-sm focus:outline-none focus:ring-1 focus:ring-accent-teal"
+                        />
+                      ) : (
+                        <a
+                          href={`tel:${displayProfile.phone}`}
+                          className="text-accent-teal hover:text-accent-teal/80 text-sm transition-colors"
+                        >
+                          {displayProfile.phone}
+                        </a>
+                      )}
+                    </div>
+                  )}
 
                   <div className="flex items-center gap-3">
                     <Calendar className="w-4 h-4 text-medium" />
@@ -320,32 +343,50 @@ export default function ProfilePage() {
               </div>
 
               {/* Social Links Card */}
-              <div className="bg-card rounded-lg p-6">
-                <h3 className="text-white font-medium mb-4">Social Links</h3>
-                <div className="space-y-3">
+              {(isEditing || displayProfile.website || displayProfile.instagram || displayProfile.apple_music || displayProfile.spotify || displayProfile.soundcloud || displayProfile.bandcamp) && (
+                <div className="bg-card rounded-lg p-6">
+                  <h3 className="text-white font-medium mb-4">Social Links</h3>
+                  <div className="space-y-3">
                   {[
                     { icon: Globe, field: 'website' as keyof Profile, label: 'Website' },
                     { icon: Instagram, field: 'instagram' as keyof Profile, label: 'Instagram' },
-                    { icon: Twitter, field: 'twitter' as keyof Profile, label: 'Twitter' },
-                    { icon: Github, field: 'github' as keyof Profile, label: 'GitHub' }
-                  ].map(({ icon: Icon, field, label }) => (
-                    <div key={field} className="flex items-center gap-3">
-                      <Icon className="w-4 h-4 text-medium" />
-                      {isEditing ? (
-                        <input
-                          type="text"
-                          value={(displayProfile[field] as string) || ''}
-                          onChange={(e) => updateField(field, e.target.value)}
-                          placeholder={label}
-                          className="flex-1 bg-background border border-card rounded px-2 py-1 text-white text-sm focus:outline-none focus:ring-1 focus:ring-accent-teal"
-                        />
-                      ) : (
-                        <span className="text-secondary text-sm">{displayProfile[field] as string}</span>
-                      )}
-                    </div>
-                  ))}
+                    { icon: Headphones, field: 'apple_music' as keyof Profile, label: 'Apple Music' },
+                    { icon: Disc3, field: 'spotify' as keyof Profile, label: 'Spotify' },
+                    { icon: Radio, field: 'soundcloud' as keyof Profile, label: 'SoundCloud' },
+                    { icon: AudioLines, field: 'bandcamp' as keyof Profile, label: 'Bandcamp' }
+                  ].map(({ icon: Icon, field, label }) => {
+                    const fieldValue = displayProfile[field] as string
+                    
+                    // When editing, show all fields. When viewing, only show fields with values
+                    if (!isEditing && !fieldValue) return null
+                    
+                    return (
+                      <div key={field} className="flex items-center gap-3">
+                        <Icon className="w-4 h-4 text-medium" />
+                        {isEditing ? (
+                          <input
+                            type="text"
+                            value={fieldValue || ''}
+                            onChange={(e) => updateField(field, e.target.value)}
+                            placeholder={label}
+                            className="flex-1 bg-background border border-card rounded px-2 py-1 text-white text-sm focus:outline-none focus:ring-1 focus:ring-accent-teal"
+                          />
+                        ) : (
+                          <a
+                            href={fieldValue.startsWith('http') ? fieldValue : `https://${fieldValue}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-accent-teal hover:text-accent-teal/80 text-sm transition-colors"
+                          >
+                            {label}
+                          </a>
+                        )}
+                      </div>
+                    )
+                  }).filter(Boolean)}
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
 
             {/* Right Column - Detailed Info */}

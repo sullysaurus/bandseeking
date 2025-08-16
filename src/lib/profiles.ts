@@ -12,8 +12,10 @@ export interface Profile {
   looking_for: string[]
   website: string | null
   instagram: string | null
-  twitter: string | null
-  github: string | null
+  apple_music: string | null
+  spotify: string | null
+  soundcloud: string | null
+  bandcamp: string | null
   phone: string | null
   avatar_url: string | null
   created_at: string
@@ -34,8 +36,10 @@ export interface ProfileUpdate {
   looking_for?: string[]
   website?: string
   instagram?: string
-  twitter?: string
-  github?: string
+  apple_music?: string
+  spotify?: string
+  soundcloud?: string
+  bandcamp?: string
   phone?: string
   avatar_url?: string
 }
@@ -114,19 +118,27 @@ class ProfileService {
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) throw new Error('No authenticated user')
 
-      // Check if profile already exists first
-      const existing = await this.getProfile()
-      if (existing) {
-        console.log('Profile already exists, returning existing profile')
-        return existing
-      }
+      console.log('Creating profile for user:', user.id)
 
       const { data, error } = await supabase
         .from('profiles')
         .upsert([
           {
             id: user.id,
-            ...profileData
+            username: profileData.username || user.email?.split('@')[0] || `user_${Date.now()}`,
+            full_name: profileData.full_name || user.user_metadata?.full_name || 'User',
+            bio: profileData.bio || null,
+            location: profileData.location || null,
+            instruments: profileData.instruments || [],
+            genres: profileData.genres || [],
+            experience_level: profileData.experience_level || null,
+            looking_for: profileData.looking_for || [],
+            website: profileData.website || null,
+            instagram: profileData.instagram || null,
+            twitter: profileData.twitter || null,
+            github: profileData.github || null,
+            phone: profileData.phone || null,
+            avatar_url: profileData.avatar_url || null
           }
         ])
         .select()
@@ -137,6 +149,7 @@ class ProfileService {
         throw error
       }
 
+      console.log('Profile created successfully:', data)
       return data
     } catch (error) {
       console.error('Error in createProfile:', error)
@@ -191,12 +204,45 @@ class ProfileService {
   // Get all musicians for discovery
   async getAllMusicians(): Promise<Profile[]> {
     try {
-      const { data, error } = await supabase
+      console.log('Fetching musicians from Supabase...')
+      
+      // First test basic connection
+      console.log('Testing Supabase connection...')
+      const { data: testData, error: testError } = await supabase
+        .from('profiles')
+        .select('id')
+        .limit(1)
+      
+      if (testError) {
+        console.error('Connection test failed:', testError)
+        return []
+      }
+      
+      console.log('Connection test successful, fetching all profiles...')
+      const startTime = Date.now()
+      
+      // Add timeout to prevent hanging
+      const timeoutPromise = new Promise((_, reject) => {
+        setTimeout(() => reject(new Error('Query timeout after 10 seconds')), 10000)
+      })
+      
+      const queryPromise = supabase
         .from('profiles')
         .select('*')
         .order('created_at', { ascending: false })
+        .limit(50)
       
-      if (error) throw error
+      const { data, error } = await Promise.race([queryPromise, timeoutPromise]) as any
+      
+      const endTime = Date.now()
+      console.log(`Database query took ${endTime - startTime}ms`)
+      
+      if (error) {
+        console.error('Supabase error:', error)
+        throw error
+      }
+      
+      console.log(`Found ${data?.length || 0} profiles`)
       return data || []
     } catch (error) {
       console.error('Error fetching musicians:', error)

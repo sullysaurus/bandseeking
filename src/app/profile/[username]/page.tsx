@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { MapPin, Calendar, Mail, Globe, Instagram, Twitter, Github, MessageSquare, ArrowLeft, Heart } from 'lucide-react'
+import { MapPin, Calendar, Mail, Phone, Globe, Instagram, MessageSquare, ArrowLeft, Heart, Headphones, Radio, Disc3, AudioLines } from 'lucide-react'
 import { useParams, useRouter } from 'next/navigation'
 import Link from 'next/link'
 import Sidebar from '@/components/Sidebar'
@@ -165,8 +165,13 @@ export default function PublicProfilePage() {
 
                     {profile.phone && (
                       <div className="flex items-center gap-3">
-                        <Mail className="w-4 h-4 text-medium" />
-                        <span className="text-secondary text-sm">{profile.phone}</span>
+                        <Phone className="w-4 h-4 text-medium" />
+                        <a
+                          href={`tel:${profile.phone}`}
+                          className="text-accent-teal hover:text-accent-teal/80 text-sm transition-colors"
+                        >
+                          {profile.phone}
+                        </a>
                       </div>
                     )}
 
@@ -180,15 +185,17 @@ export default function PublicProfilePage() {
                 </div>
 
                 {/* Social Links Card */}
-                {(profile.website || profile.instagram || profile.twitter || profile.github) && (
+                {(profile.website || profile.instagram || profile.apple_music || profile.spotify || profile.soundcloud || profile.bandcamp) && (
                   <div className="bg-card rounded-lg p-6">
                     <h3 className="text-white font-medium mb-4">Social Links</h3>
                     <div className="space-y-3">
                       {[
                         { icon: Globe, field: profile.website, label: 'Website' },
                         { icon: Instagram, field: profile.instagram, label: 'Instagram' },
-                        { icon: Twitter, field: profile.twitter, label: 'Twitter' },
-                        { icon: Github, field: profile.github, label: 'GitHub' }
+                        { icon: Headphones, field: profile.apple_music, label: 'Apple Music' },
+                        { icon: Disc3, field: profile.spotify, label: 'Spotify' },
+                        { icon: Radio, field: profile.soundcloud, label: 'SoundCloud' },
+                        { icon: AudioLines, field: profile.bandcamp, label: 'Bandcamp' }
                       ].map(({ icon: Icon, field, label }, index) => 
                         field ? (
                           <div key={index} className="flex items-center gap-3">

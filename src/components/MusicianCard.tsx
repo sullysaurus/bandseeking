@@ -5,7 +5,6 @@ import Link from 'next/link'
 import { Profile } from '@/lib/profiles'
 import { getActivityStatus, getResponseSpeedInfo } from '@/lib/activity-utils'
 import { useState } from 'react'
-import { messageService } from '@/lib/messages'
 import { useRouter } from 'next/navigation'
 
 interface MusicianCardProps {
@@ -32,14 +31,14 @@ export default function MusicianCard({ profile, onContact }: MusicianCardProps) 
 
     setIsContacting(true)
     try {
-      const conversation = await messageService.findOrCreateConversation(profile.id)
-      if (conversation) {
-        router.push('/messages')
-      }
+      console.log('Starting conversation with:', profile.username || profile.id)
+      // Direct to private conversation with this user
+      router.push(`/messages?user=${profile.id}`)
     } catch (error) {
-      console.error('Error creating conversation:', error)
+      console.error('Error navigating to chat:', error)
+    } finally {
+      setIsContacting(false)
     }
-    setIsContacting(false)
   }
 
   return (
