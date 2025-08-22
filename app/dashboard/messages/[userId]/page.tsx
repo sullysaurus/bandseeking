@@ -110,14 +110,18 @@ export default function ChatPage() {
         {
           event: 'INSERT',
           schema: 'public',
-          table: 'messages',
-          filter: `or(and(sender_id.eq.${userId},receiver_id.eq.${receiverId}),and(sender_id.eq.${receiverId},receiver_id.eq.${userId}))`
+          table: 'messages'
         },
-        (payload) => {
+        (payload: any) => {
           console.log('Received new message via realtime:', payload.new)
-          setMessages(prev => [...prev, payload.new])
-          if (payload.new.receiver_id === userId) {
-            markMessagesAsRead(userId)
+          const newMsg = payload.new
+          // Only add messages that are part of this conversation
+          if ((newMsg.sender_id === userId && newMsg.receiver_id === receiverId) ||
+              (newMsg.sender_id === receiverId && newMsg.receiver_id === userId)) {
+            setMessages(prev => [...prev, newMsg])
+            if (newMsg.receiver_id === userId) {
+              markMessagesAsRead(userId)
+            }
           }
         }
       )
