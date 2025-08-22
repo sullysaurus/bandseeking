@@ -36,6 +36,12 @@ export default function DashboardPage() {
         .eq('id', authUser.id)
         .single()
 
+      // Check if user has completed profile setup
+      if (!userData?.profile_completed) {
+        router.push('/onboarding')
+        return
+      }
+
       setUser(userData)
 
       // Get profile data
