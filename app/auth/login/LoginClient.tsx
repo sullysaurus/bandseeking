@@ -47,11 +47,11 @@ export default function LoginClient() {
       // Ensure user record exists and get user data
       const userData = await ensureUserRecord()
       
-      // Force a hard redirect to trigger middleware
+      // Use router.push for smoother navigation
       if (userData.profile_completed) {
-        window.location.href = '/dashboard'
+        router.push('/dashboard')
       } else {
-        window.location.href = '/onboarding'
+        router.push('/onboarding')
       }
     } catch (err: any) {
       setError(err.message || 'Invalid email or password')

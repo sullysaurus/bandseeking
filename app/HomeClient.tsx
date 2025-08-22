@@ -1,32 +1,37 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import Navigation from '@/components/layout/Navigation'
 import ProfileCard from '@/components/ProfileCard'
 import Button from '@/components/ui/Button'
 import { supabase } from '@/lib/supabase'
-import { Search, Users, MessageSquare, Music, Plus } from 'lucide-react'
+import { Search, Users, MessageSquare, Music } from 'lucide-react'
 
 interface HomeClientProps {
   initialProfiles: any[]
 }
 
 export default function HomeClient({ initialProfiles }: HomeClientProps) {
-  const [user, setUser] = useState<any>(null)
+  const router = useRouter()
   const [loading, setLoading] = useState(true)
   const profiles = initialProfiles
 
   useEffect(() => {
-    getCurrentUser()
+    checkAuthAndRedirect()
   }, [])
 
-  const getCurrentUser = async () => {
+  const checkAuthAndRedirect = async () => {
     try {
       const { data: { user } } = await supabase.auth.getUser()
-      setUser(user)
+      if (user) {
+        // User is logged in, redirect to dashboard
+        router.push('/dashboard')
+        return
+      }
     } catch (error) {
-      console.error('Error getting user:', error)
+      console.error('Error checking auth:', error)
     } finally {
       setLoading(false)
     }
@@ -40,93 +45,6 @@ export default function HomeClient({ initialProfiles }: HomeClientProps) {
           <div className="text-center">
             <div className="w-8 h-8 border-2 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
             <p className="text-gray-600">Loading...</p>
-          </div>
-        </div>
-      </>
-    )
-  }
-
-  // Show different content for logged-in users
-  if (user) {
-    return (
-      <>
-        <Navigation />
-        
-        {/* Dashboard-style Homepage for Logged-in Users */}
-        <div className="min-h-screen bg-gray-50">
-          <div className="max-w-7xl mx-auto px-4 py-8">
-            {/* Welcome Header */}
-            <div className="mb-8">
-              <h1 className="text-3xl font-bold text-black mb-2">Welcome back!</h1>
-              <p className="text-gray-600">Discover new musicians and manage your connections</p>
-            </div>
-
-            {/* Quick Actions */}
-            <div className="grid md:grid-cols-3 gap-6 mb-8">
-              <Link href="/search" className="block">
-                <div className="bg-white p-6 rounded-xl border border-gray-200 hover:border-blue-500/50 hover:shadow-lg transition-all duration-300 group">
-                  <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center mb-4 group-hover:bg-blue-200 transition-colors">
-                    <Search className="w-6 h-6 text-blue-600" />
-                  </div>
-                  <h3 className="text-xl font-semibold text-black mb-2">Find Musicians</h3>
-                  <p className="text-gray-600">Search for musicians in your area</p>
-                </div>
-              </Link>
-              
-              <Link href="/dashboard/messages" className="block">
-                <div className="bg-white p-6 rounded-xl border border-gray-200 hover:border-blue-500/50 hover:shadow-lg transition-all duration-300 group">
-                  <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center mb-4 group-hover:bg-blue-200 transition-colors">
-                    <MessageSquare className="w-6 h-6 text-blue-600" />
-                  </div>
-                  <h3 className="text-xl font-semibold text-black mb-2">Messages</h3>
-                  <p className="text-gray-600">Connect with other musicians</p>
-                </div>
-              </Link>
-              
-              <Link href="/dashboard/profile" className="block">
-                <div className="bg-white p-6 rounded-xl border border-gray-200 hover:border-blue-500/50 hover:shadow-lg transition-all duration-300 group">
-                  <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center mb-4 group-hover:bg-blue-200 transition-colors">
-                    <Plus className="w-6 h-6 text-blue-600" />
-                  </div>
-                  <h3 className="text-xl font-semibold text-black mb-2">Update Profile</h3>
-                  <p className="text-gray-600">Keep your profile up to date</p>
-                </div>
-              </Link>
-            </div>
-
-            {/* Recent Musicians */}
-            <div className="mb-8">
-              <div className="flex flex-col md:flex-row md:justify-between md:items-center mb-6 gap-4">
-                <div>
-                  <h2 className="text-2xl font-bold text-black mb-2">Recent Musicians</h2>
-                  <p className="text-gray-600">Check out the latest members of our community</p>
-                </div>
-                <Link href="/search">
-                  <Button variant="secondary" className="bg-gray-100 border-gray-300 text-gray-700 hover:bg-gray-200 px-6 rounded-lg">
-                    View All
-                  </Button>
-                </Link>
-              </div>
-
-              {profiles.length > 0 ? (
-                <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                  {profiles.slice(0, 8).map((profile) => (
-                    <ProfileCard key={profile.id} profile={profile} />
-                  ))}
-                </div>
-              ) : (
-                <div className="text-center py-12 bg-white rounded-xl border border-gray-200">
-                  <Users className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-                  <h3 className="text-xl font-semibold text-black mb-2">No musicians yet</h3>
-                  <p className="text-gray-600 mb-6">Be the first to create a profile!</p>
-                  <Link href="/dashboard/profile">
-                    <Button className="bg-blue-600 hover:bg-blue-700 text-white px-6 rounded-lg">
-                      Create Profile
-                    </Button>
-                  </Link>
-                </div>
-              )}
-            </div>
           </div>
         </div>
       </>
