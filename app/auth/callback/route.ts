@@ -23,11 +23,19 @@ export async function GET(request: NextRequest) {
       // Ensure user record exists and get user data
       const userData = await ensureUserRecord()
       
+      console.log('Auth callback - User data:', {
+        id: userData.id,
+        profile_completed: userData.profile_completed,
+        isNewUser: userData.isNewUser
+      })
+      
       if (userData.profile_completed) {
         // If profile is completed, go to dashboard
+        console.log('Redirecting to dashboard')
         return NextResponse.redirect(new URL('/dashboard', request.url))
       } else {
         // If profile not completed or new user, go to onboarding
+        console.log('Redirecting to onboarding')
         return NextResponse.redirect(new URL('/onboarding', request.url))
       }
     } catch (error) {
