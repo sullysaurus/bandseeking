@@ -16,9 +16,12 @@ export default function EditProfilePage() {
   const [saving, setSaving] = useState(false)
   const [currentUser, setCurrentUser] = useState<any>(null)
   const [profile, setProfile] = useState<any>(null)
+  const [avatarFile, setAvatarFile] = useState<File | null>(null)
+  const [avatarPreview, setAvatarPreview] = useState<string | null>(null)
   
   const [formData, setFormData] = useState({
     bio: '',
+    profileImageUrl: '',
     mainInstrument: '',
     secondaryInstruments: [] as string[],
     experienceLevel: '',
@@ -50,8 +53,24 @@ export default function EditProfilePage() {
       return
     }
     
-    setCurrentUser(user)
+    // Get user data including username
+    const { data: userData } = await supabase
+      .from('users')
+      .select('username')
+      .eq('id', user.id)
+      .single()
+    
+    setCurrentUser({ ...user, username: userData?.username })
     await fetchProfile(user.id)
+  }
+
+  const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (file) {
+      setAvatarFile(file)
+      const previewUrl = URL.createObjectURL(file)
+      setAvatarPreview(previewUrl)
+    }
   }
 
   const fetchProfile = async (userId: string) => {
@@ -70,6 +89,7 @@ export default function EditProfilePage() {
         setProfile(profileData)
         setFormData({
           bio: profileData.bio || '',
+          profileImageUrl: profileData.profile_image_url || '',
           mainInstrument: profileData.main_instrument || '',
           secondaryInstruments: profileData.secondary_instruments || [],
           experienceLevel: profileData.experience_level || '',
@@ -88,6 +108,7 @@ export default function EditProfilePage() {
           },
           isPublished: profileData.is_published || false
         })
+        setAvatarPreview(profileData.profile_image_url)
       }
     } catch (error) {
       console.error('Error fetching profile:', error)
@@ -101,9 +122,44 @@ export default function EditProfilePage() {
     
     setSaving(true)
     try {
+      let profileImageUrl = formData.profileImageUrl
+
+      // Upload new avatar if provided
+      if (avatarFile) {
+        console.log('Uploading new avatar...')
+        const fileExt = avatarFile.name.split('.').pop()
+        const fileName = `${currentUser.id}-${Date.now()}.${fileExt}`
+        
+        const { data: uploadData, error: uploadError } = await supabase.storage
+          .from('avatars')
+          .upload(fileName, avatarFile, {
+            cacheControl: '3600',
+            upsert: false
+          })
+
+        if (uploadError) {
+          console.error('Avatar upload error details:', {
+            error: uploadError,
+            message: uploadError.message,
+            details: uploadError.details,
+            hint: uploadError.hint
+          })
+          throw new Error(`Failed to upload avatar: ${uploadError.message}`)
+        }
+
+        // Get the public URL
+        const { data: { publicUrl } } = supabase.storage
+          .from('avatars')
+          .getPublicUrl(fileName)
+        
+        profileImageUrl = publicUrl
+        console.log('Avatar uploaded successfully:', profileImageUrl)
+      }
+
       const profileData = {
         user_id: currentUser.id,
         bio: formData.bio,
+        profile_image_url: profileImageUrl,
         main_instrument: formData.mainInstrument,
         secondary_instruments: formData.secondaryInstruments,
         experience_level: formData.experienceLevel as any,
@@ -139,7 +195,15 @@ export default function EditProfilePage() {
         .update({ profile_completed: true })
         .eq('id', currentUser.id)
 
-      router.push('/dashboard')
+      // Clear avatar file after successful save
+      setAvatarFile(null)
+      
+      // Redirect to user's profile page
+      if (currentUser?.username) {
+        router.push(`/profile/${currentUser.username}`)
+      } else {
+        router.push('/dashboard')
+      }
     } catch (error) {
       console.error('Error saving profile:', error)
     } finally {
@@ -197,6 +261,30 @@ export default function EditProfilePage() {
                   value={formData.bio}
                   onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
                 />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-2">Profile Photo</label>
+                <div className="space-y-4">
+                  {avatarPreview && (
+                    <div className="flex justify-center">
+                      <div className="w-24 h-24 relative rounded-full overflow-hidden bg-gray-100">
+                        <img
+                          src={avatarPreview}
+                          alt="Profile preview"
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                    </div>
+                  )}
+                  <input
+                    type="file"
+                    accept="image/*"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black"
+                    onChange={handleAvatarChange}
+                  />
+                  <p className="text-sm text-gray-500">Upload a new profile photo (optional)</p>
+                </div>
               </div>
             </div>
           </div>

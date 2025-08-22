@@ -200,7 +200,7 @@ export default function DashboardPage() {
           </Link>
 
           {/* Settings Card */}
-          <Link href="/settings" className="block">
+          <Link href="/dashboard/profile" className="block">
             <div className="bg-white rounded-lg border border-gray-200 p-6 hover:shadow-lg transition-shadow">
               <div className="flex items-center mb-4">
                 <Settings className="w-6 h-6 mr-2" />

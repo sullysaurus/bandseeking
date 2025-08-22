@@ -164,13 +164,46 @@ export default function OnboardingPage() {
         experience_level: formData.experienceLevel,
         bio: formData.bio?.substring(0, 50) + '...',
         seeking_count: formData.seeking.length,
-        genres_count: formData.genres.length
+        genres_count: formData.genres.length,
+        has_profile_image: !!formData.profileImage
       })
+
+      let profileImageUrl = null
+
+      // Upload profile image if provided
+      if (formData.profileImage) {
+        console.log('Uploading profile image...')
+        console.log('Supabase URL:', process.env.NEXT_PUBLIC_SUPABASE_URL)
+        console.log('Supabase Key exists:', !!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY)
+        const fileExt = formData.profileImage.name.split('.').pop()
+        const fileName = `${userId}-${Date.now()}.${fileExt}`
+        
+        const { data: uploadData, error: uploadError } = await supabase.storage
+          .from('avatars')
+          .upload(fileName, formData.profileImage, {
+            cacheControl: '3600',
+            upsert: false
+          })
+
+        if (uploadError) {
+          console.error('Image upload error:', uploadError)
+          throw new Error(`Failed to upload image: ${uploadError.message}`)
+        }
+
+        // Get the public URL
+        const { data: { publicUrl } } = supabase.storage
+          .from('avatars')
+          .getPublicUrl(fileName)
+        
+        profileImageUrl = publicUrl
+        console.log('Image uploaded successfully:', profileImageUrl)
+      }
 
       // Create profile
       const { data: profileData, error: profileError } = await supabase.from('profiles').insert({
         user_id: userId,
         bio: formData.bio || '',
+        profile_image_url: profileImageUrl,
         main_instrument: formData.mainInstrument,
         secondary_instruments: formData.secondaryInstruments.length > 0 ? formData.secondaryInstruments : null,
         experience_level: formData.experienceLevel as any,
@@ -247,12 +280,26 @@ export default function OnboardingPage() {
               </div>
               <div>
                 <label className="block text-sm font-medium mb-2">Profile Image</label>
-                <input
-                  type="file"
-                  accept="image/*"
-                  className="w-full"
-                  onChange={(e) => setFormData({ ...formData, profileImage: e.target.files?.[0] || null })}
-                />
+                <div className="space-y-3">
+                  {formData.profileImage && (
+                    <div className="flex justify-center">
+                      <div className="w-24 h-24 relative rounded-full overflow-hidden bg-gray-100">
+                        <img
+                          src={URL.createObjectURL(formData.profileImage)}
+                          alt="Profile preview"
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                    </div>
+                  )}
+                  <input
+                    type="file"
+                    accept="image/*"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black"
+                    onChange={(e) => setFormData({ ...formData, profileImage: e.target.files?.[0] || null })}
+                  />
+                  <p className="text-sm text-gray-500">Upload a profile photo (optional)</p>
+                </div>
               </div>
             </div>
           </div>

@@ -7,7 +7,7 @@ import Link from 'next/link'
 import { supabase } from '@/lib/supabase'
 import Navigation from '@/components/layout/Navigation'
 import Button from '@/components/ui/Button'
-import { MapPin, Music, Star, Calendar, Car, Package, Globe, Instagram, Youtube, Heart, MessageSquare } from 'lucide-react'
+import { MapPin, Music, Star, Calendar, Car, Package, Globe, Instagram, Youtube, Heart, MessageSquare, Edit } from 'lucide-react'
 
 export default function ProfilePage() {
   const params = useParams()
@@ -141,6 +141,19 @@ export default function ProfilePage() {
                   <h1 className="text-2xl font-bold mb-1">{user.full_name}</h1>
                   <p className="text-gray-600 mb-4">@{user.username}</p>
                   
+                  {/* Edit button for own profile */}
+                  {currentUser && currentUser.id === user.id && (
+                    <div className="mb-4">
+                      <Link href="/dashboard/profile">
+                        <Button className="w-full">
+                          <Edit className="w-4 h-4 mr-2" />
+                          Edit Profile
+                        </Button>
+                      </Link>
+                    </div>
+                  )}
+                  
+                  {/* Action buttons for other users */}
                   {currentUser && currentUser.id !== user.id && (
                     <div className="flex gap-2 mb-4">
                       <Button className="flex-1">

@@ -204,32 +204,96 @@ export default function SearchPage() {
       <Navigation />
       <div className="max-w-7xl mx-auto px-4 py-8">
         {/* Search Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold mb-4">Find Musicians</h1>
-          <div className="flex flex-col sm:flex-row gap-4">
-            <div className="flex-1 relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+        <div className="mb-6">
+          <h1 className="text-3xl font-bold mb-2">Find Musicians</h1>
+        </div>
+
+        {/* Mobile-Optimized Search Controls */}
+        <div className="mb-4 p-3 sm:p-4 bg-white rounded-lg border border-gray-200">
+          {/* Top Row: Location & Filters */}
+          <div className="flex items-center justify-between gap-2 mb-3">
+            {/* ZIP Code + Location Button */}
+            <div className="flex items-center gap-1">
+              <Input
+                placeholder="ZIP"
+                value={filters.zipCode}
+                onChange={(e) => setFilters({ ...filters, zipCode: e.target.value })}
+                maxLength={5}
+                className="w-16 text-center text-sm h-8"
+              />
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                onClick={getMyLocation}
+                disabled={gettingLocation}
+                className="p-1 h-8 w-8"
+                title="Get my location"
+              >
+                <MapPin className="w-3 h-3" />
+              </Button>
+            </div>
+
+            {/* Distance Slider - Compact */}
+            <div className="flex items-center gap-1 flex-1 max-w-32">
+              <span className="text-xs text-gray-600">{filters.maxDistance}mi</span>
               <input
-                type="text"
-                placeholder="Search by name, bio, or influences..."
-                className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
+                type="range"
+                min="5"
+                max="100"
+                step="5"
+                value={filters.maxDistance}
+                onChange={(e) => setFilters({ ...filters, maxDistance: parseInt(e.target.value) })}
+                className="flex-1 h-1"
               />
             </div>
+
+            {/* Filters Button */}
             <Button
               variant="secondary"
+              size="sm"
               onClick={() => setShowFilters(!showFilters)}
-              className="flex items-center"
+              className="flex items-center h-8 px-2"
             >
-              <Filter className="w-4 h-4 mr-2" />
-              Filters
+              <Filter className="w-3 h-3 mr-1" />
+              <span className="hidden sm:inline">Filters</span>
               {activeFiltersCount() > 0 && (
-                <span className="ml-2 px-2 py-0.5 bg-black text-white text-xs rounded-full">
+                <span className="ml-1 px-1.5 py-0.5 bg-black text-white text-xs rounded-full">
                   {activeFiltersCount()}
                 </span>
               )}
             </Button>
+          </div>
+
+          {/* Quick Search Chips - More Compact */}
+          <div className="flex flex-wrap gap-1.5">
+            {['Guitar', 'Drums', 'Vocals', 'Bass', 'Keys', 'Rock', 'Jazz', 'Pop'].map((chip) => (
+              <button
+                key={chip}
+                onClick={() => {
+                  const isInstrument = ['Guitar', 'Drums', 'Vocals', 'Bass', 'Keys'].includes(chip)
+                  const realChip = chip === 'Keys' ? 'Keyboard' : chip
+                  if (isInstrument) {
+                    setFilters({ ...filters, instrument: filters.instrument === realChip ? '' : realChip })
+                  } else {
+                    const isSelected = filters.genres.includes(realChip)
+                    setFilters({
+                      ...filters,
+                      genres: isSelected 
+                        ? filters.genres.filter(g => g !== realChip)
+                        : [...filters.genres, realChip]
+                    })
+                  }
+                }}
+                className={`px-2 py-1 text-xs rounded-full border transition-colors ${
+                  (filters.instrument === (chip === 'Keys' ? 'Keyboard' : chip) || filters.genres.includes(chip))
+                    ? 'bg-black text-white border-black'
+                    : 'bg-gray-50 text-gray-600 border-gray-200 hover:border-gray-300'
+                }`}
+              >
+                {chip}
+              </button>
+            ))}
           </div>
         </div>
 
@@ -349,44 +413,6 @@ export default function SearchPage() {
                 </div>
               </div>
 
-              {/* Distance */}
-              <div>
-                <label className="block text-sm font-medium mb-2">
-                  Max Travel Distance: {filters.maxDistance} miles
-                </label>
-                <input
-                  type="range"
-                  min="5"
-                  max="100"
-                  step="5"
-                  value={filters.maxDistance}
-                  onChange={(e) => setFilters({ ...filters, maxDistance: parseInt(e.target.value) })}
-                  className="w-full"
-                />
-              </div>
-
-              {/* Location */}
-              <div>
-                <label className="block text-sm font-medium mb-2">Location</label>
-                <div className="space-y-2">
-                  <Input
-                    placeholder="Enter ZIP code"
-                    value={filters.zipCode}
-                    onChange={(e) => setFilters({ ...filters, zipCode: e.target.value })}
-                    maxLength={5}
-                  />
-                  <Button
-                    type="button"
-                    variant="outline"
-                    onClick={getMyLocation}
-                    disabled={gettingLocation}
-                    className="w-full flex items-center justify-center gap-2 text-sm"
-                  >
-                    <MapPin className="w-4 h-4" />
-                    {gettingLocation ? 'Getting location...' : 'Get my location'}
-                  </Button>
-                </div>
-              </div>
             </div>
 
             {/* Genres (expandable) */}

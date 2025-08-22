@@ -78,6 +78,10 @@ export default function ProfileCard({ profile }: ProfileCardProps) {
             alt={user.full_name}
             fill
             className="object-cover"
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+            onError={(e) => {
+              console.error('Profile image failed to load:', profile.profile_image_url)
+            }}
           />
         ) : (
           <div className="w-full h-full flex items-center justify-center">
