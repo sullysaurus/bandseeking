@@ -191,7 +191,7 @@ export default function HomeClient({ initialProfiles }: HomeClientProps) {
               Everything you need to find your sound
             </h2>
             <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-              From discovering musicians to forming bands, we've built the tools to help you create meaningful musical connections.
+              From discovering musicians to forming bands, we&apos;ve built the tools to help you create meaningful musical connections.
             </p>
           </div>
           
