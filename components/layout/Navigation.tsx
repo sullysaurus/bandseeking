@@ -64,12 +64,6 @@ export default function Navigation() {
                   <MessageSquare className="w-4 h-4" />
                   <span>Messages</span>
                 </Link>
-                {userProfile?.username && (
-                  <Link href={`/profile/${userProfile.username}`} className="flex items-center space-x-1 hover:text-gray-600">
-                    <User className="w-4 h-4" />
-                    <span>Profile</span>
-                  </Link>
-                )}
                 <Link href="/dashboard" className="flex items-center space-x-1 hover:text-gray-600">
                   <User className="w-4 h-4" />
                   <span>Dashboard</span>
@@ -125,15 +119,6 @@ export default function Navigation() {
                 >
                   Messages
                 </Link>
-                {userProfile?.username && (
-                  <Link
-                    href={`/profile/${userProfile.username}`}
-                    className="block px-4 py-2 hover:bg-gray-50 rounded-lg"
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    My Profile
-                  </Link>
-                )}
                 <Link
                   href="/dashboard"
                   className="block px-4 py-2 hover:bg-gray-50 rounded-lg"

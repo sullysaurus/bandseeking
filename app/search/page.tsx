@@ -120,10 +120,14 @@ export default function SearchPage() {
       filtered = filtered.filter(profile => profile.has_own_equipment)
     }
 
-    // Distance filter
-    filtered = filtered.filter(profile =>
-      profile.willing_to_travel_miles <= filters.maxDistance
-    )
+    // Location-based filter
+    if (filters.zipCode) {
+      // TODO: Implement actual distance calculation between zip codes
+      // For now, just filter by exact zip code match
+      filtered = filtered.filter(profile =>
+        profile.user.zip_code === filters.zipCode
+      )
+    }
 
     setFilteredProfiles(filtered)
   }
@@ -194,7 +198,6 @@ export default function SearchPage() {
     if (filters.availability.length > 0) count += filters.availability.length
     if (filters.hasTransportation) count++
     if (filters.hasEquipment) count++
-    if (filters.maxDistance < 100) count++
     if (filters.zipCode) count++
     return count
   }
@@ -215,11 +218,11 @@ export default function SearchPage() {
             {/* ZIP Code + Location Button */}
             <div className="flex items-center gap-1">
               <Input
-                placeholder="ZIP"
+                placeholder="ZIP Code"
                 value={filters.zipCode}
                 onChange={(e) => setFilters({ ...filters, zipCode: e.target.value })}
                 maxLength={5}
-                className="w-16 text-center text-sm h-8"
+                className="w-20 text-center text-sm h-8"
               />
               <Button
                 type="button"
@@ -234,9 +237,9 @@ export default function SearchPage() {
               </Button>
             </div>
 
-            {/* Distance Slider - Compact */}
+            {/* Radius Slider - Compact */}
             <div className="flex items-center gap-1 flex-1 max-w-32">
-              <span className="text-xs text-gray-600">{filters.maxDistance}mi</span>
+              <span className="text-xs text-gray-600">{filters.maxDistance}mi radius</span>
               <input
                 type="range"
                 min="5"
