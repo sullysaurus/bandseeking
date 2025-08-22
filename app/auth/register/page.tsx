@@ -94,17 +94,8 @@ export default function RegisterPage() {
       if (authError) throw authError
 
       if (authData.user) {
-        // Create user record in database
-        const { error: dbError } = await supabase.from('users').insert({
-          id: authData.user.id,
-          email: data.email,
-          username: data.username,
-          full_name: data.fullName,
-          zip_code: data.zipCode
-        })
-
-        if (dbError) throw dbError
-
+        // User record should be created automatically by Supabase
+        // The ensureUserRecord function in onboarding will handle any missing records
         router.push('/auth/verify?email=' + encodeURIComponent(data.email))
       }
     } catch (err: any) {
