@@ -2,45 +2,19 @@
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
-import { ensureUserRecord } from '@/lib/auth-helpers'
 import Navigation from '@/components/layout/Navigation'
 import ProfileCard from '@/components/ProfileCard'
 import Button from '@/components/ui/Button'
 import { Search, Users, MessageSquare, Music } from 'lucide-react'
 
 export default function HomePage() {
-  const router = useRouter()
   const [profiles, setProfiles] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    checkAuthAndRedirect()
     fetchProfiles()
   }, [])
-
-  const checkAuthAndRedirect = async () => {
-    try {
-      const { data: { user } } = await supabase.auth.getUser()
-      
-      if (user) {
-        // User is authenticated, check if they need to complete onboarding
-        const userData = await ensureUserRecord()
-        
-        if (!userData.profile_completed) {
-          router.push('/onboarding')
-          return
-        } else {
-          router.push('/dashboard')
-          return
-        }
-      }
-    } catch (error) {
-      // Not authenticated or error, continue showing homepage
-      console.log('User not authenticated, showing homepage')
-    }
-  }
 
   const fetchProfiles = async () => {
     try {

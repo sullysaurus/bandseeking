@@ -101,14 +101,18 @@ export default function ChatPage() {
   }
 
   const subscribeToMessages = (userId: string) => {
+    // Create a unique channel name for this conversation
+    // Sort the IDs to ensure both users subscribe to the same channel
+    const channelName = [userId, receiverId].sort().join('-')
+    
     console.log('Setting up real-time subscription for messages', {
       userId,
       receiverId,
-      channel: `chat:${userId}:${receiverId}`
+      channel: `messages-${channelName}`
     })
     
     const subscription = supabase
-      .channel('messages-channel')
+      .channel(`messages-${channelName}`)
       .on(
         'postgres_changes',
         {
