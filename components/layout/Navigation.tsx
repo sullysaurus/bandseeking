@@ -12,6 +12,7 @@ export default function Navigation() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [user, setUser] = useState<any>(null)
   const [userProfile, setUserProfile] = useState<any>(null)
+  const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
     const getUser = async () => {
@@ -28,11 +29,14 @@ export default function Navigation() {
         
         setUserProfile(userData)
       }
+      setIsLoading(false)
     }
     getUser()
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user ?? null)
+      setUserProfile(null) // Reset profile when user changes
+      setIsLoading(false) // Auth state has been determined
     })
 
     return () => subscription.unsubscribe()
@@ -58,7 +62,13 @@ export default function Navigation() {
               <span>Search</span>
             </Link>
 
-            {user ? (
+            {isLoading ? (
+              // Show placeholder while loading to prevent flash
+              <div className="flex items-center space-x-4">
+                <div className="w-16 h-7 bg-gray-100 rounded animate-pulse" />
+                <div className="w-20 h-7 bg-gray-100 rounded animate-pulse" />
+              </div>
+            ) : user ? (
               <>
                 <Link href="/dashboard/messages" className="flex items-center space-x-1 hover:text-gray-600">
                   <MessageSquare className="w-4 h-4" />
@@ -110,7 +120,13 @@ export default function Navigation() {
               Search Musicians
             </Link>
 
-            {user ? (
+            {isLoading ? (
+              // Mobile loading state
+              <div className="space-y-2">
+                <div className="h-10 bg-gray-100 rounded-lg animate-pulse" />
+                <div className="h-10 bg-gray-100 rounded-lg animate-pulse" />
+              </div>
+            ) : user ? (
               <>
                 <Link
                   href="/dashboard/messages"
