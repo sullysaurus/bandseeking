@@ -213,13 +213,13 @@ export default function SearchClient() {
             <p className="text-gray-600 text-lg">Discover talented musicians ready to collaborate</p>
           </div>
 
-        {/* Enhanced Search Controls */}
+        {/* Compact Search Controls */}
         <div className="mb-6">
-          {/* Main Search Bar */}
-          <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-4 mb-4">
-            {/* Location Search Row */}
-            <div className="flex items-center gap-3 mb-4">
-              <div className="flex items-center gap-2 flex-1">
+          {/* Main Search Bar - Single Row */}
+          <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4">
+            <div className="flex flex-col lg:flex-row gap-6">
+              {/* Location and Radius Section */}
+              <div className="flex items-center gap-4 lg:w-auto">
                 <div className="relative">
                   <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
                   <Input
@@ -227,7 +227,7 @@ export default function SearchClient() {
                     value={filters.zipCode}
                     onChange={(e) => setFilters({ ...filters, zipCode: e.target.value })}
                     maxLength={5}
-                    className="pl-10 pr-4 h-12 text-center bg-gray-50 border-gray-200 rounded-xl focus:bg-white transition-colors"
+                    className="pl-10 pr-4 h-10 w-32 text-center bg-gray-50 border-gray-200 rounded-lg focus:bg-white transition-colors"
                   />
                 </div>
                 <Button
@@ -235,7 +235,7 @@ export default function SearchClient() {
                   variant="ghost"
                   onClick={getMyLocation}
                   disabled={gettingLocation}
-                  className="h-12 px-4 bg-gray-50 hover:bg-gray-100 rounded-xl border border-gray-200"
+                  className="h-10 px-3 bg-gray-50 hover:bg-gray-100 rounded-lg border border-gray-200"
                   title="Use my location"
                 >
                   {gettingLocation ? (
@@ -244,37 +244,26 @@ export default function SearchClient() {
                     <MapPin className="w-4 h-4" />
                   )}
                 </Button>
-              </div>
-            </div>
-
-            {/* Distance Slider */}
-            <div className="mb-4">
-              <div className="flex items-center justify-between mb-2">
-                <label className="text-sm font-medium text-gray-700">Search Radius</label>
-                <span className="text-sm font-semibold text-gray-900 bg-gray-100 px-2 py-1 rounded-lg">
-                  {filters.maxDistance} miles
-                </span>
-              </div>
-              <div className="relative">
-                <input
-                  type="range"
-                  min="5"
-                  max="100"
-                  step="5"
-                  value={filters.maxDistance}
-                  onChange={(e) => setFilters({ ...filters, maxDistance: parseInt(e.target.value) })}
-                  className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider"
-                />
-                <div className="flex justify-between text-xs text-gray-500 mt-1">
-                  <span>5mi</span>
-                  <span>100mi</span>
+                
+                {/* Compact Radius */}
+                <div className="flex items-center gap-3">
+                  <span className="text-sm text-gray-600 whitespace-nowrap">within</span>
+                  <select
+                    value={filters.maxDistance}
+                    onChange={(e) => setFilters({ ...filters, maxDistance: parseInt(e.target.value) })}
+                    className="h-10 px-4 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 min-w-[80px]"
+                  >
+                    <option value={5}>5mi</option>
+                    <option value={10}>10mi</option>
+                    <option value={25}>25mi</option>
+                    <option value={50}>50mi</option>
+                    <option value={100}>100mi</option>
+                  </select>
                 </div>
               </div>
-            </div>
 
-            {/* Quick Filters Row */}
-            <div className="flex items-center justify-between">
-              <div className="flex flex-wrap gap-2">
+              {/* Quick Instrument Filters */}
+              <div className="flex items-center gap-3 flex-1">
                 {['Guitar', 'Drums', 'Vocals', 'Bass'].map((chip) => (
                   <button
                     key={chip}
@@ -282,26 +271,28 @@ export default function SearchClient() {
                       const realChip = chip
                       setFilters({ ...filters, instrument: filters.instrument === realChip ? '' : realChip })
                     }}
-                    className={`px-3 py-1.5 text-sm rounded-full border-2 transition-all font-medium ${
+                    className={`px-4 py-1.5 text-sm rounded-lg border transition-all font-medium ${
                       filters.instrument === chip
-                        ? 'bg-black text-white border-black'
-                        : 'bg-white text-gray-600 border-gray-300 hover:border-gray-400 hover:bg-gray-50'
+                        ? 'bg-blue-600 text-white border-blue-600'
+                        : 'bg-gray-50 text-gray-700 border-gray-200 hover:border-gray-300 hover:bg-gray-100'
                     }`}
                   >
                     {chip}
                   </button>
                 ))}
               </div>
+
+              {/* More Filters Button */}
               <Button
                 variant="secondary"
                 size="sm"
                 onClick={() => setShowFilters(!showFilters)}
-                className="flex items-center gap-2 h-10 px-4 rounded-xl bg-gray-100 hover:bg-gray-200 border-0"
+                className="flex items-center gap-2 h-10 px-4 rounded-lg bg-gray-100 hover:bg-gray-200 border-0 shrink-0"
               >
                 <Filter className="w-4 h-4" />
-                <span className="font-medium">More</span>
+                <span className="font-medium">Filters</span>
                 {activeFiltersCount() > 0 && (
-                  <span className="ml-1 px-2 py-0.5 bg-black text-white text-xs rounded-full font-semibold">
+                  <span className="px-1.5 py-0.5 bg-blue-600 text-white text-xs rounded-full font-semibold">
                     {activeFiltersCount()}
                   </span>
                 )}

@@ -49,14 +49,14 @@ export default function Navigation() {
 
   return (
     <nav className="sticky top-0 z-50 bg-white/90 backdrop-blur-lg border-b border-gray-200">
-      <div className="max-w-7xl mx-auto px-4">
+      <div className="max-w-7xl mx-auto px-6">
         <div className="flex justify-between items-center h-16">
           <Link href={user ? "/dashboard" : "/"} className="text-xl font-bold text-black hover:text-blue-600 transition-colors">
             BandSeeking
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-6">
+          <div className="hidden md:flex items-center space-x-8">
             <Link href="/search" className="flex items-center space-x-1 text-gray-600 hover:text-black transition-colors">
               <Search className="w-4 h-4" />
               <span>Search</span>
