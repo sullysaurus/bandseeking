@@ -211,92 +211,101 @@ export default function SearchPage() {
           <h1 className="text-3xl font-bold mb-2">Find Musicians</h1>
         </div>
 
-        {/* Mobile-Optimized Search Controls */}
-        <div className="mb-4 p-3 sm:p-4 bg-white rounded-lg border border-gray-200">
-          {/* Top Row: Location & Filters */}
-          <div className="flex items-center justify-between gap-2 mb-3">
-            {/* ZIP Code + Location Button */}
-            <div className="flex items-center gap-1">
-              <Input
-                placeholder="ZIP Code"
-                value={filters.zipCode}
-                onChange={(e) => setFilters({ ...filters, zipCode: e.target.value })}
-                maxLength={5}
-                className="w-20 text-center text-sm h-8"
-              />
+        {/* Enhanced Search Controls */}
+        <div className="mb-6">
+          {/* Main Search Bar */}
+          <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-4 mb-4">
+            {/* Location Search Row */}
+            <div className="flex items-center gap-3 mb-4">
+              <div className="flex items-center gap-2 flex-1">
+                <div className="relative">
+                  <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                  <Input
+                    placeholder="ZIP Code"
+                    value={filters.zipCode}
+                    onChange={(e) => setFilters({ ...filters, zipCode: e.target.value })}
+                    maxLength={5}
+                    className="pl-10 pr-4 h-12 text-center bg-gray-50 border-gray-200 rounded-xl focus:bg-white transition-colors"
+                  />
+                </div>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  onClick={getMyLocation}
+                  disabled={gettingLocation}
+                  className="h-12 px-4 bg-gray-50 hover:bg-gray-100 rounded-xl border border-gray-200"
+                  title="Use my location"
+                >
+                  {gettingLocation ? (
+                    <div className="w-4 h-4 animate-spin rounded-full border-2 border-gray-300 border-t-gray-600" />
+                  ) : (
+                    <MapPin className="w-4 h-4" />
+                  )}
+                </Button>
+              </div>
+            </div>
+
+            {/* Distance Slider */}
+            <div className="mb-4">
+              <div className="flex items-center justify-between mb-2">
+                <label className="text-sm font-medium text-gray-700">Search Radius</label>
+                <span className="text-sm font-semibold text-gray-900 bg-gray-100 px-2 py-1 rounded-lg">
+                  {filters.maxDistance} miles
+                </span>
+              </div>
+              <div className="relative">
+                <input
+                  type="range"
+                  min="5"
+                  max="100"
+                  step="5"
+                  value={filters.maxDistance}
+                  onChange={(e) => setFilters({ ...filters, maxDistance: parseInt(e.target.value) })}
+                  className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider"
+                />
+                <div className="flex justify-between text-xs text-gray-500 mt-1">
+                  <span>5mi</span>
+                  <span>100mi</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Quick Filters Row */}
+            <div className="flex items-center justify-between">
+              <div className="flex flex-wrap gap-2">
+                {['Guitar', 'Drums', 'Vocals', 'Bass'].map((chip) => (
+                  <button
+                    key={chip}
+                    onClick={() => {
+                      const realChip = chip
+                      setFilters({ ...filters, instrument: filters.instrument === realChip ? '' : realChip })
+                    }}
+                    className={`px-3 py-1.5 text-sm rounded-full border-2 transition-all font-medium ${
+                      filters.instrument === chip
+                        ? 'bg-black text-white border-black'
+                        : 'bg-white text-gray-600 border-gray-300 hover:border-gray-400 hover:bg-gray-50'
+                    }`}
+                  >
+                    {chip}
+                  </button>
+                ))}
+              </div>
               <Button
-                type="button"
-                variant="ghost"
+                variant="secondary"
                 size="sm"
-                onClick={getMyLocation}
-                disabled={gettingLocation}
-                className="p-1 h-8 w-8"
-                title="Get my location"
+                onClick={() => setShowFilters(!showFilters)}
+                className="flex items-center gap-2 h-10 px-4 rounded-xl bg-gray-100 hover:bg-gray-200 border-0"
               >
-                <MapPin className="w-3 h-3" />
+                <Filter className="w-4 h-4" />
+                <span className="font-medium">More</span>
+                {activeFiltersCount() > 0 && (
+                  <span className="ml-1 px-2 py-0.5 bg-black text-white text-xs rounded-full font-semibold">
+                    {activeFiltersCount()}
+                  </span>
+                )}
+                <ChevronDown className={`w-4 h-4 transition-transform ${showFilters ? 'rotate-180' : ''}`} />
               </Button>
             </div>
-
-            {/* Radius Slider - Compact */}
-            <div className="flex items-center gap-1 flex-1 max-w-32">
-              <span className="text-xs text-gray-600">{filters.maxDistance}mi radius</span>
-              <input
-                type="range"
-                min="5"
-                max="100"
-                step="5"
-                value={filters.maxDistance}
-                onChange={(e) => setFilters({ ...filters, maxDistance: parseInt(e.target.value) })}
-                className="flex-1 h-1"
-              />
-            </div>
-
-            {/* Filters Button */}
-            <Button
-              variant="secondary"
-              size="sm"
-              onClick={() => setShowFilters(!showFilters)}
-              className="flex items-center h-8 px-2"
-            >
-              <Filter className="w-3 h-3 mr-1" />
-              <span className="hidden sm:inline">Filters</span>
-              {activeFiltersCount() > 0 && (
-                <span className="ml-1 px-1.5 py-0.5 bg-black text-white text-xs rounded-full">
-                  {activeFiltersCount()}
-                </span>
-              )}
-            </Button>
-          </div>
-
-          {/* Quick Search Chips - More Compact */}
-          <div className="flex flex-wrap gap-1.5">
-            {['Guitar', 'Drums', 'Vocals', 'Bass', 'Keys', 'Rock', 'Jazz', 'Pop'].map((chip) => (
-              <button
-                key={chip}
-                onClick={() => {
-                  const isInstrument = ['Guitar', 'Drums', 'Vocals', 'Bass', 'Keys'].includes(chip)
-                  const realChip = chip === 'Keys' ? 'Keyboard' : chip
-                  if (isInstrument) {
-                    setFilters({ ...filters, instrument: filters.instrument === realChip ? '' : realChip })
-                  } else {
-                    const isSelected = filters.genres.includes(realChip)
-                    setFilters({
-                      ...filters,
-                      genres: isSelected 
-                        ? filters.genres.filter(g => g !== realChip)
-                        : [...filters.genres, realChip]
-                    })
-                  }
-                }}
-                className={`px-2 py-1 text-xs rounded-full border transition-colors ${
-                  (filters.instrument === (chip === 'Keys' ? 'Keyboard' : chip) || filters.genres.includes(chip))
-                    ? 'bg-black text-white border-black'
-                    : 'bg-gray-50 text-gray-600 border-gray-200 hover:border-gray-300'
-                }`}
-              >
-                {chip}
-              </button>
-            ))}
           </div>
         </div>
 
@@ -481,15 +490,15 @@ export default function SearchPage() {
 
         {/* Results Grid */}
         {loading ? (
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
             {[...Array(8)].map((_, i) => (
               <div key={i} className="animate-pulse">
-                <div className="bg-gray-200 h-64 rounded-lg"></div>
+                <div className="bg-gray-200 h-80 rounded-xl"></div>
               </div>
             ))}
           </div>
         ) : filteredProfiles.length > 0 ? (
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
             {filteredProfiles.map((profile) => (
               <ProfileCard key={profile.id} profile={profile} />
             ))}

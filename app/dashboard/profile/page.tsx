@@ -140,9 +140,7 @@ export default function EditProfilePage() {
         if (uploadError) {
           console.error('Avatar upload error details:', {
             error: uploadError,
-            message: uploadError.message,
-            details: uploadError.details,
-            hint: uploadError.hint
+            message: uploadError.message
           })
           throw new Error(`Failed to upload avatar: ${uploadError.message}`)
         }

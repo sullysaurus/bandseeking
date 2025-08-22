@@ -70,8 +70,8 @@ export default function ProfileCard({ profile }: ProfileCardProps) {
   }
 
   return (
-    <div className="bg-white rounded-lg border border-gray-200 overflow-hidden hover:shadow-lg transition-shadow duration-200">
-      <div className="aspect-square relative bg-gray-100">
+    <div className="bg-white rounded-xl border border-gray-200 overflow-hidden hover:shadow-lg transition-shadow duration-200">
+      <div className="aspect-square relative bg-gradient-to-br from-gray-50 to-gray-100">
         {profile.profile_image_url ? (
           <Image
             src={profile.profile_image_url}
@@ -92,41 +92,41 @@ export default function ProfileCard({ profile }: ProfileCardProps) {
         )}
       </div>
 
-      <div className="p-4">
-        <h3 className="font-semibold text-lg mb-1">{user.full_name}</h3>
-        <p className="text-sm text-gray-600 mb-3">@{user.username}</p>
+      <div className="p-3 sm:p-4">
+        <h3 className="font-semibold text-base sm:text-lg mb-1 truncate">{user.full_name}</h3>
+        <p className="text-xs sm:text-sm text-gray-600 mb-3">@{user.username}</p>
 
-        <div className="space-y-2 mb-4">
-          <div className="flex items-center text-sm text-gray-600">
-            <Music className="w-4 h-4 mr-2" />
-            <span>{profile.main_instrument}</span>
+        <div className="space-y-1.5 mb-3">
+          <div className="flex items-center text-xs sm:text-sm text-gray-700">
+            <Music className="w-3.5 h-3.5 mr-2 flex-shrink-0" />
+            <span className="truncate font-medium">{profile.main_instrument}</span>
           </div>
           {user.zip_code && (
-            <div className="flex items-center text-sm text-gray-600">
-              <MapPin className="w-4 h-4 mr-2" />
+            <div className="flex items-center text-xs sm:text-sm text-gray-600">
+              <MapPin className="w-3.5 h-3.5 mr-2 flex-shrink-0" />
               <span>{user.zip_code}</span>
             </div>
           )}
-          <div className="flex items-center text-sm text-gray-600">
-            <Star className="w-4 h-4 mr-2" />
+          <div className="flex items-center text-xs sm:text-sm text-gray-600">
+            <Star className="w-3.5 h-3.5 mr-2 flex-shrink-0" />
             <span className="capitalize">{profile.experience_level}</span>
           </div>
         </div>
 
         {profile.seeking && profile.seeking.length > 0 && (
-          <div className="mb-4">
-            <p className="text-xs text-gray-500 mb-2">Looking for:</p>
+          <div className="mb-3">
+            <p className="text-xs text-gray-500 mb-1.5">Looking for:</p>
             <div className="flex flex-wrap gap-1">
               {profile.seeking.slice(0, 2).map((item: string, index: number) => (
                 <span
                   key={index}
-                  className="text-xs px-2 py-1 bg-gray-100 rounded"
+                  className="text-xs px-2 py-1 bg-gray-100 text-gray-700 rounded-md"
                 >
                   {item}
                 </span>
               ))}
               {profile.seeking.length > 2 && (
-                <span className="text-xs px-2 py-1 bg-gray-100 rounded">
+                <span className="text-xs px-2 py-1 bg-gray-100 text-gray-700 rounded-md">
                   +{profile.seeking.length - 2}
                 </span>
               )}
@@ -137,7 +137,7 @@ export default function ProfileCard({ profile }: ProfileCardProps) {
         <div className="space-y-2">
           <div className="flex gap-2">
             <Link href={`/profile/${user.username}`} className="flex-1">
-              <Button variant="primary" size="sm" className="w-full">
+              <Button variant="primary" size="sm" className="w-full text-xs sm:text-sm">
                 View Profile
               </Button>
             </Link>
@@ -145,15 +145,16 @@ export default function ProfileCard({ profile }: ProfileCardProps) {
               variant="ghost" 
               size="sm"
               onClick={handleSave}
+              className="px-2"
             >
-              <Heart className={`w-4 h-4 ${isSaved ? 'fill-current' : ''}`} />
+              <Heart className={`w-4 h-4 ${isSaved ? 'fill-current text-red-500' : 'text-gray-400'}`} />
             </Button>
           </div>
           {currentUser && currentUser.id !== user.id && (
             <Button 
               variant="secondary" 
               size="sm" 
-              className="w-full"
+              className="w-full text-xs sm:text-sm"
               onClick={handleMessage}
             >
               Message
