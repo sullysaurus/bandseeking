@@ -49,15 +49,6 @@ export default function SearchPage() {
         .order('created_at', { ascending: false })
 
       if (error) throw error
-      
-      // Debug: Check all profiles to see published status
-      const { data: allProfiles } = await supabase
-        .from('profiles')
-        .select('id, is_published, user:users(username)')
-      
-      console.log('All profiles in DB:', allProfiles)
-      console.log('Published profiles:', data?.length || 0)
-      
       setProfiles(data || [])
       setFilteredProfiles(data || [])
     } catch (error) {

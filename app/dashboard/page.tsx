@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { supabase } from '@/lib/supabase'
+import { ensureUserRecord } from '@/lib/auth-helpers'
 import Navigation from '@/components/layout/Navigation'
 import Button from '@/components/ui/Button'
 import { User, MessageSquare, Heart, Settings, Edit, Eye } from 'lucide-react'
@@ -22,22 +23,11 @@ export default function DashboardPage() {
 
   const checkAuth = async () => {
     try {
-      const { data: { user: authUser } } = await supabase.auth.getUser()
+      // Ensure user record exists and get user data
+      const userData = await ensureUserRecord()
       
-      if (!authUser) {
-        router.push('/auth/login')
-        return
-      }
-
-      // Get user data
-      const { data: userData } = await supabase
-        .from('users')
-        .select('*')
-        .eq('id', authUser.id)
-        .single()
-
       // Check if user has completed profile setup
-      if (!userData?.profile_completed) {
+      if (!userData.profile_completed) {
         router.push('/onboarding')
         return
       }
@@ -48,7 +38,7 @@ export default function DashboardPage() {
       const { data: profileData } = await supabase
         .from('profiles')
         .select('*')
-        .eq('user_id', authUser.id)
+        .eq('user_id', userData.id)
         .single()
 
       setProfile(profileData)
@@ -57,7 +47,7 @@ export default function DashboardPage() {
       const { count: savedProfilesCount } = await supabase
         .from('saved_profiles')
         .select('*', { count: 'exact', head: true })
-        .eq('user_id', authUser.id)
+        .eq('user_id', userData.id)
 
       setSavedCount(savedProfilesCount || 0)
 
@@ -65,12 +55,14 @@ export default function DashboardPage() {
       const { count: unreadCount } = await supabase
         .from('messages')
         .select('*', { count: 'exact', head: true })
-        .eq('receiver_id', authUser.id)
+        .eq('receiver_id', userData.id)
         .eq('read', false)
 
       setMessageCount(unreadCount || 0)
     } catch (error) {
       console.error('Error loading dashboard:', error)
+      // If there's an auth error, redirect to login
+      router.push('/auth/login')
     } finally {
       setLoading(false)
     }

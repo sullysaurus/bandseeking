@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { supabase } from '@/lib/supabase'
+import { ensureUserRecord } from '@/lib/auth-helpers'
 import Input from '@/components/ui/Input'
 import Button from '@/components/ui/Button'
 import { z } from 'zod'
@@ -42,24 +43,13 @@ export default function LoginPage() {
 
       if (authError) throw authError
 
-      // Get the current user
-      const { data: { user } } = await supabase.auth.getUser()
+      // Ensure user record exists and get user data
+      const userData = await ensureUserRecord()
       
-      if (user) {
-        // Check if user has completed profile
-        const { data: userData } = await supabase
-          .from('users')
-          .select('profile_completed')
-          .eq('id', user.id)
-          .single()
-
-        if (userData?.profile_completed) {
-          router.push('/dashboard')
-        } else {
-          router.push('/onboarding')
-        }
+      if (userData.profile_completed) {
+        router.push('/dashboard')
       } else {
-        throw new Error('Authentication failed')
+        router.push('/onboarding')
       }
     } catch (err: any) {
       setError(err.message || 'Invalid email or password')

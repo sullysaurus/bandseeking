@@ -1,5 +1,6 @@
 import { createClient } from '@supabase/supabase-js'
 import { NextRequest, NextResponse } from 'next/server'
+import { ensureUserRecord } from '@/lib/auth-helpers'
 
 export async function GET(request: NextRequest) {
   const requestUrl = new URL(request.url)
@@ -19,24 +20,15 @@ export async function GET(request: NextRequest) {
         return NextResponse.redirect(new URL('/auth/error', request.url))
       }
       
-      // Get the authenticated user
-      const { data: { user } } = await supabase.auth.getUser()
+      // Ensure user record exists and get user data
+      const userData = await ensureUserRecord()
       
-      if (user) {
-        // Check if user has completed their profile
-        const { data: userData, error: userError } = await supabase
-          .from('users')
-          .select('profile_completed')
-          .eq('id', user.id)
-          .single()
-        
-        // If no user record exists (email confirmation) or profile not completed, go to onboarding
-        if (userError || !userData || !userData.profile_completed) {
-          return NextResponse.redirect(new URL('/onboarding', request.url))
-        } else {
-          // If profile is completed, go to dashboard
-          return NextResponse.redirect(new URL('/dashboard', request.url))
-        }
+      if (userData.profile_completed) {
+        // If profile is completed, go to dashboard
+        return NextResponse.redirect(new URL('/dashboard', request.url))
+      } else {
+        // If profile not completed or new user, go to onboarding
+        return NextResponse.redirect(new URL('/onboarding', request.url))
       }
     } catch (error) {
       console.error('Error in auth callback:', error)
