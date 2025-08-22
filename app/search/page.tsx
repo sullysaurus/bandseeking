@@ -6,7 +6,7 @@ import Navigation from '@/components/layout/Navigation'
 import ProfileCard from '@/components/ProfileCard'
 import Button from '@/components/ui/Button'
 import Input from '@/components/ui/Input'
-import { Search, Filter, X, ChevronDown } from 'lucide-react'
+import { Search, Filter, X, ChevronDown, MapPin } from 'lucide-react'
 import { instruments, genres, seekingOptions, experienceLevels, availabilityOptions } from '@/lib/utils'
 
 export default function SearchPage() {
@@ -15,6 +15,7 @@ export default function SearchPage() {
   const [loading, setLoading] = useState(true)
   const [showFilters, setShowFilters] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
+  const [gettingLocation, setGettingLocation] = useState(false)
   
   const [filters, setFilters] = useState({
     instrument: '',
@@ -142,6 +143,48 @@ export default function SearchPage() {
     setSearchQuery('')
   }
 
+  const getMyLocation = async () => {
+    setGettingLocation(true)
+    try {
+      if (!navigator.geolocation) {
+        throw new Error('Geolocation is not supported by this browser')
+      }
+
+      const position = await new Promise<GeolocationPosition>((resolve, reject) => {
+        navigator.geolocation.getCurrentPosition(resolve, reject, {
+          enableHighAccuracy: true,
+          timeout: 10000,
+          maximumAge: 300000 // 5 minutes
+        })
+      })
+
+      const { latitude, longitude } = position.coords
+
+      // Use reverse geocoding to get ZIP code
+      const response = await fetch(
+        `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${latitude}&longitude=${longitude}&localityLanguage=en`
+      )
+      
+      if (!response.ok) {
+        throw new Error('Failed to get location data')
+      }
+
+      const data = await response.json()
+      const zipCode = data.postcode || data.postalCode
+
+      if (zipCode) {
+        setFilters({ ...filters, zipCode })
+      } else {
+        throw new Error('Could not determine ZIP code from location')
+      }
+    } catch (error) {
+      console.error('Error getting location:', error)
+      alert(error instanceof Error ? error.message : 'Failed to get your location')
+    } finally {
+      setGettingLocation(false)
+    }
+  }
+
   const activeFiltersCount = () => {
     let count = 0
     if (filters.instrument) count++
@@ -152,6 +195,7 @@ export default function SearchPage() {
     if (filters.hasTransportation) count++
     if (filters.hasEquipment) count++
     if (filters.maxDistance < 100) count++
+    if (filters.zipCode) count++
     return count
   }
 
@@ -319,6 +363,29 @@ export default function SearchPage() {
                   onChange={(e) => setFilters({ ...filters, maxDistance: parseInt(e.target.value) })}
                   className="w-full"
                 />
+              </div>
+
+              {/* Location */}
+              <div>
+                <label className="block text-sm font-medium mb-2">Location</label>
+                <div className="space-y-2">
+                  <Input
+                    placeholder="Enter ZIP code"
+                    value={filters.zipCode}
+                    onChange={(e) => setFilters({ ...filters, zipCode: e.target.value })}
+                    maxLength={5}
+                  />
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={getMyLocation}
+                    disabled={gettingLocation}
+                    className="w-full flex items-center justify-center gap-2 text-sm"
+                  >
+                    <MapPin className="w-4 h-4" />
+                    {gettingLocation ? 'Getting location...' : 'Get my location'}
+                  </Button>
+                </div>
               </div>
             </div>
 
