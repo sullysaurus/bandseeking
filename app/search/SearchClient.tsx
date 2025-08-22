@@ -205,11 +205,13 @@ export default function SearchClient() {
   return (
     <>
       <Navigation />
-      <div className="max-w-7xl mx-auto px-4 py-8">
-        {/* Search Header */}
-        <div className="mb-6">
-          <h1 className="text-3xl font-bold mb-2">Find Musicians</h1>
-        </div>
+      <div className="min-h-screen bg-white">
+        <div className="max-w-7xl mx-auto px-4 py-8">
+          {/* Search Header */}
+          <div className="mb-6">
+            <h1 className="text-4xl font-bold mb-2 text-black">Find Musicians</h1>
+            <p className="text-gray-600 text-lg">Discover talented musicians ready to collaborate</p>
+          </div>
 
         {/* Enhanced Search Controls */}
         <div className="mb-6">
@@ -483,7 +485,7 @@ export default function SearchClient() {
 
         {/* Results Count */}
         <div className="mb-4">
-          <p className="text-gray-600">
+          <p className="text-gray-700">
             Found {filteredProfiles.length} musician{filteredProfiles.length !== 1 ? 's' : ''}
           </p>
         </div>
@@ -505,12 +507,13 @@ export default function SearchClient() {
           </div>
         ) : (
           <div className="text-center py-12">
-            <p className="text-gray-600 mb-4">No musicians found matching your criteria</p>
+            <p className="text-gray-700 mb-4">No musicians found matching your criteria</p>
             <Button variant="secondary" onClick={clearFilters}>
               Clear Filters
             </Button>
           </div>
         )}
+        </div>
       </div>
     </>
   )

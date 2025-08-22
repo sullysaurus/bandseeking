@@ -48,16 +48,16 @@ export default function Navigation() {
   }
 
   return (
-    <nav className="sticky top-0 z-50 bg-white border-b border-gray-200">
+    <nav className="sticky top-0 z-50 bg-white/90 backdrop-blur-lg border-b border-gray-200">
       <div className="max-w-7xl mx-auto px-4">
         <div className="flex justify-between items-center h-16">
-          <Link href="/" className="text-xl font-bold">
+          <Link href="/" className="text-xl font-bold text-black hover:text-blue-600 transition-colors">
             BandSeeking
           </Link>
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-6">
-            <Link href="/search" className="flex items-center space-x-1 hover:text-gray-600">
+            <Link href="/search" className="flex items-center space-x-1 text-gray-600 hover:text-black transition-colors">
               <Search className="w-4 h-4" />
               <span>Search</span>
             </Link>
@@ -65,22 +65,22 @@ export default function Navigation() {
             {isLoading ? (
               // Show placeholder while loading to prevent flash
               <div className="flex items-center space-x-4">
-                <div className="w-16 h-7 bg-gray-100 rounded animate-pulse" />
-                <div className="w-20 h-7 bg-gray-100 rounded animate-pulse" />
+                <div className="w-16 h-7 bg-gray-200 rounded animate-pulse" />
+                <div className="w-20 h-7 bg-gray-200 rounded animate-pulse" />
               </div>
             ) : user ? (
               <>
-                <Link href="/dashboard/messages" className="flex items-center space-x-1 hover:text-gray-600">
+                <Link href="/dashboard/messages" className="flex items-center space-x-1 text-gray-600 hover:text-black transition-colors">
                   <MessageSquare className="w-4 h-4" />
                   <span>Messages</span>
                 </Link>
-                <Link href="/dashboard" className="flex items-center space-x-1 hover:text-gray-600">
+                <Link href="/dashboard" className="flex items-center space-x-1 text-gray-600 hover:text-black transition-colors">
                   <User className="w-4 h-4" />
                   <span>Dashboard</span>
                 </Link>
                 <button
                   onClick={handleSignOut}
-                  className="flex items-center space-x-1 hover:text-gray-600"
+                  className="flex items-center space-x-1 text-gray-600 hover:text-black transition-colors"
                 >
                   <LogOut className="w-4 h-4" />
                   <span>Sign Out</span>
@@ -89,10 +89,10 @@ export default function Navigation() {
             ) : (
               <>
                 <Link href="/auth/login">
-                  <Button variant="ghost" size="sm">Sign In</Button>
+                  <Button variant="ghost" size="sm" className="text-gray-600 hover:text-black hover:bg-gray-100">Sign In</Button>
                 </Link>
                 <Link href="/auth/register">
-                  <Button size="sm">Get Started</Button>
+                  <Button size="sm" className="bg-blue-600 hover:bg-blue-700 text-white">Get Started</Button>
                 </Link>
               </>
             )}
@@ -101,7 +101,7 @@ export default function Navigation() {
           {/* Mobile Menu Button */}
           <button
             onClick={() => setIsMenuOpen(!isMenuOpen)}
-            className="md:hidden p-2"
+            className="md:hidden p-2 text-gray-300 hover:text-white"
           >
             {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </button>
@@ -110,11 +110,11 @@ export default function Navigation() {
 
       {/* Mobile Menu */}
       {isMenuOpen && (
-        <div className="md:hidden border-t border-gray-200">
+        <div className="md:hidden border-t border-gray-200 bg-white">
           <div className="px-4 py-4 space-y-2">
             <Link
               href="/search"
-              className="block px-4 py-2 hover:bg-gray-50 rounded-lg"
+              className="block px-4 py-2 text-gray-600 hover:text-black hover:bg-gray-100 rounded-lg"
               onClick={() => setIsMenuOpen(false)}
             >
               Search Musicians
@@ -123,21 +123,21 @@ export default function Navigation() {
             {isLoading ? (
               // Mobile loading state
               <div className="space-y-2">
-                <div className="h-10 bg-gray-100 rounded-lg animate-pulse" />
-                <div className="h-10 bg-gray-100 rounded-lg animate-pulse" />
+                <div className="h-10 bg-gray-200 rounded-lg animate-pulse" />
+                <div className="h-10 bg-gray-200 rounded-lg animate-pulse" />
               </div>
             ) : user ? (
               <>
                 <Link
                   href="/dashboard/messages"
-                  className="block px-4 py-2 hover:bg-gray-50 rounded-lg"
+                  className="block px-4 py-2 text-gray-600 hover:text-black hover:bg-gray-100 rounded-lg"
                   onClick={() => setIsMenuOpen(false)}
                 >
                   Messages
                 </Link>
                 <Link
                   href="/dashboard"
-                  className="block px-4 py-2 hover:bg-gray-50 rounded-lg"
+                  className="block px-4 py-2 text-gray-600 hover:text-black hover:bg-gray-100 rounded-lg"
                   onClick={() => setIsMenuOpen(false)}
                 >
                   Dashboard
@@ -147,7 +147,7 @@ export default function Navigation() {
                     handleSignOut()
                     setIsMenuOpen(false)
                   }}
-                  className="block w-full text-left px-4 py-2 hover:bg-gray-50 rounded-lg"
+                  className="block w-full text-left px-4 py-2 text-gray-600 hover:text-black hover:bg-gray-100 rounded-lg"
                 >
                   Sign Out
                 </button>
@@ -156,14 +156,14 @@ export default function Navigation() {
               <>
                 <Link
                   href="/auth/login"
-                  className="block px-4 py-2 hover:bg-gray-50 rounded-lg"
+                  className="block px-4 py-2 text-gray-600 hover:text-black hover:bg-gray-100 rounded-lg"
                   onClick={() => setIsMenuOpen(false)}
                 >
                   Sign In
                 </Link>
                 <Link
                   href="/auth/register"
-                  className="block px-4 py-2 hover:bg-gray-50 rounded-lg font-medium"
+                  className="block px-4 py-2 text-white bg-blue-600 hover:bg-blue-700 rounded-lg font-medium"
                   onClick={() => setIsMenuOpen(false)}
                 >
                   Get Started
