@@ -101,10 +101,14 @@ export default function ChatPage() {
   }
 
   const subscribeToMessages = (userId: string) => {
-    console.log('Setting up real-time subscription for messages')
+    console.log('Setting up real-time subscription for messages', {
+      userId,
+      receiverId,
+      channel: `chat:${userId}:${receiverId}`
+    })
     
     const subscription = supabase
-      .channel(`chat:${userId}:${receiverId}`)
+      .channel('messages-channel')
       .on(
         'postgres_changes',
         {
@@ -113,20 +117,43 @@ export default function ChatPage() {
           table: 'messages'
         },
         (payload: any) => {
-          console.log('Received new message via realtime:', payload.new)
-          const newMsg = payload.new
-          // Only add messages that are part of this conversation
-          if ((newMsg.sender_id === userId && newMsg.receiver_id === receiverId) ||
-              (newMsg.sender_id === receiverId && newMsg.receiver_id === userId)) {
-            setMessages(prev => [...prev, newMsg])
-            if (newMsg.receiver_id === userId) {
-              markMessagesAsRead(userId)
+          console.log('Realtime event received:', {
+            eventType: payload.eventType,
+            new: payload.new,
+            old: payload.old
+          })
+          
+          if (payload.eventType === 'INSERT') {
+            const newMsg = payload.new
+            console.log('Checking message:', {
+              sender: newMsg.sender_id,
+              receiver: newMsg.receiver_id,
+              expectedSender: userId,
+              expectedReceiver: receiverId,
+              willAdd: (newMsg.sender_id === userId && newMsg.receiver_id === receiverId) ||
+                       (newMsg.sender_id === receiverId && newMsg.receiver_id === userId)
+            })
+            
+            // Only add messages that are part of this conversation
+            if ((newMsg.sender_id === userId && newMsg.receiver_id === receiverId) ||
+                (newMsg.sender_id === receiverId && newMsg.receiver_id === userId)) {
+              console.log('Adding message to UI')
+              setMessages(prev => {
+                console.log('Previous messages:', prev.length)
+                return [...prev, newMsg]
+              })
+              if (newMsg.receiver_id === userId) {
+                markMessagesAsRead(userId)
+              }
             }
           }
         }
       )
       .subscribe((status) => {
         console.log('Subscription status:', status)
+        if (status === 'CHANNEL_ERROR') {
+          console.error('Subscription error - check Supabase Realtime settings')
+        }
       })
 
     return () => {
