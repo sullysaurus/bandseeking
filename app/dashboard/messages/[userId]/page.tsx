@@ -202,75 +202,86 @@ export default function ChatPage() {
   return (
     <>
       <Navigation />
-      <div className="max-w-4xl mx-auto px-4 py-8 h-[calc(100vh-4rem)] flex flex-col">
-        {/* Header */}
-        <div className="mb-4 pb-4 border-b border-gray-200">
-          <Link href="/dashboard/messages" className="inline-flex items-center text-gray-600 hover:text-black mb-2">
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Back to Messages
-          </Link>
-          {receiver && (
-            <div className="flex items-center">
-              <div className="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center mr-3">
-                <User className="w-5 h-5 text-gray-500" />
-              </div>
-              <div>
-                <h2 className="text-xl font-semibold">{receiver.full_name}</h2>
-                <Link href={`/profile/${receiver.username}`} className="text-sm text-gray-600 hover:text-black">
-                  View Profile
-                </Link>
-              </div>
-            </div>
-          )}
-        </div>
-
-        {/* Messages */}
-        <div className="flex-1 overflow-y-auto mb-4 space-y-4">
-          {messages.length === 0 ? (
-            <div className="text-center py-12 text-gray-500">
-              Start a conversation with {receiver?.full_name}
-            </div>
-          ) : (
-            messages.map((message) => {
-              const isOwn = message.sender_id === currentUser?.id
-              return (
-                <div
-                  key={message.id}
-                  className={`flex ${isOwn ? 'justify-end' : 'justify-start'}`}
-                >
-                  <div
-                    className={`max-w-xs lg:max-w-md px-4 py-2 rounded-lg ${
-                      isOwn
-                        ? 'bg-black text-white'
-                        : 'bg-gray-100 text-black'
-                    }`}
-                  >
-                    <p className="break-words">{message.content}</p>
-                    <p className={`text-xs mt-1 ${isOwn ? 'text-gray-300' : 'text-gray-500'}`}>
-                      {formatDistanceToNow(new Date(message.created_at), { addSuffix: true })}
-                    </p>
+      <div className="min-h-screen bg-purple-300">
+        <div className="max-w-4xl mx-auto px-4 py-8 h-[calc(100vh-4rem)] flex flex-col">
+          {/* Header */}
+          <div className="mb-6">
+            <Link href="/dashboard/messages" className="inline-flex items-center font-black text-lg mb-4 hover:text-pink-400 transition-colors">
+              ← BACK TO MESSAGES
+            </Link>
+            {receiver && (
+              <div className="bg-white border-4 border-black p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h2 className="text-2xl font-black mb-1">{receiver.full_name.toUpperCase()}</h2>
+                    <p className="font-bold text-gray-600">@{receiver.username}</p>
                   </div>
+                  <Link 
+                    href={`/profile/${receiver.username}`} 
+                    className="px-3 py-1 bg-yellow-300 border-2 border-black font-black text-sm hover:bg-yellow-400 transition-colors"
+                  >
+                    VIEW PROFILE
+                  </Link>
                 </div>
-              )
-            })
-          )}
-          <div ref={messagesEndRef} />
-        </div>
+              </div>
+            )}
+          </div>
 
-        {/* Message Input */}
-        <form onSubmit={sendMessage} className="flex gap-2">
-          <input
-            type="text"
-            placeholder="Type a message..."
-            className="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black"
-            value={newMessage}
-            onChange={(e) => setNewMessage(e.target.value)}
-            disabled={sending}
-          />
-          <Button type="submit" disabled={sending || !newMessage.trim()}>
-            <Send className="w-4 h-4" />
-          </Button>
-        </form>
+          {/* Messages */}
+          <div className="flex-1 overflow-y-auto mb-4 space-y-3 bg-white border-4 border-black p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+            {messages.length === 0 ? (
+              <div className="text-center py-12">
+                <h3 className="font-black text-xl mb-2">START THE CONVERSATION!</h3>
+                <p className="font-bold text-gray-600">
+                  Send a message to {receiver?.full_name}
+                </p>
+              </div>
+            ) : (
+              messages.map((message) => {
+                const isOwn = message.sender_id === currentUser?.id
+                return (
+                  <div
+                    key={message.id}
+                    className={`flex ${isOwn ? 'justify-end' : 'justify-start'}`}
+                  >
+                    <div
+                      className={`max-w-xs lg:max-w-md px-4 py-2 border-3 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] ${
+                        isOwn
+                          ? 'bg-black text-white'
+                          : 'bg-lime-300 text-black'
+                      }`}
+                    >
+                      <p className="font-bold break-words">{message.content}</p>
+                      <p className={`text-xs mt-1 font-bold ${isOwn ? 'text-gray-300' : 'text-gray-700'}`}>
+                        {formatDistanceToNow(new Date(message.created_at), { addSuffix: true }).toUpperCase()}
+                      </p>
+                    </div>
+                  </div>
+                )
+              })
+            )}
+            <div ref={messagesEndRef} />
+          </div>
+
+          {/* Message Input */}
+          <form onSubmit={sendMessage} className="flex gap-2">
+            <input
+              type="text"
+              placeholder="TYPE YOUR MESSAGE..."
+              className="flex-1 px-4 py-3 border-4 border-black font-bold placeholder:text-gray-400 focus:outline-none focus:bg-yellow-100 transition-colors"
+              value={newMessage}
+              onChange={(e) => setNewMessage(e.target.value)}
+              disabled={sending}
+            />
+            <button 
+              type="submit" 
+              disabled={sending || !newMessage.trim()}
+              className="px-6 py-3 bg-black text-white border-4 border-black font-black hover:bg-pink-400 hover:text-black transition-colors shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] disabled:opacity-50"
+            >
+              {sending ? 'SENDING...' : 'SEND →'}
+            </button>
+          </form>
+        </div>
       </div>
     </>
   )

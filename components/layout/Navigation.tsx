@@ -4,39 +4,24 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
-import { Menu, X, User, MessageSquare, Search, LogOut } from 'lucide-react'
-import Button from '@/components/ui/Button'
 
 export default function Navigation() {
   const router = useRouter()
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [user, setUser] = useState<any>(null)
-  const [userProfile, setUserProfile] = useState<any>(null)
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
     const getUser = async () => {
       const { data: { user } } = await supabase.auth.getUser()
       setUser(user)
-      
-      if (user) {
-        // Get user profile for username
-        const { data: userData } = await supabase
-          .from('users')
-          .select('username')
-          .eq('id', user.id)
-          .single()
-        
-        setUserProfile(userData)
-      }
       setIsLoading(false)
     }
     getUser()
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user ?? null)
-      setUserProfile(null) // Reset profile when user changes
-      setIsLoading(false) // Auth state has been determined
+      setIsLoading(false)
     })
 
     return () => subscription.unsubscribe()
@@ -48,51 +33,40 @@ export default function Navigation() {
   }
 
   return (
-    <nav className="sticky top-0 z-50 bg-white/90 backdrop-blur-lg border-b border-gray-200">
-      <div className="max-w-7xl mx-auto px-6">
+    <nav className="sticky top-0 z-50 bg-white border-b-4 border-black">
+      <div className="max-w-6xl mx-auto px-4">
         <div className="flex justify-between items-center h-16">
-          <Link href={user ? "/dashboard" : "/"} className="text-xl font-bold text-black hover:text-blue-600 transition-colors">
-            BandSeeking
+          <Link href={user ? "/dashboard" : "/"} className="text-2xl font-black hover:text-pink-400 transition-colors">
+            BANDSEEKING
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-8">
-            <Link href="/search" className="flex items-center space-x-1 text-gray-600 hover:text-black transition-colors">
-              <Search className="w-4 h-4" />
-              <span>Search</span>
+          <div className="hidden md:flex items-center gap-2">
+            <Link href="/search" className="px-3 py-1 bg-yellow-300 border-2 border-black font-black text-sm hover:bg-yellow-400 transition-colors shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+              SEARCH
             </Link>
-
+            
             {isLoading ? (
-              // Show placeholder while loading to prevent flash
-              <div className="flex items-center space-x-4">
-                <div className="w-16 h-7 bg-gray-200 rounded animate-pulse" />
-                <div className="w-20 h-7 bg-gray-200 rounded animate-pulse" />
-              </div>
+              <span className="px-3 py-1 font-black text-sm">LOADING...</span>
             ) : user ? (
               <>
-                <Link href="/dashboard/messages" className="flex items-center space-x-1 text-gray-600 hover:text-black transition-colors">
-                  <MessageSquare className="w-4 h-4" />
-                  <span>Messages</span>
+                <Link href="/dashboard/messages" className="px-3 py-1 bg-cyan-300 border-2 border-black font-black text-sm hover:bg-cyan-400 transition-colors shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+                  MESSAGES
                 </Link>
-                <Link href="/dashboard" className="flex items-center space-x-1 text-gray-600 hover:text-black transition-colors">
-                  <User className="w-4 h-4" />
-                  <span>Dashboard</span>
+                <Link href="/dashboard" className="px-3 py-1 bg-lime-300 border-2 border-black font-black text-sm hover:bg-lime-400 transition-colors shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+                  DASHBOARD
                 </Link>
-                <button
-                  onClick={handleSignOut}
-                  className="flex items-center space-x-1 text-gray-600 hover:text-black transition-colors"
-                >
-                  <LogOut className="w-4 h-4" />
-                  <span>Sign Out</span>
+                <button onClick={handleSignOut} className="px-3 py-1 bg-white border-2 border-black font-black text-sm hover:bg-red-400 transition-colors shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+                  SIGN OUT
                 </button>
               </>
             ) : (
               <>
-                <Link href="/auth/login">
-                  <Button variant="ghost" size="sm" className="text-gray-600 hover:text-black hover:bg-gray-100">Sign In</Button>
+                <Link href="/auth/login" className="px-3 py-1 bg-white border-2 border-black font-black text-sm hover:bg-cyan-300 transition-colors shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+                  SIGN IN
                 </Link>
-                <Link href="/auth/register">
-                  <Button size="sm" className="bg-blue-600 hover:bg-blue-700 text-white">Get Started</Button>
+                <Link href="/auth/register" className="px-3 py-1 bg-pink-400 border-2 border-black font-black text-sm hover:bg-pink-500 transition-colors shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+                  JOIN
                 </Link>
               </>
             )}
@@ -101,72 +75,68 @@ export default function Navigation() {
           {/* Mobile Menu Button */}
           <button
             onClick={() => setIsMenuOpen(!isMenuOpen)}
-            className="md:hidden p-2 text-gray-300 hover:text-white"
+            className="md:hidden px-3 py-1 bg-yellow-300 border-2 border-black font-black text-sm shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
           >
-            {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            {isMenuOpen ? 'X' : 'MENU'}
           </button>
         </div>
       </div>
 
       {/* Mobile Menu */}
       {isMenuOpen && (
-        <div className="md:hidden border-t border-gray-200 bg-white">
+        <div className="md:hidden border-t-4 border-black bg-white">
           <div className="px-4 py-4 space-y-2">
             <Link
               href="/search"
-              className="block px-4 py-2 text-gray-600 hover:text-black hover:bg-gray-100 rounded-lg"
+              className="block px-4 py-2 bg-yellow-300 border-2 border-black font-black hover:bg-yellow-400 transition-colors"
               onClick={() => setIsMenuOpen(false)}
             >
-              Search Musicians
+              SEARCH
             </Link>
 
             {isLoading ? (
-              // Mobile loading state
-              <div className="space-y-2">
-                <div className="h-10 bg-gray-200 rounded-lg animate-pulse" />
-                <div className="h-10 bg-gray-200 rounded-lg animate-pulse" />
-              </div>
+              <div className="px-4 py-2 font-black">LOADING...</div>
             ) : user ? (
               <>
                 <Link
                   href="/dashboard/messages"
-                  className="block px-4 py-2 text-gray-600 hover:text-black hover:bg-gray-100 rounded-lg"
+                  className="block px-4 py-2 bg-cyan-300 border-2 border-black font-black hover:bg-cyan-400 transition-colors"
                   onClick={() => setIsMenuOpen(false)}
                 >
-                  Messages
+                  MESSAGES
                 </Link>
                 <Link
                   href="/dashboard"
-                  className="block px-4 py-2 text-gray-600 hover:text-black hover:bg-gray-100 rounded-lg"
+                  className="block px-4 py-2 bg-lime-300 border-2 border-black font-black hover:bg-lime-400 transition-colors"
                   onClick={() => setIsMenuOpen(false)}
                 >
-                  Dashboard
+                  DASHBOARD
                 </Link>
                 <button
                   onClick={() => {
                     handleSignOut()
                     setIsMenuOpen(false)
                   }}
-                  className="block w-full text-left px-4 py-2 text-gray-600 hover:text-black hover:bg-gray-100 rounded-lg"
+                  className="block w-full text-left px-4 py-2 bg-white border-2 border-black font-black hover:bg-red-400 transition-colors"
                 >
-                  Sign Out
+                  SIGN OUT
                 </button>
               </>
             ) : (
               <>
                 <Link
                   href="/auth/login"
-                  className="block px-4 py-2 text-gray-600 hover:text-black hover:bg-gray-100 rounded-lg"
+                  className="block px-4 py-2 bg-white border-2 border-black font-black hover:bg-cyan-300 transition-colors"
                   onClick={() => setIsMenuOpen(false)}
                 >
-                  Sign In
+                  SIGN IN
                 </Link>
                 <Link
                   href="/auth/register"
-                  className="block px-4 py-2 text-white bg-blue-600 hover:bg-blue-700 rounded-lg font-medium"
+                  className="block px-4 py-2 bg-pink-400 border-2 border-black font-black hover:bg-pink-500 transition-colors"
                   onClick={() => setIsMenuOpen(false)}
                 >
-                  Get Started
+                  JOIN NOW
                 </Link>
               </>
             )}

@@ -1,55 +1,43 @@
 'use client'
 
 import Link from 'next/link'
-import Button from '@/components/ui/Button'
-import { Home, Search, ArrowLeft } from 'lucide-react'
+import Navigation from '@/components/layout/Navigation'
 
 export default function NotFound() {
   return (
-    <div className="min-h-screen bg-white flex items-center justify-center px-4">
-      <div className="text-center max-w-md">
-        <div className="mb-8">
-          <div className="text-8xl font-bold text-gray-200 mb-4">404</div>
-          <h1 className="text-3xl font-bold mb-2">Page Not Found</h1>
-          <p className="text-gray-600">
-            The page you&apos;re looking for doesn&apos;t exist or has been moved.
-          </p>
-        </div>
-
-        <div className="space-y-4">
-          <div className="flex flex-col sm:flex-row gap-3 justify-center">
-            <Link href="/">
-              <Button className="flex items-center">
-                <Home className="w-4 h-4 mr-2" />
-                Back to Home
-              </Button>
-            </Link>
-            <Link href="/search">
-              <Button variant="secondary" className="flex items-center">
-                <Search className="w-4 h-4 mr-2" />
-                Find Musicians
-              </Button>
-            </Link>
-          </div>
-          
-          <button 
-            onClick={() => window.history.back()} 
-            className="text-gray-600 hover:text-black text-sm flex items-center mx-auto"
-          >
-            <ArrowLeft className="w-4 h-4 mr-1" />
-            Go Back
-          </button>
-        </div>
-
-        <div className="mt-12 text-sm text-gray-500">
-          <p>Looking for something specific?</p>
-          <div className="mt-2 space-x-4">
-            <Link href="/auth/login" className="hover:text-black">Sign In</Link>
-            <Link href="/auth/register" className="hover:text-black">Create Account</Link>
-            <Link href="/dashboard" className="hover:text-black">Dashboard</Link>
+    <>
+      <Navigation />
+      <div className="min-h-screen bg-red-400 flex items-center justify-center px-4">
+        <div className="text-center">
+          <div className="bg-white border-8 border-black p-8 md:p-12 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
+            <h1 className="text-6xl md:text-8xl font-black mb-4">404</h1>
+            <h2 className="text-2xl md:text-3xl font-black mb-4">PAGE NOT FOUND!</h2>
+            <p className="font-bold text-lg mb-8 max-w-md">
+              LOOKS LIKE THIS PAGE WENT ON TOUR AND NEVER CAME BACK.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Link 
+                href="/" 
+                className="px-6 py-3 bg-black text-white border-4 border-black font-black hover:bg-yellow-300 hover:text-black transition-colors shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
+              >
+                GO HOME →
+              </Link>
+              <Link 
+                href="/search" 
+                className="px-6 py-3 bg-cyan-300 border-4 border-black font-black hover:bg-cyan-400 transition-colors shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
+              >
+                FIND MUSICIANS →
+              </Link>
+            </div>
+            <button 
+              onClick={() => window.history.back()} 
+              className="mt-6 font-black text-sm hover:text-pink-400 transition-colors"
+            >
+              ← GO BACK
+            </button>
           </div>
         </div>
       </div>
-    </div>
+    </>
   )
 }

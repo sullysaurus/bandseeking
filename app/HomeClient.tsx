@@ -3,11 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import Navigation from '@/components/layout/Navigation'
-import ProfileCard from '@/components/ProfileCard'
-import Button from '@/components/ui/Button'
 import { supabase } from '@/lib/supabase'
-import { Search, Users, MessageSquare, Music } from 'lucide-react'
 
 interface HomeClientProps {
   initialProfiles: any[]
@@ -16,7 +12,6 @@ interface HomeClientProps {
 export default function HomeClient({ initialProfiles }: HomeClientProps) {
   const router = useRouter()
   const [loading, setLoading] = useState(true)
-  const profiles = initialProfiles
 
   useEffect(() => {
     checkAuthAndRedirect()
@@ -26,7 +21,6 @@ export default function HomeClient({ initialProfiles }: HomeClientProps) {
     try {
       const { data: { user } } = await supabase.auth.getUser()
       if (user) {
-        // User is logged in, redirect to dashboard
         router.push('/dashboard')
         return
       }
@@ -39,163 +33,103 @@ export default function HomeClient({ initialProfiles }: HomeClientProps) {
 
   if (loading) {
     return (
-      <>
-        <Navigation />
-        <div className="min-h-screen bg-white flex items-center justify-center">
-          <div className="text-center">
-            <div className="w-8 h-8 border-2 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-            <p className="text-gray-600">Loading...</p>
-          </div>
+      <div className="min-h-screen bg-yellow-300 flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-2xl font-black">LOADING...</p>
         </div>
-      </>
+      </div>
     )
   }
 
-  // Show landing page for non-logged-in users
   return (
-    <>
-      <Navigation />
-      
-      {/* Hero Section */}
-      <section className="bg-white text-black relative overflow-hidden">
-        <div className="max-w-7xl mx-auto px-4 py-20 md:py-32 relative">
-          <div className="text-center max-w-4xl mx-auto">
-            <h1 className="text-5xl md:text-7xl font-bold mb-6 text-black leading-tight">
-              Find Your Musical Match Today
-            </h1>
-            <h2 className="text-3xl md:text-4xl font-bold mb-8 text-blue-600">
-              Connect to like-minded musicians
-            </h2>
-            <p className="text-xl md:text-2xl text-gray-700 mb-4 max-w-3xl mx-auto leading-relaxed">
-              BandSeeking is the premier musician connection platform.
-            </p>
-            <p className="text-lg text-gray-600 mb-12 max-w-2xl mx-auto">
-              Discover talented musicians in your area, form bands, collaborate on projects, and bring your musical vision to life.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link href="/auth/register">
-                <Button size="lg" className="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white border-0 px-8 py-3 rounded-lg">
-                  Start your project
-                </Button>
-              </Link>
-              <Link href="/search">
-                <Button variant="secondary" size="lg" className="w-full sm:w-auto bg-gray-100 border border-gray-300 text-gray-700 hover:bg-gray-200 px-8 py-3 rounded-lg">
-                  Browse musicians
-                </Button>
-              </Link>
-            </div>
-          </div>
-        </div>
-        
-        {/* Trusted by section */}
-        <div className="border-t border-gray-200 py-12">
-          <div className="max-w-7xl mx-auto px-4">
-            <p className="text-center text-gray-500 mb-8">Trusted by musicians worldwide</p>
-            <div className="flex justify-center items-center space-x-12 opacity-50">
-              <div className="text-gray-500 font-medium">Local Bands</div>
-              <div className="text-gray-500 font-medium">Solo Artists</div>
-              <div className="text-gray-500 font-medium">Studios</div>
-              <div className="text-gray-500 font-medium">Producers</div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Features Section */}
-      <section className="py-20 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold text-black mb-4">
-              Everything you need to find your sound
-            </h2>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-              From discovering musicians to forming bands, we&apos;ve built the tools to help you create meaningful musical connections.
-            </p>
-          </div>
-          
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-            <div className="relative p-8 bg-white rounded-2xl border border-gray-200 hover:border-blue-500/50 hover:shadow-lg transition-all duration-300 group">
-              <div className="w-14 h-14 bg-gray-100 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-gray-200 transition-colors">
-                <Users className="w-7 h-7 text-blue-600" />
-              </div>
-              <h3 className="text-xl font-semibold text-black mb-3">Showcase Your Sound</h3>
-              <p className="text-gray-600 leading-relaxed">
-                Build a profile that highlights your musical style, influences, and what makes you unique as a musician.
-              </p>
-            </div>
-            
-            <div className="relative p-8 bg-white rounded-2xl border border-gray-200 hover:border-blue-500/50 hover:shadow-lg transition-all duration-300 group">
-              <div className="w-14 h-14 bg-gray-100 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-gray-200 transition-colors">
-                <Search className="w-7 h-7 text-blue-600" />
-              </div>
-              <h3 className="text-xl font-semibold text-black mb-3">Find Your Match</h3>
-              <p className="text-gray-600 leading-relaxed">
-                Search for musicians by location, instrument, genre, and vibe to find the perfect collaborators for your project.
-              </p>
-            </div>
-            
-            <div className="relative p-8 bg-white rounded-2xl border border-gray-200 hover:border-blue-500/50 hover:shadow-lg transition-all duration-300 group">
-              <div className="w-14 h-14 bg-gray-100 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-gray-200 transition-colors">
-                <MessageSquare className="w-7 h-7 text-blue-600" />
-              </div>
-              <h3 className="text-xl font-semibold text-black mb-3">Start the Conversation</h3>
-              <p className="text-gray-600 leading-relaxed">
-                Connect instantly with musicians through our messaging system and turn ideas into collaborations.
-              </p>
-            </div>
-            
-            <div className="relative p-8 bg-white rounded-2xl border border-gray-200 hover:border-blue-500/50 hover:shadow-lg transition-all duration-300 group">
-              <div className="w-14 h-14 bg-gray-100 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-gray-200 transition-colors">
-                <Music className="w-7 h-7 text-blue-600" />
-              </div>
-              <h3 className="text-xl font-semibold text-black mb-3">Create Something Amazing</h3>
-              <p className="text-gray-600 leading-relaxed">
-                From weekend jams to recording projects, build the musical connections that bring your creative vision to life.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Recent Profiles Section */}
-      <section className="py-20 bg-white">
-        <div className="max-w-7xl mx-auto px-4">
-          <div className="flex flex-col md:flex-row md:justify-between md:items-center mb-12 gap-4">
-            <div>
-              <h2 className="text-4xl font-bold text-black mb-2">Meet Our Music Community</h2>
-              <p className="text-lg text-gray-600">Connect with talented musicians ready to collaborate and create</p>
-            </div>
-            <Link href="/search">
-              <Button variant="secondary" className="bg-gray-100 border-gray-300 text-gray-700 hover:bg-gray-200 px-6 rounded-lg">
-                View All Musicians
-              </Button>
+    <div className="min-h-screen bg-yellow-300">
+      {/* Header */}
+      <header className="border-b-8 border-black bg-white p-4 md:p-6">
+        <div className="max-w-6xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-4">
+          <h1 className="text-3xl md:text-4xl font-black tracking-tight">BANDSEEKING</h1>
+          <div className="flex gap-2 sm:gap-4">
+            <Link href="/auth/login" className="px-4 py-2 bg-white border-4 border-black font-black text-sm md:text-base hover:bg-black hover:text-white transition-colors shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+              SIGN IN
+            </Link>
+            <Link href="/auth/register" className="px-4 py-2 bg-pink-400 border-4 border-black font-black text-sm md:text-base hover:bg-pink-500 transition-colors shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+              JOIN NOW
             </Link>
           </div>
+        </div>
+      </header>
 
-          {profiles.length > 0 ? (
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {profiles.map((profile) => (
-                <ProfileCard key={profile.id} profile={profile} />
-              ))}
-            </div>
-          ) : (
-            <div className="text-center py-16">
-              <div className="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                <Users className="w-12 h-12 text-blue-600" />
-              </div>
-              <h3 className="text-2xl font-semibold text-black mb-3">Join the movement!</h3>
-              <p className="text-lg text-gray-600 mb-8 max-w-md mx-auto">
-                Be part of a growing community where musicians connect, collaborate, and create incredible music together.
-              </p>
-              <Link href="/auth/register">
-                <Button size="lg" className="bg-blue-600 hover:bg-blue-700 text-white px-8 rounded-lg">
-                  Create Your Profile
-                </Button>
+      {/* Hero Section */}
+      <section className="p-4 md:p-8">
+        <div className="max-w-6xl mx-auto">
+          <div className="bg-white border-8 border-black p-6 md:p-12 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] mb-8">
+            <h2 className="text-4xl md:text-6xl font-black mb-4 leading-none">
+              FIND YOUR<br />
+              <span className="text-pink-400">PERFECT</span><br />
+              BAND
+            </h2>
+            <p className="text-lg md:text-xl font-bold mb-8 max-w-2xl">
+              Connect with musicians who get your vibe. No BS, just real connections.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4">
+              <Link href="/auth/register" className="inline-block px-6 py-3 bg-black text-white border-4 border-black font-black text-lg hover:bg-pink-400 hover:text-black transition-colors shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+                START JAMMING →
+              </Link>
+              <Link href="/search" className="inline-block px-6 py-3 bg-white border-4 border-black font-black text-lg hover:bg-cyan-300 transition-colors shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+                BROWSE MUSICIANS
               </Link>
             </div>
-          )}
+          </div>
+
+          {/* Features Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 mb-8">
+            <div className="bg-pink-400 border-4 border-black p-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] transition-all">
+              <h3 className="text-2xl font-black mb-2">REAL MUSICIANS</h3>
+              <p className="font-bold">No wannabes. Just people who actually play.</p>
+            </div>
+            <div className="bg-cyan-300 border-4 border-black p-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] transition-all">
+              <h3 className="text-2xl font-black mb-2">LOCAL SCENE</h3>
+              <p className="font-bold">Find musicians in your area. Real connections, real jams.</p>
+            </div>
+            <div className="bg-lime-400 border-4 border-black p-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] transition-all">
+              <h3 className="text-2xl font-black mb-2">NO FEES</h3>
+              <p className="font-bold">100% free. Forever. We're here for the music.</p>
+            </div>
+          </div>
+
+          {/* Quick Links */}
+          <div className="bg-black text-white border-4 border-black p-6 md:p-8 shadow-[4px_4px_0px_0px_rgba(255,255,255,1)]">
+            <h3 className="text-2xl md:text-3xl font-black mb-6 text-yellow-300">QUICK LINKS</h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              <Link href="/search?instrument=guitar" className="block p-3 bg-white text-black border-2 border-white font-black hover:bg-yellow-300 transition-colors">
+                → FIND GUITARISTS
+              </Link>
+              <Link href="/search?instrument=drums" className="block p-3 bg-white text-black border-2 border-white font-black hover:bg-yellow-300 transition-colors">
+                → FIND DRUMMERS
+              </Link>
+              <Link href="/search?instrument=bass" className="block p-3 bg-white text-black border-2 border-white font-black hover:bg-yellow-300 transition-colors">
+                → FIND BASSISTS
+              </Link>
+              <Link href="/search?instrument=vocals" className="block p-3 bg-white text-black border-2 border-white font-black hover:bg-yellow-300 transition-colors">
+                → FIND VOCALISTS
+              </Link>
+              <Link href="/search?instrument=keyboard" className="block p-3 bg-white text-black border-2 border-white font-black hover:bg-yellow-300 transition-colors">
+                → FIND KEYBOARDISTS
+              </Link>
+              <Link href="/search" className="block p-3 bg-pink-400 text-black border-2 border-white font-black hover:bg-pink-500 transition-colors">
+                → VIEW ALL
+              </Link>
+            </div>
+          </div>
         </div>
       </section>
-    </>
+
+      {/* Footer */}
+      <footer className="border-t-8 border-black bg-white p-4 md:p-6 mt-8">
+        <div className="max-w-6xl mx-auto text-center">
+          <p className="font-black text-lg">© BANDSEEKING 2024</p>
+          <p className="font-bold">Made for musicians, by musicians.</p>
+        </div>
+      </footer>
+    </div>
   )
 }

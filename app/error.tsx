@@ -2,8 +2,7 @@
 
 import { useEffect } from 'react'
 import Link from 'next/link'
-import Button from '@/components/ui/Button'
-import { AlertCircle, Home, RefreshCw } from 'lucide-react'
+import Navigation from '@/components/layout/Navigation'
 
 export default function Error({
   error,
@@ -13,54 +12,37 @@ export default function Error({
   reset: () => void
 }) {
   useEffect(() => {
-    // Log the error to an error reporting service
-    console.error('Application error:', error)
+    console.error(error)
   }, [error])
 
   return (
-    <div className="min-h-screen bg-white flex items-center justify-center px-4">
-      <div className="text-center max-w-md">
-        <div className="mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-red-100 rounded-full mb-4">
-            <AlertCircle className="w-8 h-8 text-red-500" />
+    <>
+      <Navigation />
+      <div className="min-h-screen bg-orange-400 flex items-center justify-center px-4">
+        <div className="text-center">
+          <div className="bg-white border-8 border-black p-8 md:p-12 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
+            <h1 className="text-6xl md:text-8xl font-black mb-4">OOPS!</h1>
+            <h2 className="text-2xl md:text-3xl font-black mb-4">SOMETHING WENT WRONG</h2>
+            <p className="font-bold text-lg mb-8 max-w-md">
+              THE AMP BLEW A FUSE. LET'S TRY THAT AGAIN.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <button 
+                onClick={reset}
+                className="px-6 py-3 bg-black text-white border-4 border-black font-black hover:bg-lime-400 hover:text-black transition-colors shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
+              >
+                TRY AGAIN →
+              </button>
+              <Link 
+                href="/" 
+                className="px-6 py-3 bg-yellow-300 border-4 border-black font-black hover:bg-yellow-400 transition-colors shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
+              >
+                GO HOME →
+              </Link>
+            </div>
           </div>
-          <h1 className="text-3xl font-bold mb-2">Something went wrong</h1>
-          <p className="text-gray-600 mb-4">
-            We encountered an unexpected error. This has been logged and our team will look into it.
-          </p>
-          
-          {process.env.NODE_ENV === 'development' && (
-            <details className="mt-4 p-4 bg-gray-50 rounded-lg text-left">
-              <summary className="cursor-pointer font-medium text-sm">
-                Error Details (Development Only)
-              </summary>
-              <pre className="mt-2 text-xs text-gray-700 overflow-auto">
-                {error.message}
-                {error.digest && `\nDigest: ${error.digest}`}
-              </pre>
-            </details>
-          )}
-        </div>
-
-        <div className="space-y-4">
-          <div className="flex flex-col sm:flex-row gap-3 justify-center">
-            <Button onClick={reset} className="flex items-center">
-              <RefreshCw className="w-4 h-4 mr-2" />
-              Try Again
-            </Button>
-            <Link href="/">
-              <Button variant="secondary" className="flex items-center">
-                <Home className="w-4 h-4 mr-2" />
-                Back to Home
-              </Button>
-            </Link>
-          </div>
-        </div>
-
-        <div className="mt-8 text-sm text-gray-500">
-          <p>If this problem persists, please contact support.</p>
         </div>
       </div>
-    </div>
+    </>
   )
 }

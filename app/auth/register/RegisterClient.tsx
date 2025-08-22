@@ -109,81 +109,119 @@ export default function RegisterClient() {
   return (
     <>
       <Navigation />
-      <div className="min-h-screen flex items-center justify-center px-4 py-12">
+      <div className="min-h-screen bg-pink-300 flex items-center justify-center px-4 py-12">
         <div className="w-full max-w-md">
-          <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold mb-2">Join BandSeeking</h1>
-            <p className="text-gray-600">Connect with musicians in your area</p>
-          </div>
+          <div className="bg-white border-8 border-black p-8 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
+            <div className="text-center mb-8">
+              <h1 className="text-4xl font-black mb-2">JOIN THE BAND!</h1>
+              <p className="font-bold text-lg">START YOUR MUSIC JOURNEY</p>
+            </div>
 
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-            <Input
-              label="Full Name"
-              placeholder="John Doe"
-              {...register('fullName')}
-              error={errors.fullName?.message}
-            />
-
-            <Input
-              label="Username"
-              placeholder="johndoe"
-              {...register('username')}
-              error={errors.username?.message}
-            />
-
-            <Input
-              label="Email"
-              type="email"
-              placeholder="john@example.com"
-              {...register('email')}
-              error={errors.email?.message}
-            />
-
-            <Input
-              label="Password"
-              type="password"
-              placeholder="••••••••"
-              {...register('password')}
-              error={errors.password?.message}
-            />
-
-            <Input
-              label="Confirm Password"
-              type="password"
-              placeholder="••••••••"
-              {...register('confirmPassword')}
-              error={errors.confirmPassword?.message}
-            />
-
-            <Input
-              label="ZIP Code"
-              placeholder="12345"
-              maxLength={5}
-              {...register('zipCode')}
-              error={errors.zipCode?.message}
-            />
-
-            {error && (
-              <div className="p-3 rounded-lg bg-red-50 border border-red-200">
-                <p className="text-sm text-red-600">{error}</p>
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+              <div>
+                <label className="block font-black mb-2 text-sm">FULL NAME</label>
+                <input
+                  placeholder="YOUR NAME"
+                  {...register('fullName')}
+                  className="w-full px-4 py-3 border-4 border-black font-bold placeholder:text-gray-400 focus:outline-none focus:bg-yellow-100 transition-colors"
+                />
+                {errors.fullName && (
+                  <p className="mt-1 font-bold text-sm text-red-600">{errors.fullName.message}</p>
+                )}
               </div>
-            )}
 
-            <Button
-              type="submit"
-              disabled={isLoading}
-              className="w-full"
-            >
-              {isLoading ? 'Creating Account...' : 'Create Account'}
-            </Button>
+              <div>
+                <label className="block font-black mb-2 text-sm">USERNAME</label>
+                <input
+                  placeholder="PICK A USERNAME"
+                  {...register('username')}
+                  className="w-full px-4 py-3 border-4 border-black font-bold placeholder:text-gray-400 focus:outline-none focus:bg-yellow-100 transition-colors"
+                />
+                {errors.username && (
+                  <p className="mt-1 font-bold text-sm text-red-600">{errors.username.message}</p>
+                )}
+              </div>
 
-            <p className="text-center text-sm text-gray-600">
-              Already have an account?{' '}
-              <Link href="/auth/login" className="font-medium text-black hover:underline">
-                Sign In
+              <div>
+                <label className="block font-black mb-2 text-sm">EMAIL</label>
+                <input
+                  type="email"
+                  placeholder="YOUR@EMAIL.COM"
+                  {...register('email')}
+                  className="w-full px-4 py-3 border-4 border-black font-bold placeholder:text-gray-400 focus:outline-none focus:bg-yellow-100 transition-colors"
+                />
+                {errors.email && (
+                  <p className="mt-1 font-bold text-sm text-red-600">{errors.email.message}</p>
+                )}
+              </div>
+
+              <div>
+                <label className="block font-black mb-2 text-sm">PASSWORD</label>
+                <input
+                  type="password"
+                  placeholder="••••••••"
+                  {...register('password')}
+                  className="w-full px-4 py-3 border-4 border-black font-bold placeholder:text-gray-400 focus:outline-none focus:bg-yellow-100 transition-colors"
+                />
+                {errors.password && (
+                  <p className="mt-1 font-bold text-sm text-red-600">{errors.password.message}</p>
+                )}
+              </div>
+
+              <div>
+                <label className="block font-black mb-2 text-sm">CONFIRM PASSWORD</label>
+                <input
+                  type="password"
+                  placeholder="••••••••"
+                  {...register('confirmPassword')}
+                  className="w-full px-4 py-3 border-4 border-black font-bold placeholder:text-gray-400 focus:outline-none focus:bg-yellow-100 transition-colors"
+                />
+                {errors.confirmPassword && (
+                  <p className="mt-1 font-bold text-sm text-red-600">{errors.confirmPassword.message}</p>
+                )}
+              </div>
+
+              <div>
+                <label className="block font-black mb-2 text-sm">ZIP CODE</label>
+                <input
+                  placeholder="12345"
+                  maxLength={5}
+                  {...register('zipCode')}
+                  className="w-full px-4 py-3 border-4 border-black font-bold placeholder:text-gray-400 focus:outline-none focus:bg-yellow-100 transition-colors"
+                />
+                {errors.zipCode && (
+                  <p className="mt-1 font-bold text-sm text-red-600">{errors.zipCode.message}</p>
+                )}
+              </div>
+
+              {error && (
+                <div className="p-3 bg-red-400 border-4 border-black">
+                  <p className="font-black text-sm">{error.toUpperCase()}</p>
+                </div>
+              )}
+
+              <button
+                type="submit"
+                disabled={isLoading}
+                className="w-full px-6 py-3 bg-black text-white border-4 border-black font-black text-lg hover:bg-lime-400 hover:text-black transition-colors shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] disabled:opacity-50"
+              >
+                {isLoading ? 'CREATING ACCOUNT...' : 'CREATE ACCOUNT →'}
+              </button>
+
+            </form>
+
+            <div className="mt-6 pt-6 border-t-4 border-black">
+              <p className="text-center font-bold">
+                ALREADY A MEMBER?
+              </p>
+              <Link 
+                href="/auth/login" 
+                className="block mt-2 px-6 py-3 bg-cyan-300 border-4 border-black font-black text-center hover:bg-cyan-400 transition-colors shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
+              >
+                SIGN IN →
               </Link>
-            </p>
-          </form>
+            </div>
+          </div>
         </div>
       </div>
     </>
