@@ -24,18 +24,18 @@ export async function GET(request: NextRequest) {
       
       if (user) {
         // Check if user has completed their profile
-        const { data: userData } = await supabase
+        const { data: userData, error: userError } = await supabase
           .from('users')
           .select('profile_completed')
           .eq('id', user.id)
           .single()
         
-        if (userData?.profile_completed) {
+        // If no user record exists (email confirmation) or profile not completed, go to onboarding
+        if (userError || !userData || !userData.profile_completed) {
+          return NextResponse.redirect(new URL('/onboarding', request.url))
+        } else {
           // If profile is completed, go to dashboard
           return NextResponse.redirect(new URL('/dashboard', request.url))
-        } else {
-          // If profile not completed, go to onboarding
-          return NextResponse.redirect(new URL('/onboarding', request.url))
         }
       }
     } catch (error) {
