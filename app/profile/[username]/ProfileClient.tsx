@@ -6,11 +6,11 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { supabase } from '@/lib/supabase'
 import Navigation from '@/components/layout/Navigation'
-import Button from '@/components/ui/Button'
-import { MapPin, Music, Star, Calendar, Car, Package, Globe, Instagram, Youtube, Heart, MessageSquare, Edit } from 'lucide-react'
+import { useRouter } from 'next/navigation'
 
 export default function ProfileClient() {
   const params = useParams()
+  const router = useRouter()
   const username = params.username as string
   const [profile, setProfile] = useState<any>(null)
   const [user, setUser] = useState<any>(null)
@@ -66,7 +66,12 @@ export default function ProfileClient() {
   }
 
   const handleSave = async () => {
-    if (!currentUser || !profile) return
+    if (!currentUser) {
+      router.push('/auth/login')
+      return
+    }
+    
+    if (!profile) return
 
     if (isSaved) {
       await supabase
@@ -85,12 +90,20 @@ export default function ProfileClient() {
     setIsSaved(!isSaved)
   }
 
+  const handleMessage = () => {
+    if (!currentUser) {
+      router.push('/auth/login')
+      return
+    }
+    router.push(`/dashboard/messages/${profile.user_id}`)
+  }
+
   if (loading) {
     return (
       <>
         <Navigation />
-        <div className="min-h-screen flex items-center justify-center">
-          <div className="animate-pulse">Loading profile...</div>
+        <div className="min-h-screen bg-cyan-300 flex items-center justify-center">
+          <div className="font-black text-2xl">LOADING PROFILE...</div>
         </div>
       </>
     )
@@ -100,11 +113,15 @@ export default function ProfileClient() {
     return (
       <>
         <Navigation />
-        <div className="min-h-screen flex items-center justify-center">
-          <div className="text-center">
-            <h2 className="text-2xl font-bold mb-4">Profile not found</h2>
-            <Link href="/">
-              <Button>Back to Home</Button>
+        <div className="min-h-screen bg-red-300 flex items-center justify-center">
+          <div className="bg-white border-4 border-black p-8 text-center shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
+            <h2 className="text-2xl font-black mb-4">PROFILE NOT FOUND</h2>
+            <p className="font-bold mb-6">This musician profile could not be found.</p>
+            <Link 
+              href="/"
+              className="inline-block px-6 py-3 bg-black text-white border-4 border-black font-black hover:bg-cyan-400 hover:text-black transition-colors shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
+            >
+              BACK TO HOME →
             </Link>
           </div>
         </div>
@@ -115,40 +132,41 @@ export default function ProfileClient() {
   return (
     <>
       <Navigation />
-      <div className="max-w-6xl mx-auto px-4 py-8">
-        <div className="grid lg:grid-cols-3 gap-8">
-          {/* Left Column - Profile Info */}
-          <div className="lg:col-span-1">
-            <div className="sticky top-24">
-              <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
-                <div className="aspect-square relative bg-gray-100">
-                  {profile.profile_image_url ? (
-                    <Image
-                      src={profile.profile_image_url}
-                      alt={user.full_name}
-                      fill
-                      className="object-cover"
-                    />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center">
-                      <div className="text-6xl font-bold text-gray-400">
-                        {user.full_name.charAt(0).toUpperCase()}
+      <div className="min-h-screen bg-cyan-300">
+        <div className="max-w-6xl mx-auto px-4 py-8">
+          <div className="grid lg:grid-cols-3 gap-6">
+            {/* Left Column - Profile Info */}
+            <div className="lg:col-span-1">
+              <div className="sticky top-24">
+                <div className="bg-white border-4 border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
+                  <div className="aspect-square relative bg-gray-100 border-b-4 border-black">
+                    {profile.profile_image_url ? (
+                      <Image
+                        src={profile.profile_image_url}
+                        alt={user.full_name}
+                        fill
+                        className="object-cover"
+                      />
+                    ) : (
+                      <div className="w-full h-full bg-gradient-to-br from-pink-400 to-purple-500 flex items-center justify-center">
+                        <div className="text-6xl font-black text-white">
+                          {user.full_name.charAt(0).toUpperCase()}
+                        </div>
                       </div>
-                    </div>
-                  )}
-                </div>
-                <div className="p-6">
-                  <h1 className="text-2xl font-bold mb-1">{user.full_name}</h1>
-                  <p className="text-gray-600 mb-4">@{user.username}</p>
+                    )}
+                  </div>
+                  <div className="p-6">
+                    <h1 className="text-2xl font-black mb-1">{user.full_name.toUpperCase()}</h1>
+                    <p className="font-bold text-gray-600 mb-4">@{user.username}</p>
                   
                   {/* Edit button for own profile */}
                   {currentUser && currentUser.id === user.id && (
                     <div className="mb-4">
-                      <Link href="/dashboard/profile">
-                        <Button className="w-full">
-                          <Edit className="w-4 h-4 mr-2" />
-                          Edit Profile
-                        </Button>
+                      <Link 
+                        href="/dashboard/profile"
+                        className="block w-full px-4 py-3 bg-black text-white border-4 border-black font-black text-center hover:bg-yellow-300 hover:text-black transition-colors shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
+                      >
+                        EDIT PROFILE →
                       </Link>
                     </div>
                   )}
@@ -156,67 +174,97 @@ export default function ProfileClient() {
                   {/* Action buttons for other users */}
                   {currentUser && currentUser.id !== user.id && (
                     <div className="flex gap-2 mb-4">
-                      <Button className="flex-1">
-                        <MessageSquare className="w-4 h-4 mr-2" />
-                        Message
-                      </Button>
-                      <Button
-                        variant={isSaved ? 'secondary' : 'ghost'}
-                        onClick={handleSave}
+                      <button 
+                        onClick={handleMessage}
+                        className="flex-1 px-4 py-3 bg-yellow-300 border-4 border-black font-black hover:bg-yellow-400 transition-colors shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
                       >
-                        <Heart className={`w-4 h-4 ${isSaved ? 'fill-current' : ''}`} />
-                      </Button>
+                        MESSAGE →
+                      </button>
+                      <button
+                        onClick={handleSave}
+                        className={`px-4 py-3 border-4 border-black font-black transition-colors shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] ${
+                          isSaved 
+                            ? 'bg-pink-400 hover:bg-pink-500' 
+                            : 'bg-white hover:bg-lime-300'
+                        }`}
+                      >
+                        {isSaved ? '♥' : '♡'}
+                      </button>
+                    </div>
+                  )}
+                  
+                  {/* Login prompt for non-users */}
+                  {!currentUser && (
+                    <div className="flex gap-2 mb-4">
+                      <Link 
+                        href="/auth/login"
+                        className="flex-1 px-4 py-3 bg-black text-white border-4 border-black font-black text-center hover:bg-cyan-400 hover:text-black transition-colors shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
+                      >
+                        LOGIN TO MESSAGE →
+                      </Link>
                     </div>
                   )}
 
+                  {/* Quick Info Tags */}
                   <div className="space-y-3">
-                    <div className="flex items-center text-sm">
-                      <Music className="w-4 h-4 mr-2 text-gray-400" />
-                      <span>{profile.main_instrument}</span>
+                    <div className="flex flex-wrap gap-2">
+                      <span className="px-3 py-1 bg-pink-400 border-2 border-black font-black text-xs">
+                        {profile.main_instrument?.toUpperCase() || 'MUSICIAN'}
+                      </span>
+                      {profile.experience_level && (
+                        <span className={`px-3 py-1 border-2 border-black font-black text-xs ${
+                          profile.experience_level === 'beginner' ? 'bg-green-300' :
+                          profile.experience_level === 'intermediate' ? 'bg-yellow-300' :
+                          profile.experience_level === 'advanced' ? 'bg-orange-400' :
+                          profile.experience_level === 'professional' ? 'bg-red-400 text-white' :
+                          'bg-gray-300'
+                        }`}>
+                          {profile.experience_level.toUpperCase()}
+                        </span>
+                      )}
+                      {user.zip_code && (
+                        <span className="px-3 py-1 bg-cyan-300 border-2 border-black font-black text-xs">
+                          📍 {user.zip_code}
+                        </span>
+                      )}
                     </div>
-                    {user.zip_code && (
-                      <div className="flex items-center text-sm">
-                        <MapPin className="w-4 h-4 mr-2 text-gray-400" />
-                        <span>{user.zip_code}</span>
+                    
+                    {/* Additional Info */}
+                    <div className="space-y-2 pt-3">
+                      {profile.availability && (
+                        <div className="font-bold text-sm">
+                          📅 AVAILABILITY: {profile.availability.toUpperCase()}
+                        </div>
+                      )}
+                      {profile.has_transportation && (
+                        <div className="font-bold text-sm text-green-600">
+                          🚗 HAS TRANSPORTATION
+                        </div>
+                      )}
+                      {profile.has_own_equipment && (
+                        <div className="font-bold text-sm text-blue-600">
+                          🎸 HAS OWN EQUIPMENT
+                        </div>
+                      )}
+                      <div className="font-bold text-sm">
+                        📍 WILL TRAVEL: {profile.willing_to_travel_miles} MILES
                       </div>
-                    )}
-                    <div className="flex items-center text-sm">
-                      <Star className="w-4 h-4 mr-2 text-gray-400" />
-                      <span className="capitalize">{profile.experience_level}</span>
                     </div>
-                    {profile.availability && (
-                      <div className="flex items-center text-sm">
-                        <Calendar className="w-4 h-4 mr-2 text-gray-400" />
-                        <span className="capitalize">{profile.availability}</span>
-                      </div>
-                    )}
-                    {profile.has_transportation && (
-                      <div className="flex items-center text-sm">
-                        <Car className="w-4 h-4 mr-2 text-gray-400" />
-                        <span>Has transportation</span>
-                      </div>
-                    )}
-                    {profile.has_own_equipment && (
-                      <div className="flex items-center text-sm">
-                        <Package className="w-4 h-4 mr-2 text-gray-400" />
-                        <span>Has own equipment</span>
-                      </div>
-                    )}
                   </div>
 
                   {/* Social Links */}
                   {profile.social_links && Object.values(profile.social_links).some((v) => v) && (
-                    <div className="mt-6 pt-6 border-t border-gray-200">
-                      <h3 className="font-semibold mb-3">Social Links</h3>
-                      <div className="flex gap-3">
+                    <div className="mt-6 pt-6 border-t-4 border-black">
+                      <h3 className="font-black mb-3">SOCIAL LINKS</h3>
+                      <div className="flex flex-wrap gap-2">
                         {profile.social_links.instagram && (
                           <a
                             href={`https://instagram.com/${profile.social_links.instagram}`}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="text-gray-600 hover:text-black"
+                            className="px-3 py-2 bg-pink-400 border-2 border-black font-black text-xs hover:bg-pink-500 transition-colors"
                           >
-                            <Instagram className="w-5 h-5" />
+                            INSTAGRAM →
                           </a>
                         )}
                         {profile.social_links.youtube && (
@@ -224,9 +272,9 @@ export default function ProfileClient() {
                             href={profile.social_links.youtube}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="text-gray-600 hover:text-black"
+                            className="px-3 py-2 bg-red-400 border-2 border-black font-black text-xs hover:bg-red-500 transition-colors"
                           >
-                            <Youtube className="w-5 h-5" />
+                            YOUTUBE →
                           </a>
                         )}
                         {profile.social_links.soundcloud && (
@@ -234,9 +282,19 @@ export default function ProfileClient() {
                             href={profile.social_links.soundcloud}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="text-gray-600 hover:text-black"
+                            className="px-3 py-2 bg-orange-400 border-2 border-black font-black text-xs hover:bg-orange-500 transition-colors"
                           >
-                            <Globe className="w-5 h-5" />
+                            SOUNDCLOUD →
+                          </a>
+                        )}
+                        {profile.social_links.spotify && (
+                          <a
+                            href={profile.social_links.spotify}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="px-3 py-2 bg-green-400 border-2 border-black font-black text-xs hover:bg-green-500 transition-colors"
+                          >
+                            SPOTIFY →
                           </a>
                         )}
                       </div>
@@ -251,23 +309,23 @@ export default function ProfileClient() {
           <div className="lg:col-span-2 space-y-6">
             {/* Bio */}
             {profile.bio && (
-              <div className="bg-white rounded-lg border border-gray-200 p-6">
-                <h2 className="text-xl font-semibold mb-3">About</h2>
-                <p className="text-gray-700 whitespace-pre-wrap">{profile.bio}</p>
+              <div className="bg-white border-4 border-black p-6 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
+                <h2 className="text-2xl font-black mb-4">ABOUT</h2>
+                <p className="font-bold text-gray-700 whitespace-pre-wrap leading-relaxed">{profile.bio}</p>
               </div>
             )}
 
             {/* Looking For */}
             {profile.seeking && profile.seeking.length > 0 && (
-              <div className="bg-white rounded-lg border border-gray-200 p-6">
-                <h2 className="text-xl font-semibold mb-3">Looking For</h2>
+              <div className="bg-white border-4 border-black p-6 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
+                <h2 className="text-2xl font-black mb-4">LOOKING FOR</h2>
                 <div className="flex flex-wrap gap-2">
                   {profile.seeking.map((item: string, index: number) => (
                     <span
                       key={index}
-                      className="px-3 py-1 bg-black text-white rounded-full text-sm"
+                      className="px-4 py-2 bg-purple-400 border-2 border-black font-black text-sm"
                     >
-                      {item}
+                      {item.toUpperCase()}
                     </span>
                   ))}
                 </div>
@@ -276,15 +334,15 @@ export default function ProfileClient() {
 
             {/* Genres */}
             {profile.genres && profile.genres.length > 0 && (
-              <div className="bg-white rounded-lg border border-gray-200 p-6">
-                <h2 className="text-xl font-semibold mb-3">Genres</h2>
+              <div className="bg-white border-4 border-black p-6 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
+                <h2 className="text-2xl font-black mb-4">GENRES</h2>
                 <div className="flex flex-wrap gap-2">
                   {profile.genres.map((genre: string, index: number) => (
                     <span
                       key={index}
-                      className="px-3 py-1 border border-gray-300 rounded-full text-sm"
+                      className="px-4 py-2 bg-blue-300 border-2 border-black font-black text-sm"
                     >
-                      {genre}
+                      {genre.toUpperCase()}
                     </span>
                   ))}
                 </div>
@@ -293,23 +351,23 @@ export default function ProfileClient() {
 
             {/* Influences */}
             {profile.influences && (
-              <div className="bg-white rounded-lg border border-gray-200 p-6">
-                <h2 className="text-xl font-semibold mb-3">Influences</h2>
-                <p className="text-gray-700">{profile.influences}</p>
+              <div className="bg-white border-4 border-black p-6 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
+                <h2 className="text-2xl font-black mb-4">INFLUENCES</h2>
+                <p className="font-bold text-gray-700 leading-relaxed">{profile.influences}</p>
               </div>
             )}
 
             {/* Secondary Instruments */}
             {profile.secondary_instruments && profile.secondary_instruments.length > 0 && (
-              <div className="bg-white rounded-lg border border-gray-200 p-6">
-                <h2 className="text-xl font-semibold mb-3">Also Plays</h2>
+              <div className="bg-white border-4 border-black p-6 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
+                <h2 className="text-2xl font-black mb-4">ALSO PLAYS</h2>
                 <div className="flex flex-wrap gap-2">
                   {profile.secondary_instruments.map((instrument: string, index: number) => (
                     <span
                       key={index}
-                      className="px-3 py-1 bg-gray-100 rounded-lg text-sm"
+                      className="px-4 py-2 bg-lime-300 border-2 border-black font-black text-sm"
                     >
-                      {instrument}
+                      {instrument.toUpperCase()}
                     </span>
                   ))}
                 </div>
@@ -317,13 +375,14 @@ export default function ProfileClient() {
             )}
 
             {/* Travel Distance */}
-            <div className="bg-white rounded-lg border border-gray-200 p-6">
-              <h2 className="text-xl font-semibold mb-3">Travel Range</h2>
-              <p className="text-gray-700">
-                Willing to travel up to {profile.willing_to_travel_miles} miles
+            <div className="bg-white border-4 border-black p-6 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
+              <h2 className="text-2xl font-black mb-4">TRAVEL RANGE</h2>
+              <p className="font-bold text-gray-700">
+                WILLING TO TRAVEL UP TO {profile.willing_to_travel_miles} MILES
               </p>
             </div>
           </div>
+        </div>
         </div>
       </div>
     </>

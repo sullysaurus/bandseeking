@@ -5,10 +5,8 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { supabase } from '@/lib/supabase'
 import Navigation from '@/components/layout/Navigation'
-import Button from '@/components/ui/Button'
-import Input from '@/components/ui/Input'
+import Image from 'next/image'
 import { instruments, genres, seekingOptions, experienceLevels, availabilityOptions } from '@/lib/utils'
-import { ArrowLeft, Save, Eye } from 'lucide-react'
 
 export default function EditProfilePage() {
   const router = useRouter()
@@ -213,8 +211,8 @@ export default function EditProfilePage() {
     return (
       <>
         <Navigation />
-        <div className="min-h-screen flex items-center justify-center">
-          <div className="animate-pulse">Loading profile...</div>
+        <div className="min-h-screen bg-orange-300 flex items-center justify-center">
+          <div className="font-black text-2xl">LOADING PROFILE...</div>
         </div>
       </>
     )
@@ -223,53 +221,58 @@ export default function EditProfilePage() {
   return (
     <>
       <Navigation />
-      <div className="max-w-4xl mx-auto px-4 py-8">
-        <div className="mb-8">
-          <Link href="/dashboard" className="inline-flex items-center text-gray-600 hover:text-black mb-4">
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Back to Dashboard
-          </Link>
-          <div className="flex justify-between items-center">
-            <div>
-              <h1 className="text-3xl font-bold">Edit Profile</h1>
-              <p className="text-gray-600">Update your musical profile</p>
+      <div className="min-h-screen bg-orange-300">
+        <div className="max-w-4xl mx-auto px-4 py-8">
+          <div className="mb-8">
+            <Link 
+              href="/dashboard" 
+              className="inline-flex items-center font-black text-lg mb-4 hover:text-pink-400 transition-colors"
+            >
+              ← BACK TO DASHBOARD
+            </Link>
+            <div className="flex justify-between items-center">
+              <div>
+                <h1 className="text-4xl md:text-5xl font-black mb-2">EDIT PROFILE</h1>
+                <p className="font-bold text-xl">Update your musical profile and get discovered.</p>
+              </div>
+              {currentUser && (
+                <Link 
+                  href={`/profile/${currentUser.username || currentUser.id}`}
+                  className="px-4 py-2 bg-black text-white border-4 border-black font-black hover:bg-cyan-400 hover:text-black transition-colors shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
+                >
+                  VIEW PROFILE →
+                </Link>
+              )}
             </div>
-            {currentUser && (
-              <Link href={`/profile/${currentUser.user_metadata?.username || currentUser.id}`}>
-                <Button variant="ghost">
-                  <Eye className="w-4 h-4 mr-2" />
-                  Preview
-                </Button>
-              </Link>
-            )}
           </div>
-        </div>
 
-        <div className="space-y-8">
+        <div className="space-y-6">
           {/* Basic Info */}
-          <div className="bg-white rounded-lg border border-gray-200 p-6">
-            <h2 className="text-xl font-semibold mb-4">Basic Information</h2>
+          <div className="bg-white border-4 border-black p-6 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
+            <h2 className="text-2xl font-black mb-4">BASIC INFORMATION</h2>
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium mb-2">Bio</label>
+                <label className="block font-black mb-2">BIO</label>
                 <textarea
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black"
+                  className="w-full px-4 py-3 border-4 border-black font-bold focus:outline-none focus:bg-yellow-100"
                   rows={4}
-                  placeholder="Tell us about your musical journey..."
+                  placeholder="TELL US ABOUT YOUR MUSICAL JOURNEY..."
                   value={formData.bio}
                   onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium mb-2">Profile Photo</label>
+                <label className="block font-black mb-2">PROFILE PHOTO</label>
                 <div className="space-y-4">
                   {avatarPreview && (
                     <div className="flex justify-center">
-                      <div className="w-24 h-24 relative rounded-full overflow-hidden bg-gray-100">
-                        <img
+                      <div className="w-24 h-24 border-4 border-black bg-gray-100">
+                        <Image
                           src={avatarPreview}
                           alt="Profile preview"
+                          width={96}
+                          height={96}
                           className="w-full h-full object-cover"
                         />
                       </div>
@@ -278,46 +281,46 @@ export default function EditProfilePage() {
                   <input
                     type="file"
                     accept="image/*"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black"
+                    className="w-full px-3 py-2 border-4 border-black font-bold focus:outline-none focus:bg-yellow-100"
                     onChange={handleAvatarChange}
                   />
-                  <p className="text-sm text-gray-500">Upload a new profile photo (optional)</p>
+                  <p className="text-sm font-bold text-gray-600">Upload a new profile photo (optional)</p>
                 </div>
               </div>
             </div>
           </div>
 
           {/* Musical Info */}
-          <div className="bg-white rounded-lg border border-gray-200 p-6">
-            <h2 className="text-xl font-semibold mb-4">Musical Information</h2>
+          <div className="bg-white border-4 border-black p-6 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
+            <h2 className="text-2xl font-black mb-4">MUSICAL INFORMATION</h2>
             <div className="grid md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium mb-2">Main Instrument</label>
+                <label className="block font-black mb-2">MAIN INSTRUMENT</label>
                 <select
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black"
+                  className="w-full px-4 py-3 border-4 border-black font-bold bg-white focus:outline-none focus:bg-yellow-100"
                   value={formData.mainInstrument}
                   onChange={(e) => setFormData({ ...formData, mainInstrument: e.target.value })}
                 >
-                  <option value="">Select an instrument</option>
+                  <option value="">SELECT AN INSTRUMENT</option>
                   {instruments.map((instrument) => (
                     <option key={instrument} value={instrument}>
-                      {instrument}
+                      {instrument.toUpperCase()}
                     </option>
                   ))}
                 </select>
               </div>
               
               <div>
-                <label className="block text-sm font-medium mb-2">Experience Level</label>
+                <label className="block font-black mb-2">EXPERIENCE LEVEL</label>
                 <select
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black"
+                  className="w-full px-4 py-3 border-4 border-black font-bold bg-white focus:outline-none focus:bg-yellow-100"
                   value={formData.experienceLevel}
                   onChange={(e) => setFormData({ ...formData, experienceLevel: e.target.value })}
                 >
-                  <option value="">Select experience level</option>
+                  <option value="">SELECT EXPERIENCE LEVEL</option>
                   {experienceLevels.map((level) => (
                     <option key={level.value} value={level.value}>
-                      {level.label}
+                      {level.label.toUpperCase()}
                     </option>
                   ))}
                 </select>
@@ -325,11 +328,11 @@ export default function EditProfilePage() {
             </div>
 
             <div className="mt-4">
-              <label className="block text-sm font-medium mb-2">Influences</label>
+              <label className="block font-black mb-2">INFLUENCES</label>
               <textarea
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black"
+                className="w-full px-4 py-3 border-4 border-black font-bold focus:outline-none focus:bg-yellow-100"
                 rows={3}
-                placeholder="List your musical influences..."
+                placeholder="LIST YOUR MUSICAL INFLUENCES..."
                 value={formData.influences}
                 onChange={(e) => setFormData({ ...formData, influences: e.target.value })}
               />
@@ -337,14 +340,14 @@ export default function EditProfilePage() {
           </div>
 
           {/* What You're Looking For */}
-          <div className="bg-white rounded-lg border border-gray-200 p-6">
-            <h2 className="text-xl font-semibold mb-4">What You&apos;re Looking For</h2>
+          <div className="bg-white border-4 border-black p-6 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
+            <h2 className="text-2xl font-black mb-4">WHAT YOU&apos;RE LOOKING FOR</h2>
             <div className="grid md:grid-cols-2 gap-2">
               {seekingOptions.map((option) => (
-                <label key={option} className="flex items-center p-3 rounded-lg border border-gray-200 hover:border-gray-300 cursor-pointer">
+                <label key={option} className="flex items-center p-3 border-2 border-black bg-white hover:bg-yellow-100 cursor-pointer font-bold transition-colors">
                   <input
                     type="checkbox"
-                    className="mr-3"
+                    className="mr-3 w-4 h-4"
                     checked={formData.seeking.includes(option)}
                     onChange={(e) => {
                       if (e.target.checked) {
@@ -354,21 +357,21 @@ export default function EditProfilePage() {
                       }
                     }}
                   />
-                  <span>{option}</span>
+                  <span>{option.toUpperCase()}</span>
                 </label>
               ))}
             </div>
           </div>
 
           {/* Genres */}
-          <div className="bg-white rounded-lg border border-gray-200 p-6">
-            <h2 className="text-xl font-semibold mb-4">Genres</h2>
+          <div className="bg-white border-4 border-black p-6 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
+            <h2 className="text-2xl font-black mb-4">GENRES</h2>
             <div className="grid md:grid-cols-3 gap-2">
               {genres.map((genre) => (
-                <label key={genre} className="flex items-center p-2 rounded border border-gray-200 hover:border-gray-300 cursor-pointer">
+                <label key={genre} className="flex items-center p-2 border-2 border-black bg-white hover:bg-cyan-100 cursor-pointer font-bold transition-colors">
                   <input
                     type="checkbox"
-                    className="mr-2"
+                    className="mr-2 w-4 h-4"
                     checked={formData.genres.includes(genre)}
                     onChange={(e) => {
                       if (e.target.checked) {
@@ -378,56 +381,56 @@ export default function EditProfilePage() {
                       }
                     }}
                   />
-                  <span className="text-sm">{genre}</span>
+                  <span className="text-sm">{genre.toUpperCase()}</span>
                 </label>
               ))}
             </div>
           </div>
 
           {/* Availability & Logistics */}
-          <div className="bg-white rounded-lg border border-gray-200 p-6">
-            <h2 className="text-xl font-semibold mb-4">Availability & Logistics</h2>
+          <div className="bg-white border-4 border-black p-6 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
+            <h2 className="text-2xl font-black mb-4">AVAILABILITY & LOGISTICS</h2>
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium mb-2">Availability</label>
+                <label className="block font-black mb-2">AVAILABILITY</label>
                 <select
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black"
+                  className="w-full px-4 py-3 border-4 border-black font-bold bg-white focus:outline-none focus:bg-yellow-100"
                   value={formData.availability}
                   onChange={(e) => setFormData({ ...formData, availability: e.target.value })}
                 >
-                  <option value="">Select availability</option>
+                  <option value="">SELECT AVAILABILITY</option>
                   {availabilityOptions.map((option) => (
                     <option key={option.value} value={option.value}>
-                      {option.label}
+                      {option.label.toUpperCase()}
                     </option>
                   ))}
                 </select>
               </div>
               
               <div className="space-y-3">
-                <label className="flex items-center">
+                <label className="flex items-center p-3 border-2 border-black bg-white hover:bg-lime-100 cursor-pointer font-bold transition-colors">
                   <input
                     type="checkbox"
-                    className="mr-3"
+                    className="mr-3 w-4 h-4"
                     checked={formData.hasTransportation}
                     onChange={(e) => setFormData({ ...formData, hasTransportation: e.target.checked })}
                   />
-                  <span>I have reliable transportation</span>
+                  <span>I HAVE RELIABLE TRANSPORTATION</span>
                 </label>
-                <label className="flex items-center">
+                <label className="flex items-center p-3 border-2 border-black bg-white hover:bg-lime-100 cursor-pointer font-bold transition-colors">
                   <input
                     type="checkbox"
-                    className="mr-3"
+                    className="mr-3 w-4 h-4"
                     checked={formData.hasOwnEquipment}
                     onChange={(e) => setFormData({ ...formData, hasOwnEquipment: e.target.checked })}
                   />
-                  <span>I have my own equipment</span>
+                  <span>I HAVE MY OWN EQUIPMENT</span>
                 </label>
               </div>
 
               <div>
-                <label className="block text-sm font-medium mb-2">
-                  Willing to travel: {formData.willingToTravelMiles} miles
+                <label className="block font-black mb-2">
+                  WILLING TO TRAVEL: {formData.willingToTravelMiles} MILES
                 </label>
                 <input
                   type="range"
@@ -436,68 +439,84 @@ export default function EditProfilePage() {
                   step="5"
                   value={formData.willingToTravelMiles}
                   onChange={(e) => setFormData({ ...formData, willingToTravelMiles: parseInt(e.target.value) })}
-                  className="w-full"
+                  className="w-full h-3 bg-pink-400 border-2 border-black appearance-none slider"
                 />
               </div>
             </div>
           </div>
 
           {/* Social Links */}
-          <div className="bg-white rounded-lg border border-gray-200 p-6">
-            <h2 className="text-xl font-semibold mb-4">Social Links (Optional)</h2>
+          <div className="bg-white border-4 border-black p-6 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
+            <h2 className="text-2xl font-black mb-4">SOCIAL LINKS (OPTIONAL)</h2>
             <div className="grid md:grid-cols-2 gap-4">
-              <Input
-                label="Instagram"
-                placeholder="@username"
-                value={formData.socialLinks.instagram}
-                onChange={(e) => setFormData({
-                  ...formData,
-                  socialLinks: { ...formData.socialLinks, instagram: e.target.value }
-                })}
-              />
-              <Input
-                label="YouTube"
-                placeholder="youtube.com/..."
-                value={formData.socialLinks.youtube}
-                onChange={(e) => setFormData({
-                  ...formData,
-                  socialLinks: { ...formData.socialLinks, youtube: e.target.value }
-                })}
-              />
-              <Input
-                label="SoundCloud"
-                placeholder="soundcloud.com/..."
-                value={formData.socialLinks.soundcloud}
-                onChange={(e) => setFormData({
-                  ...formData,
-                  socialLinks: { ...formData.socialLinks, soundcloud: e.target.value }
-                })}
-              />
-              <Input
-                label="Spotify"
-                placeholder="spotify.com/..."
-                value={formData.socialLinks.spotify}
-                onChange={(e) => setFormData({
-                  ...formData,
-                  socialLinks: { ...formData.socialLinks, spotify: e.target.value }
-                })}
-              />
+              <div>
+                <label className="block font-black mb-2">INSTAGRAM</label>
+                <input
+                  type="text"
+                  className="w-full px-4 py-3 border-4 border-black font-bold focus:outline-none focus:bg-yellow-100"
+                  placeholder="@USERNAME"
+                  value={formData.socialLinks.instagram}
+                  onChange={(e) => setFormData({
+                    ...formData,
+                    socialLinks: { ...formData.socialLinks, instagram: e.target.value }
+                  })}
+                />
+              </div>
+              <div>
+                <label className="block font-black mb-2">YOUTUBE</label>
+                <input
+                  type="text"
+                  className="w-full px-4 py-3 border-4 border-black font-bold focus:outline-none focus:bg-yellow-100"
+                  placeholder="YOUTUBE.COM/..."
+                  value={formData.socialLinks.youtube}
+                  onChange={(e) => setFormData({
+                    ...formData,
+                    socialLinks: { ...formData.socialLinks, youtube: e.target.value }
+                  })}
+                />
+              </div>
+              <div>
+                <label className="block font-black mb-2">SOUNDCLOUD</label>
+                <input
+                  type="text"
+                  className="w-full px-4 py-3 border-4 border-black font-bold focus:outline-none focus:bg-yellow-100"
+                  placeholder="SOUNDCLOUD.COM/..."
+                  value={formData.socialLinks.soundcloud}
+                  onChange={(e) => setFormData({
+                    ...formData,
+                    socialLinks: { ...formData.socialLinks, soundcloud: e.target.value }
+                  })}
+                />
+              </div>
+              <div>
+                <label className="block font-black mb-2">SPOTIFY</label>
+                <input
+                  type="text"
+                  className="w-full px-4 py-3 border-4 border-black font-bold focus:outline-none focus:bg-yellow-100"
+                  placeholder="SPOTIFY.COM/..."
+                  value={formData.socialLinks.spotify}
+                  onChange={(e) => setFormData({
+                    ...formData,
+                    socialLinks: { ...formData.socialLinks, spotify: e.target.value }
+                  })}
+                />
+              </div>
             </div>
           </div>
 
           {/* Publish Settings */}
-          <div className="bg-white rounded-lg border border-gray-200 p-6">
-            <h2 className="text-xl font-semibold mb-4">Profile Settings</h2>
-            <label className="flex items-center">
+          <div className="bg-white border-4 border-black p-6 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
+            <h2 className="text-2xl font-black mb-4">PROFILE SETTINGS</h2>
+            <label className="flex items-center p-4 border-2 border-black bg-white hover:bg-lime-100 cursor-pointer font-bold transition-colors">
               <input
                 type="checkbox"
-                className="mr-3"
+                className="mr-3 w-5 h-5"
                 checked={formData.isPublished}
                 onChange={(e) => setFormData({ ...formData, isPublished: e.target.checked })}
               />
               <div>
-                <span className="font-medium">Publish profile</span>
-                <p className="text-sm text-gray-600">
+                <span className="font-black">PUBLISH PROFILE</span>
+                <p className="text-sm font-bold text-gray-600">
                   Make your profile visible to other musicians
                 </p>
               </div>
@@ -506,11 +525,15 @@ export default function EditProfilePage() {
 
           {/* Save Button */}
           <div className="flex justify-end">
-            <Button onClick={handleSave} disabled={saving} className="flex items-center">
-              <Save className="w-4 h-4 mr-2" />
-              {saving ? 'Saving...' : 'Save Profile'}
-            </Button>
+            <button
+              onClick={handleSave} 
+              disabled={saving}
+              className="px-8 py-4 bg-black text-white border-4 border-black font-black text-lg hover:bg-pink-400 hover:text-black transition-colors shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {saving ? 'SAVING...' : 'SAVE PROFILE →'}
+            </button>
           </div>
+        </div>
         </div>
       </div>
     </>

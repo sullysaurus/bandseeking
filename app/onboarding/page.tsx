@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
 import { ensureUserRecord, getUserProfile } from '@/lib/auth-helpers'
 import { instruments, genres, seekingOptions, experienceLevels, availabilityOptions } from '@/lib/utils'
+import Image from 'next/image'
 import Button from '@/components/ui/Button'
 import Input from '@/components/ui/Input'
 import { ChevronLeft, ChevronRight, Check } from 'lucide-react'
@@ -284,9 +285,11 @@ export default function OnboardingPage() {
                   {formData.profileImage && (
                     <div className="flex justify-center">
                       <div className="w-24 h-24 relative rounded-full overflow-hidden bg-gray-100">
-                        <img
+                        <Image
                           src={URL.createObjectURL(formData.profileImage)}
                           alt="Profile preview"
+                          width={96}
+                          height={96}
                           className="w-full h-full object-cover"
                         />
                       </div>

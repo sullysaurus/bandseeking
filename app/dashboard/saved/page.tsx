@@ -5,9 +5,7 @@ import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
 import Navigation from '@/components/layout/Navigation'
 import ProfileCard from '@/components/ProfileCard'
-import Button from '@/components/ui/Button'
 import Link from 'next/link'
-import { Heart, ArrowLeft } from 'lucide-react'
 
 export default function SavedProfilesPage() {
   const router = useRouter()
@@ -58,49 +56,60 @@ export default function SavedProfilesPage() {
   return (
     <>
       <Navigation />
-      <div className="max-w-7xl mx-auto px-4 py-8">
-        <div className="mb-8">
-          <Link href="/dashboard" className="inline-flex items-center text-gray-600 hover:text-black mb-4">
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Back to Dashboard
-          </Link>
-          <div className="flex items-center">
-            <Heart className="w-8 h-8 mr-3" />
-            <div>
-              <h1 className="text-3xl font-bold">Saved Musicians</h1>
-              <p className="text-gray-600">Musicians you&apos;ve saved for future collaboration</p>
-            </div>
-          </div>
-        </div>
-
-        {loading ? (
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {[...Array(4)].map((_, i) => (
-              <div key={i} className="animate-pulse">
-                <div className="bg-gray-200 h-64 rounded-lg"></div>
-              </div>
-            ))}
-          </div>
-        ) : savedProfiles.length > 0 ? (
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {savedProfiles.map((profile) => (
-              <ProfileCard key={profile.id} profile={profile} />
-            ))}
-          </div>
-        ) : (
-          <div className="text-center py-12">
-            <div className="inline-flex items-center justify-center w-16 h-16 bg-gray-100 rounded-full mb-4">
-              <Heart className="w-8 h-8 text-gray-400" />
-            </div>
-            <h2 className="text-xl font-semibold mb-2">No saved musicians yet</h2>
-            <p className="text-gray-600 mb-6">
-              Start browsing and save musicians you&apos;d like to connect with
-            </p>
-            <Link href="/search">
-              <Button>Browse Musicians</Button>
+      <div className="min-h-screen bg-purple-300">
+        <div className="max-w-6xl mx-auto px-4 py-8">
+          {/* Header */}
+          <div className="mb-8">
+            <Link 
+              href="/dashboard" 
+              className="inline-flex items-center font-black text-lg mb-4 hover:text-pink-400 transition-colors"
+            >
+              ← BACK TO DASHBOARD
             </Link>
+            <h1 className="text-4xl md:text-5xl font-black mb-2">SAVED MUSICIANS</h1>
+            <p className="font-bold text-xl">Your saved musicians for future collabs.</p>
           </div>
-        )}
+
+          {loading ? (
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {[...Array(6)].map((_, i) => (
+                <div key={i} className="bg-white border-4 border-black p-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] animate-pulse">
+                  <div className="bg-gray-200 h-20 w-20 border-4 border-black mb-4"></div>
+                  <div className="bg-gray-200 h-6 mb-2"></div>
+                  <div className="bg-gray-200 h-4 mb-4"></div>
+                  <div className="flex gap-2">
+                    <div className="bg-gray-200 h-8 flex-1"></div>
+                    <div className="bg-gray-200 h-8 w-8"></div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : savedProfiles.length > 0 ? (
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {savedProfiles.map((profile) => (
+                <ProfileCard key={profile.id} profile={profile} />
+              ))}
+            </div>
+          ) : (
+            <div className="bg-white border-4 border-black p-8 text-center shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
+              <div className="mb-6">
+                <div className="w-16 h-16 bg-pink-400 border-4 border-black mx-auto mb-4 flex items-center justify-center">
+                  <span className="text-2xl">♡</span>
+                </div>
+                <h2 className="text-2xl font-black mb-2">NO SAVED MUSICIANS YET</h2>
+                <p className="font-bold mb-6">
+                  Start browsing and save musicians you&apos;d like to connect with.
+                </p>
+                <Link 
+                  href="/search" 
+                  className="inline-block px-6 py-3 bg-black text-white border-4 border-black font-black hover:bg-cyan-400 hover:text-black transition-colors shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
+                >
+                  FIND MUSICIANS →
+                </Link>
+              </div>
+            </div>
+          )}
+        </div>
       </div>
     </>
   )

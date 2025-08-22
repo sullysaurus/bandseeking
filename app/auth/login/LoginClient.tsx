@@ -68,7 +68,7 @@ export default function LoginClient() {
           <div className="bg-white border-8 border-black p-8 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
             <div className="text-center mb-8">
               <h1 className="text-4xl font-black mb-2">WELCOME BACK!</h1>
-              <p className="font-bold text-lg">LET'S MAKE SOME NOISE</p>
+              <p className="font-bold text-lg">LET&apos;S MAKE SOME NOISE</p>
             </div>
 
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">

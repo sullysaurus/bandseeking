@@ -374,7 +374,7 @@ export default function NeoBrutalistSearchClient() {
                   {profile.bio && (
                     <div className="mb-4 p-3 bg-gray-50 border-2 border-black">
                       <p className="font-bold text-sm line-clamp-2">
-                        "{profile.bio}"
+                        &quot;{profile.bio}&quot;
                       </p>
                     </div>
                   )}

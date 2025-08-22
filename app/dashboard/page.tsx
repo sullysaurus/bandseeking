@@ -153,7 +153,7 @@ export default function DashboardPage() {
               <div className="bg-yellow-300 border-4 border-black p-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] transition-all">
                 <h2 className="text-2xl font-black mb-4">SAVED</h2>
                 <p className="font-bold mb-4">
-                  Musicians you've bookmarked.
+                  Musicians you&apos;ve bookmarked.
                 </p>
                 <div className="bg-black text-white px-4 py-2 font-black text-center hover:bg-white hover:text-black border-2 border-black transition-colors">
                   VIEW ({savedCount}) →

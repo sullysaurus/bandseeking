@@ -24,7 +24,7 @@ export default function Error({
             <h1 className="text-6xl md:text-8xl font-black mb-4">OOPS!</h1>
             <h2 className="text-2xl md:text-3xl font-black mb-4">SOMETHING WENT WRONG</h2>
             <p className="font-bold text-lg mb-8 max-w-md">
-              THE AMP BLEW A FUSE. LET'S TRY THAT AGAIN.
+              THE AMP BLEW A FUSE. LET&apos;S TRY THAT AGAIN.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <button 

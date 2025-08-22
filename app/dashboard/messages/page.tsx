@@ -159,7 +159,7 @@ export default function MessagesPage() {
             <div className="bg-white border-4 border-black p-8 text-center shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
               <h2 className="text-2xl font-black mb-4">NO RESULTS</h2>
               <p className="font-bold">
-                No conversations match "{searchQuery}".
+                No conversations match &quot;{searchQuery}&quot;.
               </p>
             </div>
           )}
