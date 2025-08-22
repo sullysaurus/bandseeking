@@ -30,6 +30,18 @@ export default function ChatPage() {
     scrollToBottom()
   }, [messages])
 
+  useEffect(() => {
+    let cleanup: (() => void) | null = null
+    
+    if (currentUser) {
+      cleanup = subscribeToMessages(currentUser.id)
+    }
+    
+    return () => {
+      if (cleanup) cleanup()
+    }
+  }, [currentUser, receiverId])
+
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
   }
@@ -46,7 +58,6 @@ export default function ChatPage() {
     await fetchReceiver()
     await fetchMessages(user.id)
     await markMessagesAsRead(user.id)
-    subscribeToMessages(user.id)
   }
 
   const fetchReceiver = async () => {
@@ -90,6 +101,8 @@ export default function ChatPage() {
   }
 
   const subscribeToMessages = (userId: string) => {
+    console.log('Setting up real-time subscription for messages')
+    
     const subscription = supabase
       .channel(`chat:${userId}:${receiverId}`)
       .on(
@@ -101,15 +114,19 @@ export default function ChatPage() {
           filter: `or(and(sender_id.eq.${userId},receiver_id.eq.${receiverId}),and(sender_id.eq.${receiverId},receiver_id.eq.${userId}))`
         },
         (payload) => {
+          console.log('Received new message via realtime:', payload.new)
           setMessages(prev => [...prev, payload.new])
           if (payload.new.receiver_id === userId) {
             markMessagesAsRead(userId)
           }
         }
       )
-      .subscribe()
+      .subscribe((status) => {
+        console.log('Subscription status:', status)
+      })
 
     return () => {
+      console.log('Cleaning up subscription')
       subscription.unsubscribe()
     }
   }
