@@ -27,6 +27,7 @@ export default function AdminUsersPage() {
   const [loading, setLoading] = useState(true)
   const [searchQuery, setSearchQuery] = useState('')
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null)
+  const [updateKey, setUpdateKey] = useState(0)
 
   useEffect(() => {
     checkAdminAccess()
@@ -84,73 +85,68 @@ export default function AdminUsersPage() {
   }
 
   const handleDeleteUser = async (userId: string) => {
+    console.log('handleDeleteUser called with userId:', userId)
+    console.log('deleteConfirm state:', deleteConfirm)
+    
     if (deleteConfirm !== userId) {
+      console.log('Setting delete confirm for user:', userId)
       setDeleteConfirm(userId)
       return
     }
 
+    console.log('Proceeding with deletion for user:', userId)
+
     try {
       console.log('Starting deletion process for user:', userId)
 
-      // Delete user's saved profiles
-      const { error: savedError } = await supabase
-        .from('saved_profiles')
-        .delete()
-        .or(`user_id.eq.${userId},saved_user_id.eq.${userId}`)
+      // Call admin API to delete user
+      const response = await fetch('/api/admin/delete-user', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          userId,
+          adminEmail: currentUser?.email
+        })
+      })
 
-      if (savedError) {
-        console.error('Error deleting saved profiles:', savedError)
+      const result = await response.json()
+
+      if (!response.ok) {
+        throw new Error(result.error || 'Failed to delete user')
       }
 
-      // Delete user's messages
-      const { error: messagesError } = await supabase
-        .from('messages')
-        .delete()
-        .or(`sender_id.eq.${userId},receiver_id.eq.${userId}`)
+      console.log('User deletion completed successfully:', result)
 
-      if (messagesError) {
-        console.error('Error deleting messages:', messagesError)
-      }
-
-      // Delete user's profile
-      const { error: profileError } = await supabase
-        .from('profiles')
-        .delete()
-        .eq('user_id', userId)
-
-      if (profileError) {
-        console.error('Error deleting profile:', profileError)
-      }
-
-      // Finally, delete user record
-      const { error: userError } = await supabase
-        .from('users')
-        .delete()
-        .eq('id', userId)
-
-      if (userError) {
-        console.error('Error deleting user:', userError)
-        throw new Error(`Failed to delete user: ${userError.message}`)
-      }
-
-      console.log('User deletion completed successfully')
+      // Clear delete confirmation immediately
+      setDeleteConfirm(null)
 
       // Immediately update local state
+      console.log('Current users state:', users.map(u => ({ id: u.id, email: u.email })))
+      console.log('Current filteredUsers state:', filteredUsers.map(u => ({ id: u.id, email: u.email })))
+      
       const updatedUsers = users.filter(user => user.id !== userId)
-      console.log('Users before filter:', users.length, 'Users after filter:', updatedUsers.length)
-      setUsers(updatedUsers)
-      
-      // Also update filtered users immediately
       const updatedFilteredUsers = filteredUsers.filter(user => user.id !== userId)
+      
+      console.log('Users before filter:', users.length, 'Users after filter:', updatedUsers.length)
       console.log('Filtered users before:', filteredUsers.length, 'Filtered users after:', updatedFilteredUsers.length)
-      setFilteredUsers(updatedFilteredUsers)
       
-      // Also force refresh to ensure consistency
+      // Update both states with force re-render
+      setUsers([...updatedUsers])
+      setFilteredUsers([...updatedFilteredUsers])
+      
+      console.log('State updates applied')
+      
+      // Force component re-render
+      setUpdateKey(prev => prev + 1)
+      
+      // Force a fresh fetch after a delay to verify deletion
       setTimeout(async () => {
+        console.log('Refetching users to ensure consistency...')
         await fetchUsers()
-      }, 500)
+      }, 1000)
       
-      setDeleteConfirm(null)
       alert('User and all associated data deleted successfully')
     } catch (error: any) {
       console.error('Error in deletion process:', error)
@@ -225,7 +221,7 @@ export default function AdminUsersPage() {
                     <th className="text-right py-3 px-4 font-semibold text-gray-900">Actions</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-gray-200">
+                <tbody key={updateKey} className="divide-y divide-gray-200">
                   {filteredUsers.map((user) => (
                     <tr key={user.id} className="hover:bg-gray-50">
                       <td className="py-3 px-4">
