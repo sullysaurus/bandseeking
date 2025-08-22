@@ -5,13 +5,14 @@ import ProfileClient from './ProfileClient'
 export async function generateMetadata({ 
   params 
 }: { 
-  params: { username: string } 
+  params: Promise<{ username: string }> 
 }): Promise<Metadata> {
+  const resolvedParams = await params
   // Fetch user and profile data for metadata
   const { data: userData } = await supabase
     .from('users')
     .select('*')
-    .eq('username', params.username)
+    .eq('username', resolvedParams.username)
     .single()
 
   if (!userData) {
@@ -51,13 +52,14 @@ export async function generateMetadata({
 export default async function ProfilePage({ 
   params 
 }: { 
-  params: { username: string } 
+  params: Promise<{ username: string }> 
 }) {
+  const resolvedParams = await params
   // Fetch profile data for structured data
   const { data: userData } = await supabase
     .from('users')
     .select('*')
-    .eq('username', params.username)
+    .eq('username', resolvedParams.username)
     .single()
 
   const { data: profileData } = await supabase
