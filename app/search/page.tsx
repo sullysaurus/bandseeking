@@ -122,7 +122,7 @@ export default function SearchPage() {
 
     // Distance filter
     filtered = filtered.filter(profile =>
-      profile.willing_to_travel_miles >= filters.maxDistance
+      profile.willing_to_travel_miles <= filters.maxDistance
     )
 
     setFilteredProfiles(filtered)
