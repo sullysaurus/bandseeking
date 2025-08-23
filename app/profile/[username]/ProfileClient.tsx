@@ -243,27 +243,27 @@ export default function ProfileClient() {
                             activeStatus.status === 'days' ? 'text-red-600' :
                             'text-gray-500'
                           }`}>
-                            🟢 {activeStatus.text}
+                            {activeStatus.text}
                           </div>
                         )
                       })()}
                       {profile.availability && (
                         <div className="font-bold text-sm">
-                          📅 AVAILABILITY: {profile.availability.toUpperCase()}
+                          AVAILABILITY: {profile.availability.toUpperCase()}
                         </div>
                       )}
                       {profile.has_transportation && (
                         <div className="font-bold text-sm text-green-600">
-                          🚗 HAS TRANSPORTATION
+                          HAS TRANSPORTATION
                         </div>
                       )}
                       {profile.has_own_equipment && (
                         <div className="font-bold text-sm text-blue-600">
-                          🎸 HAS OWN EQUIPMENT
+                          HAS OWN EQUIPMENT
                         </div>
                       )}
                       <div className="font-bold text-sm">
-                        📍 WILL TRAVEL: {profile.willing_to_travel_miles} MILES
+                        WILL TRAVEL: {profile.willing_to_travel_miles} MILES
                       </div>
                     </div>
                   </div>

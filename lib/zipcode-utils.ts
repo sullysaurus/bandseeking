@@ -1,359 +1,197 @@
-// Basic zip code to city/state mapping for common US zip codes
-// This is a simplified version - for production you might want to use a more comprehensive API or database
+// Zip code to city/state lookup using Zippopotam.us API
+// This provides comprehensive coverage of all US zip codes
 
 interface LocationInfo {
   city: string
   state: string
 }
 
-// Sample of major US cities and their zip codes
-const ZIP_TO_LOCATION: Record<string, LocationInfo> = {
+// Cache for API results to avoid repeated calls
+const locationCache = new Map<string, LocationInfo | null>()
+
+/**
+ * Fetches location data from Zippopotam.us API
+ * @param zipCode - 5-digit US zip code
+ * @returns LocationInfo object with city and state, or null if not found
+ */
+async function fetchLocationFromAPI(zipCode: string): Promise<LocationInfo | null> {
+  try {
+    const response = await fetch(`https://api.zippopotam.us/us/${zipCode}`)
+    
+    if (!response.ok) {
+      return null
+    }
+    
+    const data = await response.json()
+    
+    if (data.places && data.places.length > 0) {
+      const place = data.places[0]
+      return {
+        city: place['place name'],
+        state: place['state abbreviation']
+      }
+    }
+    
+    return null
+  } catch (error) {
+    console.warn('Failed to fetch location for zip code:', zipCode, error)
+    return null
+  }
+}
+
+// Basic fallback lookup for offline/error cases - just major cities
+const FALLBACK_ZIP_TO_LOCATION: Record<string, LocationInfo> = {
   // New York
   '10001': { city: 'New York', state: 'NY' },
   '10002': { city: 'New York', state: 'NY' },
   '10003': { city: 'New York', state: 'NY' },
-  '10004': { city: 'New York', state: 'NY' },
-  '10005': { city: 'New York', state: 'NY' },
-  '10006': { city: 'New York', state: 'NY' },
-  '10007': { city: 'New York', state: 'NY' },
-  '10008': { city: 'New York', state: 'NY' },
-  '10009': { city: 'New York', state: 'NY' },
-  '10010': { city: 'New York', state: 'NY' },
-  '10011': { city: 'New York', state: 'NY' },
-  '10012': { city: 'New York', state: 'NY' },
-  '10013': { city: 'New York', state: 'NY' },
-  '10014': { city: 'New York', state: 'NY' },
-  '10015': { city: 'New York', state: 'NY' },
-  '10016': { city: 'New York', state: 'NY' },
-  '10017': { city: 'New York', state: 'NY' },
-  '10018': { city: 'New York', state: 'NY' },
-  '10019': { city: 'New York', state: 'NY' },
-  '10020': { city: 'New York', state: 'NY' },
-  '10021': { city: 'New York', state: 'NY' },
-  '10022': { city: 'New York', state: 'NY' },
-  '10023': { city: 'New York', state: 'NY' },
-  '10024': { city: 'New York', state: 'NY' },
-  '10025': { city: 'New York', state: 'NY' },
-  '10026': { city: 'New York', state: 'NY' },
-  '10027': { city: 'New York', state: 'NY' },
-  '10028': { city: 'New York', state: 'NY' },
-  '10029': { city: 'New York', state: 'NY' },
-  '10030': { city: 'New York', state: 'NY' },
   
-  // Los Angeles
+  // Los Angeles  
   '90001': { city: 'Los Angeles', state: 'CA' },
-  '90002': { city: 'Los Angeles', state: 'CA' },
-  '90003': { city: 'Los Angeles', state: 'CA' },
-  '90004': { city: 'Los Angeles', state: 'CA' },
-  '90005': { city: 'Los Angeles', state: 'CA' },
-  '90006': { city: 'Los Angeles', state: 'CA' },
-  '90007': { city: 'Los Angeles', state: 'CA' },
-  '90008': { city: 'Los Angeles', state: 'CA' },
-  '90009': { city: 'Los Angeles', state: 'CA' },
-  '90010': { city: 'Los Angeles', state: 'CA' },
-  '90011': { city: 'Los Angeles', state: 'CA' },
-  '90012': { city: 'Los Angeles', state: 'CA' },
-  '90013': { city: 'Los Angeles', state: 'CA' },
-  '90014': { city: 'Los Angeles', state: 'CA' },
-  '90015': { city: 'Los Angeles', state: 'CA' },
-  '90016': { city: 'Los Angeles', state: 'CA' },
-  '90017': { city: 'Los Angeles', state: 'CA' },
-  '90018': { city: 'Los Angeles', state: 'CA' },
-  '90019': { city: 'Los Angeles', state: 'CA' },
-  '90020': { city: 'Los Angeles', state: 'CA' },
-  '90021': { city: 'Los Angeles', state: 'CA' },
-  '90022': { city: 'Los Angeles', state: 'CA' },
-  '90023': { city: 'Los Angeles', state: 'CA' },
-  '90024': { city: 'Los Angeles', state: 'CA' },
-  '90025': { city: 'Los Angeles', state: 'CA' },
-  '90026': { city: 'Los Angeles', state: 'CA' },
-  '90027': { city: 'Los Angeles', state: 'CA' },
-  '90028': { city: 'Los Angeles', state: 'CA' },
-  '90029': { city: 'Los Angeles', state: 'CA' },
-  '90030': { city: 'Los Angeles', state: 'CA' },
+  '90210': { city: 'Beverly Hills', state: 'CA' },
   
   // Chicago
   '60601': { city: 'Chicago', state: 'IL' },
   '60602': { city: 'Chicago', state: 'IL' },
-  '60603': { city: 'Chicago', state: 'IL' },
-  '60604': { city: 'Chicago', state: 'IL' },
-  '60605': { city: 'Chicago', state: 'IL' },
-  '60606': { city: 'Chicago', state: 'IL' },
-  '60607': { city: 'Chicago', state: 'IL' },
-  '60608': { city: 'Chicago', state: 'IL' },
-  '60609': { city: 'Chicago', state: 'IL' },
-  '60610': { city: 'Chicago', state: 'IL' },
-  '60611': { city: 'Chicago', state: 'IL' },
-  '60612': { city: 'Chicago', state: 'IL' },
-  '60613': { city: 'Chicago', state: 'IL' },
-  '60614': { city: 'Chicago', state: 'IL' },
-  '60615': { city: 'Chicago', state: 'IL' },
-  '60616': { city: 'Chicago', state: 'IL' },
-  '60617': { city: 'Chicago', state: 'IL' },
-  '60618': { city: 'Chicago', state: 'IL' },
-  '60619': { city: 'Chicago', state: 'IL' },
-  '60620': { city: 'Chicago', state: 'IL' },
-  '60621': { city: 'Chicago', state: 'IL' },
-  '60622': { city: 'Chicago', state: 'IL' },
-  '60623': { city: 'Chicago', state: 'IL' },
-  '60624': { city: 'Chicago', state: 'IL' },
-  '60625': { city: 'Chicago', state: 'IL' },
-  '60626': { city: 'Chicago', state: 'IL' },
-  '60627': { city: 'Chicago', state: 'IL' },
-  '60628': { city: 'Chicago', state: 'IL' },
-  '60629': { city: 'Chicago', state: 'IL' },
-  '60630': { city: 'Chicago', state: 'IL' },
   
   // Houston
   '77001': { city: 'Houston', state: 'TX' },
   '77002': { city: 'Houston', state: 'TX' },
-  '77003': { city: 'Houston', state: 'TX' },
-  '77004': { city: 'Houston', state: 'TX' },
-  '77005': { city: 'Houston', state: 'TX' },
-  '77006': { city: 'Houston', state: 'TX' },
-  '77007': { city: 'Houston', state: 'TX' },
-  '77008': { city: 'Houston', state: 'TX' },
-  '77009': { city: 'Houston', state: 'TX' },
-  '77010': { city: 'Houston', state: 'TX' },
-  '77011': { city: 'Houston', state: 'TX' },
-  '77012': { city: 'Houston', state: 'TX' },
-  '77013': { city: 'Houston', state: 'TX' },
-  '77014': { city: 'Houston', state: 'TX' },
-  '77015': { city: 'Houston', state: 'TX' },
-  '77016': { city: 'Houston', state: 'TX' },
-  '77017': { city: 'Houston', state: 'TX' },
-  '77018': { city: 'Houston', state: 'TX' },
-  '77019': { city: 'Houston', state: 'TX' },
-  '77020': { city: 'Houston', state: 'TX' },
-  '77021': { city: 'Houston', state: 'TX' },
-  '77022': { city: 'Houston', state: 'TX' },
-  '77023': { city: 'Houston', state: 'TX' },
-  '77024': { city: 'Houston', state: 'TX' },
-  '77025': { city: 'Houston', state: 'TX' },
-  '77026': { city: 'Houston', state: 'TX' },
-  '77027': { city: 'Houston', state: 'TX' },
-  '77028': { city: 'Houston', state: 'TX' },
-  '77029': { city: 'Houston', state: 'TX' },
-  '77030': { city: 'Houston', state: 'TX' },
   
   // Phoenix
   '85001': { city: 'Phoenix', state: 'AZ' },
   '85002': { city: 'Phoenix', state: 'AZ' },
-  '85003': { city: 'Phoenix', state: 'AZ' },
-  '85004': { city: 'Phoenix', state: 'AZ' },
-  '85005': { city: 'Phoenix', state: 'AZ' },
-  '85006': { city: 'Phoenix', state: 'AZ' },
-  '85007': { city: 'Phoenix', state: 'AZ' },
-  '85008': { city: 'Phoenix', state: 'AZ' },
-  '85009': { city: 'Phoenix', state: 'AZ' },
-  '85010': { city: 'Phoenix', state: 'AZ' },
-  '85011': { city: 'Phoenix', state: 'AZ' },
-  '85012': { city: 'Phoenix', state: 'AZ' },
-  '85013': { city: 'Phoenix', state: 'AZ' },
-  '85014': { city: 'Phoenix', state: 'AZ' },
-  '85015': { city: 'Phoenix', state: 'AZ' },
-  '85016': { city: 'Phoenix', state: 'AZ' },
-  '85017': { city: 'Phoenix', state: 'AZ' },
-  '85018': { city: 'Phoenix', state: 'AZ' },
-  '85019': { city: 'Phoenix', state: 'AZ' },
-  '85020': { city: 'Phoenix', state: 'AZ' },
-  '85021': { city: 'Phoenix', state: 'AZ' },
-  '85022': { city: 'Phoenix', state: 'AZ' },
-  '85023': { city: 'Phoenix', state: 'AZ' },
-  '85024': { city: 'Phoenix', state: 'AZ' },
-  '85025': { city: 'Phoenix', state: 'AZ' },
-  '85026': { city: 'Phoenix', state: 'AZ' },
-  '85027': { city: 'Phoenix', state: 'AZ' },
-  '85028': { city: 'Phoenix', state: 'AZ' },
-  '85029': { city: 'Phoenix', state: 'AZ' },
-  '85030': { city: 'Phoenix', state: 'AZ' },
   
-  // Philadelphia  
+  // Philadelphia
   '19101': { city: 'Philadelphia', state: 'PA' },
   '19102': { city: 'Philadelphia', state: 'PA' },
-  '19103': { city: 'Philadelphia', state: 'PA' },
-  '19104': { city: 'Philadelphia', state: 'PA' },
-  '19105': { city: 'Philadelphia', state: 'PA' },
-  '19106': { city: 'Philadelphia', state: 'PA' },
-  '19107': { city: 'Philadelphia', state: 'PA' },
-  '19108': { city: 'Philadelphia', state: 'PA' },
-  '19109': { city: 'Philadelphia', state: 'PA' },
-  '19110': { city: 'Philadelphia', state: 'PA' },
-  '19111': { city: 'Philadelphia', state: 'PA' },
-  '19112': { city: 'Philadelphia', state: 'PA' },
-  '19113': { city: 'Philadelphia', state: 'PA' },
-  '19114': { city: 'Philadelphia', state: 'PA' },
-  '19115': { city: 'Philadelphia', state: 'PA' },
-  '19116': { city: 'Philadelphia', state: 'PA' },
-  '19117': { city: 'Philadelphia', state: 'PA' },
-  '19118': { city: 'Philadelphia', state: 'PA' },
-  '19119': { city: 'Philadelphia', state: 'PA' },
-  '19120': { city: 'Philadelphia', state: 'PA' },
-  '19121': { city: 'Philadelphia', state: 'PA' },
-  '19122': { city: 'Philadelphia', state: 'PA' },
-  '19123': { city: 'Philadelphia', state: 'PA' },
-  '19124': { city: 'Philadelphia', state: 'PA' },
-  '19125': { city: 'Philadelphia', state: 'PA' },
-  '19126': { city: 'Philadelphia', state: 'PA' },
-  '19127': { city: 'Philadelphia', state: 'PA' },
-  '19128': { city: 'Philadelphia', state: 'PA' },
-  '19129': { city: 'Philadelphia', state: 'PA' },
-  '19130': { city: 'Philadelphia', state: 'PA' },
   
   // San Antonio
   '78201': { city: 'San Antonio', state: 'TX' },
   '78202': { city: 'San Antonio', state: 'TX' },
-  '78203': { city: 'San Antonio', state: 'TX' },
-  '78204': { city: 'San Antonio', state: 'TX' },
-  '78205': { city: 'San Antonio', state: 'TX' },
-  '78206': { city: 'San Antonio', state: 'TX' },
-  '78207': { city: 'San Antonio', state: 'TX' },
-  '78208': { city: 'San Antonio', state: 'TX' },
-  '78209': { city: 'San Antonio', state: 'TX' },
-  '78210': { city: 'San Antonio', state: 'TX' },
-  '78211': { city: 'San Antonio', state: 'TX' },
-  '78212': { city: 'San Antonio', state: 'TX' },
-  '78213': { city: 'San Antonio', state: 'TX' },
-  '78214': { city: 'San Antonio', state: 'TX' },
-  '78215': { city: 'San Antonio', state: 'TX' },
-  '78216': { city: 'San Antonio', state: 'TX' },
-  '78217': { city: 'San Antonio', state: 'TX' },
-  '78218': { city: 'San Antonio', state: 'TX' },
-  '78219': { city: 'San Antonio', state: 'TX' },
-  '78220': { city: 'San Antonio', state: 'TX' },
-  '78221': { city: 'San Antonio', state: 'TX' },
-  '78222': { city: 'San Antonio', state: 'TX' },
-  '78223': { city: 'San Antonio', state: 'TX' },
-  '78224': { city: 'San Antonio', state: 'TX' },
-  '78225': { city: 'San Antonio', state: 'TX' },
-  '78226': { city: 'San Antonio', state: 'TX' },
-  '78227': { city: 'San Antonio', state: 'TX' },
-  '78228': { city: 'San Antonio', state: 'TX' },
-  '78229': { city: 'San Antonio', state: 'TX' },
-  '78230': { city: 'San Antonio', state: 'TX' },
   
   // San Diego
   '92101': { city: 'San Diego', state: 'CA' },
   '92102': { city: 'San Diego', state: 'CA' },
-  '92103': { city: 'San Diego', state: 'CA' },
-  '92104': { city: 'San Diego', state: 'CA' },
-  '92105': { city: 'San Diego', state: 'CA' },
-  '92106': { city: 'San Diego', state: 'CA' },
-  '92107': { city: 'San Diego', state: 'CA' },
-  '92108': { city: 'San Diego', state: 'CA' },
-  '92109': { city: 'San Diego', state: 'CA' },
-  '92110': { city: 'San Diego', state: 'CA' },
-  '92111': { city: 'San Diego', state: 'CA' },
-  '92112': { city: 'San Diego', state: 'CA' },
-  '92113': { city: 'San Diego', state: 'CA' },
-  '92114': { city: 'San Diego', state: 'CA' },
-  '92115': { city: 'San Diego', state: 'CA' },
-  '92116': { city: 'San Diego', state: 'CA' },
-  '92117': { city: 'San Diego', state: 'CA' },
-  '92118': { city: 'San Diego', state: 'CA' },
-  '92119': { city: 'San Diego', state: 'CA' },
-  '92120': { city: 'San Diego', state: 'CA' },
-  '92121': { city: 'San Diego', state: 'CA' },
-  '92122': { city: 'San Diego', state: 'CA' },
-  '92123': { city: 'San Diego', state: 'CA' },
-  '92124': { city: 'San Diego', state: 'CA' },
-  '92125': { city: 'San Diego', state: 'CA' },
-  '92126': { city: 'San Diego', state: 'CA' },
-  '92127': { city: 'San Diego', state: 'CA' },
-  '92128': { city: 'San Diego', state: 'CA' },
-  '92129': { city: 'San Diego', state: 'CA' },
-  '92130': { city: 'San Diego', state: 'CA' },
   
   // Dallas
   '75201': { city: 'Dallas', state: 'TX' },
   '75202': { city: 'Dallas', state: 'TX' },
-  '75203': { city: 'Dallas', state: 'TX' },
-  '75204': { city: 'Dallas', state: 'TX' },
-  '75205': { city: 'Dallas', state: 'TX' },
-  '75206': { city: 'Dallas', state: 'TX' },
-  '75207': { city: 'Dallas', state: 'TX' },
-  '75208': { city: 'Dallas', state: 'TX' },
-  '75209': { city: 'Dallas', state: 'TX' },
-  '75210': { city: 'Dallas', state: 'TX' },
-  '75211': { city: 'Dallas', state: 'TX' },
-  '75212': { city: 'Dallas', state: 'TX' },
-  '75213': { city: 'Dallas', state: 'TX' },
-  '75214': { city: 'Dallas', state: 'TX' },
-  '75215': { city: 'Dallas', state: 'TX' },
-  '75216': { city: 'Dallas', state: 'TX' },
-  '75217': { city: 'Dallas', state: 'TX' },
-  '75218': { city: 'Dallas', state: 'TX' },
-  '75219': { city: 'Dallas', state: 'TX' },
-  '75220': { city: 'Dallas', state: 'TX' },
-  '75221': { city: 'Dallas', state: 'TX' },
-  '75222': { city: 'Dallas', state: 'TX' },
-  '75223': { city: 'Dallas', state: 'TX' },
-  '75224': { city: 'Dallas', state: 'TX' },
-  '75225': { city: 'Dallas', state: 'TX' },
-  '75226': { city: 'Dallas', state: 'TX' },
-  '75227': { city: 'Dallas', state: 'TX' },
-  '75228': { city: 'Dallas', state: 'TX' },
-  '75229': { city: 'Dallas', state: 'TX' },
-  '75230': { city: 'Dallas', state: 'TX' },
   
   // San Jose
   '95101': { city: 'San Jose', state: 'CA' },
   '95102': { city: 'San Jose', state: 'CA' },
-  '95103': { city: 'San Jose', state: 'CA' },
-  '95104': { city: 'San Jose', state: 'CA' },
-  '95105': { city: 'San Jose', state: 'CA' },
-  '95106': { city: 'San Jose', state: 'CA' },
-  '95107': { city: 'San Jose', state: 'CA' },
-  '95108': { city: 'San Jose', state: 'CA' },
-  '95109': { city: 'San Jose', state: 'CA' },
-  '95110': { city: 'San Jose', state: 'CA' },
-  '95111': { city: 'San Jose', state: 'CA' },
-  '95112': { city: 'San Jose', state: 'CA' },
-  '95113': { city: 'San Jose', state: 'CA' },
-  '95114': { city: 'San Jose', state: 'CA' },
-  '95115': { city: 'San Jose', state: 'CA' },
-  '95116': { city: 'San Jose', state: 'CA' },
-  '95117': { city: 'San Jose', state: 'CA' },
-  '95118': { city: 'San Jose', state: 'CA' },
-  '95119': { city: 'San Jose', state: 'CA' },
-  '95120': { city: 'San Jose', state: 'CA' },
-  '95121': { city: 'San Jose', state: 'CA' },
-  '95122': { city: 'San Jose', state: 'CA' },
-  '95123': { city: 'San Jose', state: 'CA' },
-  '95124': { city: 'San Jose', state: 'CA' },
-  '95125': { city: 'San Jose', state: 'CA' },
-  '95126': { city: 'San Jose', state: 'CA' },
-  '95127': { city: 'San Jose', state: 'CA' },
-  '95128': { city: 'San Jose', state: 'CA' },
-  '95129': { city: 'San Jose', state: 'CA' },
-  '95130': { city: 'San Jose', state: 'CA' },
+  
+  // Austin
+  '78701': { city: 'Austin', state: 'TX' },
+  '78702': { city: 'Austin', state: 'TX' },
+  
+  // San Francisco
+  '94102': { city: 'San Francisco', state: 'CA' },
+  '94103': { city: 'San Francisco', state: 'CA' },
+  
+  // Miami
+  '33101': { city: 'Miami', state: 'FL' },
+  '33102': { city: 'Miami', state: 'FL' },
+  
+  // Seattle
+  '98101': { city: 'Seattle', state: 'WA' },
+  '98102': { city: 'Seattle', state: 'WA' },
+  
+  // Denver
+  '80201': { city: 'Denver', state: 'CO' },
+  '80202': { city: 'Denver', state: 'CO' },
+  
+  // Brooklyn
+  '11201': { city: 'Brooklyn', state: 'NY' },
+  '11215': { city: 'Brooklyn', state: 'NY' },
+  
+  // Queens
+  '11101': { city: 'Queens', state: 'NY' },
+  '11354': { city: 'Queens', state: 'NY' },
+  
+  // Bronx
+  '10451': { city: 'Bronx', state: 'NY' },
+  '10452': { city: 'Bronx', state: 'NY' },
 }
 
 /**
- * Converts a zip code to city and state
+ * Converts a zip code to city and state using API with caching
  * @param zipCode - 5-digit US zip code
- * @returns LocationInfo object with city and state, or null if not found
+ * @returns Promise<LocationInfo | null>
  */
-export function getLocationFromZipCode(zipCode: string): LocationInfo | null {
+export async function getLocationFromZipCode(zipCode: string): Promise<LocationInfo | null> {
   if (!zipCode || zipCode.length !== 5) {
     return null
   }
   
-  return ZIP_TO_LOCATION[zipCode] || null
+  // Check cache first
+  if (locationCache.has(zipCode)) {
+    return locationCache.get(zipCode) || null
+  }
+  
+  // Try API first
+  const apiResult = await fetchLocationFromAPI(zipCode)
+  if (apiResult) {
+    locationCache.set(zipCode, apiResult)
+    return apiResult
+  }
+  
+  // Fall back to local lookup
+  const fallbackResult = FALLBACK_ZIP_TO_LOCATION[zipCode] || null
+  locationCache.set(zipCode, fallbackResult)
+  return fallbackResult
 }
 
 /**
- * Formats location for display - tries zip lookup first, falls back to zip code
+ * Synchronous version using fallback data only
+ * @param zipCode - 5-digit US zip code
+ * @returns LocationInfo object with city and state, or null if not found
+ */
+export function getLocationFromZipCodeSync(zipCode: string): LocationInfo | null {
+  if (!zipCode || zipCode.length !== 5) {
+    return null
+  }
+  
+  // Check cache first
+  if (locationCache.has(zipCode)) {
+    return locationCache.get(zipCode) || null
+  }
+  
+  // Use fallback data
+  return FALLBACK_ZIP_TO_LOCATION[zipCode] || null
+}
+
+/**
+ * Formats location for display - tries cached/fallback lookup first, then zip code
  * @param zipCode - 5-digit US zip code
  * @returns Formatted location string (e.g., "Los Angeles, CA" or "12345")
  */
 export function formatLocationDisplay(zipCode: string): string {
   if (!zipCode) return ''
   
-  const location = getLocationFromZipCode(zipCode)
+  // Try synchronous lookup first (cache + fallback)
+  const location = getLocationFromZipCodeSync(zipCode)
   if (location) {
     return `${location.city}, ${location.state}`
   }
   
-  return zipCode // fallback to zip code if not found
+  // Fallback to zip code if not found
+  return zipCode
+}
+
+/**
+ * Async version that tries API lookup then caches result
+ * @param zipCode - 5-digit US zip code
+ * @returns Promise<string> - Formatted location string
+ */
+export async function formatLocationDisplayAsync(zipCode: string): Promise<string> {
+  if (!zipCode) return ''
+  
+  const location = await getLocationFromZipCode(zipCode)
+  if (location) {
+    return `${location.city}, ${location.state}`
+  }
+  
+  return zipCode
 }
