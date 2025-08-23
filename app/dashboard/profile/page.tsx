@@ -30,12 +30,6 @@ export default function EditProfilePage() {
     hasTransportation: false,
     hasOwnEquipment: false,
     willingToTravelMiles: 25,
-    socialLinks: {
-      instagram: '',
-      youtube: '',
-      soundcloud: '',
-      spotify: ''
-    },
     isPublished: false
   })
 
@@ -98,12 +92,6 @@ export default function EditProfilePage() {
           hasTransportation: profileData.has_transportation || false,
           hasOwnEquipment: profileData.has_own_equipment || false,
           willingToTravelMiles: profileData.willing_to_travel_miles || 25,
-          socialLinks: profileData.social_links || {
-            instagram: '',
-            youtube: '',
-            soundcloud: '',
-            spotify: ''
-          },
           isPublished: profileData.is_published || false
         })
         setAvatarPreview(profileData.profile_image_url)
@@ -166,7 +154,6 @@ export default function EditProfilePage() {
         has_transportation: formData.hasTransportation,
         has_own_equipment: formData.hasOwnEquipment,
         willing_to_travel_miles: formData.willingToTravelMiles,
-        social_links: formData.socialLinks,
         is_published: formData.isPublished
       }
 
@@ -440,65 +427,6 @@ export default function EditProfilePage() {
                   value={formData.willingToTravelMiles}
                   onChange={(e) => setFormData({ ...formData, willingToTravelMiles: parseInt(e.target.value) })}
                   className="w-full h-3 bg-pink-400 border-2 border-black appearance-none slider"
-                />
-              </div>
-            </div>
-          </div>
-
-          {/* Social Links */}
-          <div className="bg-white border-4 border-black p-6 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
-            <h2 className="text-2xl font-black mb-4">SOCIAL LINKS (OPTIONAL)</h2>
-            <div className="grid md:grid-cols-2 gap-4">
-              <div>
-                <label className="block font-black mb-2">INSTAGRAM</label>
-                <input
-                  type="text"
-                  className="w-full px-4 py-3 border-4 border-black font-bold focus:outline-none focus:bg-yellow-100"
-                  placeholder="@USERNAME"
-                  value={formData.socialLinks.instagram}
-                  onChange={(e) => setFormData({
-                    ...formData,
-                    socialLinks: { ...formData.socialLinks, instagram: e.target.value }
-                  })}
-                />
-              </div>
-              <div>
-                <label className="block font-black mb-2">YOUTUBE</label>
-                <input
-                  type="text"
-                  className="w-full px-4 py-3 border-4 border-black font-bold focus:outline-none focus:bg-yellow-100"
-                  placeholder="YOUTUBE.COM/..."
-                  value={formData.socialLinks.youtube}
-                  onChange={(e) => setFormData({
-                    ...formData,
-                    socialLinks: { ...formData.socialLinks, youtube: e.target.value }
-                  })}
-                />
-              </div>
-              <div>
-                <label className="block font-black mb-2">SOUNDCLOUD</label>
-                <input
-                  type="text"
-                  className="w-full px-4 py-3 border-4 border-black font-bold focus:outline-none focus:bg-yellow-100"
-                  placeholder="SOUNDCLOUD.COM/..."
-                  value={formData.socialLinks.soundcloud}
-                  onChange={(e) => setFormData({
-                    ...formData,
-                    socialLinks: { ...formData.socialLinks, soundcloud: e.target.value }
-                  })}
-                />
-              </div>
-              <div>
-                <label className="block font-black mb-2">SPOTIFY</label>
-                <input
-                  type="text"
-                  className="w-full px-4 py-3 border-4 border-black font-bold focus:outline-none focus:bg-yellow-100"
-                  placeholder="SPOTIFY.COM/..."
-                  value={formData.socialLinks.spotify}
-                  onChange={(e) => setFormData({
-                    ...formData,
-                    socialLinks: { ...formData.socialLinks, spotify: e.target.value }
-                  })}
                 />
               </div>
             </div>

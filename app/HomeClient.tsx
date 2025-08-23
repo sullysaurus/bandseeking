@@ -126,7 +126,7 @@ export default function HomeClient({ initialProfiles }: HomeClientProps) {
       {/* Footer */}
       <footer className="border-t-8 border-black bg-white p-4 md:p-6 mt-8">
         <div className="max-w-6xl mx-auto text-center">
-          <p className="font-black text-lg">© BANDSEEKING 2024</p>
+          <p className="font-black text-lg">© BANDSEEKING 2025</p>
           <p className="font-bold">Made for musicians, by musicians.</p>
         </div>
       </footer>

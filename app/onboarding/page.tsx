@@ -10,7 +10,7 @@ import Button from '@/components/ui/Button'
 import Input from '@/components/ui/Input'
 import { ChevronLeft, ChevronRight, Check } from 'lucide-react'
 
-const TOTAL_STEPS = 8
+const TOTAL_STEPS = 7
 
 export default function OnboardingPage() {
   const router = useRouter()
@@ -35,13 +35,7 @@ export default function OnboardingPage() {
     availability: '',
     hasTransportation: false,
     hasOwnEquipment: false,
-    willingToTravelMiles: 25,
-    socialLinks: {
-      instagram: '',
-      youtube: '',
-      soundcloud: '',
-      spotify: ''
-    }
+    willingToTravelMiles: 25
   })
 
   useEffect(() => {
@@ -262,7 +256,6 @@ export default function OnboardingPage() {
         has_transportation: formData.hasTransportation,
         has_own_equipment: formData.hasOwnEquipment,
         willing_to_travel_miles: formData.willingToTravelMiles,
-        social_links: formData.socialLinks,
         is_published: true
       })
 
@@ -627,54 +620,6 @@ export default function OnboardingPage() {
         )
 
       case 7:
-        return (
-          <div className="space-y-6">
-            <div>
-              <h2 className="text-2xl font-bold mb-2">Social Links (Optional)</h2>
-              <p className="text-gray-600">Share your music and social profiles</p>
-            </div>
-            <div className="space-y-4">
-              <Input
-                label="Instagram"
-                placeholder="@username"
-                value={formData.socialLinks.instagram}
-                onChange={(e) => setFormData({
-                  ...formData,
-                  socialLinks: { ...formData.socialLinks, instagram: e.target.value }
-                })}
-              />
-              <Input
-                label="YouTube"
-                placeholder="youtube.com/..."
-                value={formData.socialLinks.youtube}
-                onChange={(e) => setFormData({
-                  ...formData,
-                  socialLinks: { ...formData.socialLinks, youtube: e.target.value }
-                })}
-              />
-              <Input
-                label="SoundCloud"
-                placeholder="soundcloud.com/..."
-                value={formData.socialLinks.soundcloud}
-                onChange={(e) => setFormData({
-                  ...formData,
-                  socialLinks: { ...formData.socialLinks, soundcloud: e.target.value }
-                })}
-              />
-              <Input
-                label="Spotify"
-                placeholder="spotify.com/..."
-                value={formData.socialLinks.spotify}
-                onChange={(e) => setFormData({
-                  ...formData,
-                  socialLinks: { ...formData.socialLinks, spotify: e.target.value }
-                })}
-              />
-            </div>
-          </div>
-        )
-
-      case 8:
         return (
           <div className="space-y-6">
             <div>

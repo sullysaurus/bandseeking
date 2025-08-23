@@ -267,55 +267,6 @@ export default function ProfileClient() {
                       </div>
                     </div>
                   </div>
-
-                  {/* Social Links */}
-                  {profile.social_links && Object.values(profile.social_links).some((v) => v) && (
-                    <div className="mt-6 pt-6 border-t-4 border-black">
-                      <h3 className="font-black mb-3">SOCIAL LINKS</h3>
-                      <div className="flex flex-wrap gap-2">
-                        {profile.social_links.instagram && (
-                          <a
-                            href={`https://instagram.com/${profile.social_links.instagram}`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="px-3 py-2 bg-pink-400 border-2 border-black font-black text-xs hover:bg-pink-500 transition-colors"
-                          >
-                            INSTAGRAM →
-                          </a>
-                        )}
-                        {profile.social_links.youtube && (
-                          <a
-                            href={profile.social_links.youtube}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="px-3 py-2 bg-red-400 border-2 border-black font-black text-xs hover:bg-red-500 transition-colors"
-                          >
-                            YOUTUBE →
-                          </a>
-                        )}
-                        {profile.social_links.soundcloud && (
-                          <a
-                            href={profile.social_links.soundcloud}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="px-3 py-2 bg-orange-400 border-2 border-black font-black text-xs hover:bg-orange-500 transition-colors"
-                          >
-                            SOUNDCLOUD →
-                          </a>
-                        )}
-                        {profile.social_links.spotify && (
-                          <a
-                            href={profile.social_links.spotify}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="px-3 py-2 bg-green-400 border-2 border-black font-black text-xs hover:bg-green-500 transition-colors"
-                          >
-                            SPOTIFY →
-                          </a>
-                        )}
-                      </div>
-                    </div>
-                  )}
                 </div>
               </div>
             </div>

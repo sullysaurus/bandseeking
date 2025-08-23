@@ -81,11 +81,6 @@ export default async function ProfilePage({
       '@type': 'PostalAddress',
       postalCode: userData.zip_code,
     },
-    sameAs: [
-      profileData.social_links?.instagram ? `https://instagram.com/${profileData.social_links.instagram}` : null,
-      profileData.social_links?.youtube,
-      profileData.social_links?.soundcloud,
-    ].filter(Boolean),
     knowsAbout: profileData.genres,
     skills: [profileData.main_instrument, ...(profileData.secondary_instruments || [])],
   } : null
