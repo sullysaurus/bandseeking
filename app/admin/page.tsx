@@ -86,10 +86,12 @@ export default function AdminDashboard() {
     return (
       <>
         <Navigation />
-        <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-          <div className="text-center">
-            <div className="w-8 h-8 border-2 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-            <p className="text-gray-600">Checking admin access...</p>
+        <div className="min-h-screen bg-purple-400 flex items-center justify-center">
+          <div className="bg-white border-8 border-black p-8 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
+            <div className="text-center">
+              <div className="w-12 h-12 border-4 border-black border-t-transparent animate-spin mx-auto mb-4"></div>
+              <p className="font-black text-xl">CHECKING ADMIN ACCESS...</p>
+            </div>
           </div>
         </div>
       </>
@@ -99,26 +101,30 @@ export default function AdminDashboard() {
   return (
     <>
       <Navigation />
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-purple-400">
         <div className="max-w-7xl mx-auto px-4 py-8">
           {/* Header */}
-          <div className="mb-8">
-            <div className="flex items-center gap-3 mb-2">
-              <Shield className="w-8 h-8 text-red-600" />
-              <h1 className="text-3xl font-bold text-black">Admin Dashboard</h1>
+          <div className="mb-8 text-center">
+            <div className="flex items-center justify-center gap-4 mb-4">
+              <div className="bg-red-500 border-4 border-black p-3 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+                <Shield className="w-8 h-8 text-white" />
+              </div>
+              <h1 className="text-6xl font-black">ADMIN DASHBOARD</h1>
             </div>
-            <p className="text-gray-600">System administration and user management</p>
+            <p className="font-bold text-xl">SYSTEM ADMINISTRATION AND USER MANAGEMENT</p>
           </div>
 
           {/* Stats Grid */}
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-            <div className="bg-white rounded-xl border border-gray-200 p-6">
+            <div className="bg-white border-4 border-black p-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-gray-600">Total Users</p>
-                  <p className="text-3xl font-bold text-black">{stats.totalUsers}</p>
+                  <p className="font-black text-sm mb-1">TOTAL USERS</p>
+                  <p className="text-4xl font-black text-blue-600">{stats.totalUsers}</p>
                 </div>
-                <Users className="w-8 h-8 text-blue-600" />
+                <div className="bg-blue-300 border-2 border-black p-2">
+                  <Users className="w-8 h-8 text-black" />
+                </div>
               </div>
             </div>
 

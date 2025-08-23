@@ -2,7 +2,6 @@
 
 import { WifiOff, RefreshCw, Home } from 'lucide-react'
 import Link from 'next/link'
-import Button from '@/components/ui/Button'
 
 export default function OfflinePage() {
   const handleRefresh = () => {
@@ -10,43 +9,48 @@ export default function OfflinePage() {
   }
 
   return (
-    <div className="min-h-screen bg-white flex items-center justify-center px-4">
-      <div className="text-center max-w-md">
-        <div className="mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-gray-100 rounded-full mb-6">
-            <WifiOff className="w-8 h-8 text-gray-500" />
+    <div className="min-h-screen bg-red-400 flex items-center justify-center px-4">
+      <div className="text-center">
+        <div className="bg-white border-8 border-black p-8 md:p-12 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] max-w-2xl">
+          <div className="mb-8">
+            <div className="inline-flex items-center justify-center w-20 h-20 bg-gray-300 border-4 border-black mb-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+              <WifiOff className="w-10 h-10 text-black" />
+            </div>
+            <h1 className="text-6xl md:text-8xl font-black mb-4">OFFLINE!</h1>
+            <p className="font-bold text-xl mb-6">
+              THE SIGNAL DROPPED OUT!
+            </p>
           </div>
-          <h1 className="text-3xl font-bold mb-2">You&apos;re Offline</h1>
-          <p className="text-gray-600 mb-6">
-            It looks like you&apos;ve lost your internet connection. Check your network and try again.
-          </p>
-        </div>
 
-        <div className="bg-gray-50 rounded-lg p-6 mb-8">
-          <h3 className="font-medium mb-4">While you&apos;re offline:</h3>
-          <ul className="text-sm text-gray-600 text-left space-y-2">
-            <li>• Some features may not work properly</li>
-            <li>• Your saved data will sync when reconnected</li>
-            <li>• Messages won&apos;t send until you&apos;re back online</li>
-          </ul>
-        </div>
+          <div className="bg-yellow-300 border-4 border-black p-6 mb-8 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+            <h3 className="font-black text-lg mb-4">WHILE YOU&apos;RE OFFLINE:</h3>
+            <ul className="text-left space-y-3 font-bold">
+              <li>→ SOME FEATURES WON&apos;T WORK</li>
+              <li>→ DATA WILL SYNC WHEN RECONNECTED</li>
+              <li>→ MESSAGES WON&apos;T SEND YET</li>
+            </ul>
+          </div>
 
-        <div className="space-y-4">
-          <Button onClick={handleRefresh} className="flex items-center mx-auto">
-            <RefreshCw className="w-4 h-4 mr-2" />
-            Try Again
-          </Button>
+          <div className="space-y-6">
+            <button 
+              onClick={handleRefresh} 
+              className="flex items-center mx-auto px-6 py-3 bg-lime-300 border-4 border-black font-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:bg-lime-400 transition-all"
+            >
+              <RefreshCw className="w-5 h-5 mr-2" />
+              TRY AGAIN
+            </button>
 
-          <Link href="/">
-            <Button variant="ghost" className="flex items-center mx-auto">
-              <Home className="w-4 h-4 mr-2" />
-              Back to Home
-            </Button>
-          </Link>
-        </div>
+            <Link href="/" className="block">
+              <button className="flex items-center mx-auto px-6 py-3 bg-cyan-300 border-4 border-black font-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:bg-cyan-400 transition-all">
+                <Home className="w-5 h-5 mr-2" />
+                BACK TO HOME
+              </button>
+            </Link>
+          </div>
 
-        <div className="mt-8 text-sm text-gray-500">
-          <p>Connection will be restored automatically when your network is back.</p>
+          <div className="mt-8 bg-purple-300 border-4 border-black p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+            <p className="font-bold">CONNECTION WILL RESTORE AUTOMATICALLY WHEN YOUR NETWORK IS BACK.</p>
+          </div>
         </div>
       </div>
     </div>
