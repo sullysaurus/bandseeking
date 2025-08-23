@@ -46,8 +46,12 @@ export default function HomeClient({ initialProfiles }: HomeClientProps) {
   if (loading) {
     return (
       <div className="min-h-screen bg-yellow-300 flex items-center justify-center">
-        <div className="text-center">
-          <p className="text-2xl font-black">LOADING...</p>
+        <div className="bg-white border-4 md:border-8 border-black p-6 md:p-8 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] md:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-8 w-8 md:h-12 md:w-12 border-b-4 border-black mx-auto mb-4"></div>
+            <p className="text-xl md:text-2xl font-black">LOADING...</p>
+            <p className="text-sm md:text-base font-bold text-gray-600 mt-2">CHECKING YOUR ACCOUNT</p>
+          </div>
         </div>
       </div>
     )
