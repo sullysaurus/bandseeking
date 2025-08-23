@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import { SpeedInsights } from "@vercel/speed-insights/next"
+import Footer from '@/components/layout/Footer'
 import './globals.css'
 
 const inter = Inter({ subsets: ['latin'] })
@@ -39,8 +40,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <div className="min-h-screen bg-white">
-          {children}
+        <div className="min-h-screen bg-white flex flex-col">
+          <main className="flex-grow">
+            {children}
+          </main>
+          <Footer />
         </div>
         <SpeedInsights />
       </body>

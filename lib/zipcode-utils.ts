@@ -195,3 +195,84 @@ export async function formatLocationDisplayAsync(zipCode: string): Promise<strin
   
   return zipCode
 }
+
+/**
+ * Parse location input to determine if it's a zip code, city, or city/state
+ * @param locationInput - User input like "90210", "Los Angeles", or "Los Angeles, CA"
+ * @returns object with parsed location data
+ */
+export function parseLocationInput(locationInput: string): {
+  type: 'zipcode' | 'city' | 'city_state' | 'invalid'
+  zipCode?: string
+  city?: string
+  state?: string
+} {
+  const trimmed = locationInput.trim()
+  if (!trimmed) return { type: 'invalid' }
+  
+  // Check if it's a zip code (5 digits)
+  if (/^\d{5}$/.test(trimmed)) {
+    return { type: 'zipcode', zipCode: trimmed }
+  }
+  
+  // Check if it contains a comma (city, state format)
+  if (trimmed.includes(',')) {
+    const parts = trimmed.split(',').map(p => p.trim())
+    if (parts.length === 2 && parts[0] && parts[1]) {
+      return { 
+        type: 'city_state', 
+        city: parts[0].toLowerCase(),
+        state: parts[1].toLowerCase()
+      }
+    }
+  }
+  
+  // Otherwise treat as city name
+  return { type: 'city', city: trimmed.toLowerCase() }
+}
+
+/**
+ * Check if a profile matches the location search criteria
+ * @param profile - Profile with user data including zip_code
+ * @param locationInput - User's location search input
+ * @param radius - Search radius in miles
+ * @returns Promise<boolean> - Whether the profile matches
+ */
+export async function matchesLocationSearch(profile: any, locationInput: string, radius: number): Promise<boolean> {
+  if (!locationInput.trim()) return true // No location filter
+  
+  const profileZip = profile.user?.zip_code
+  if (!profileZip) return false
+  
+  const parsedInput = parseLocationInput(locationInput)
+  
+  if (parsedInput.type === 'zipcode' && parsedInput.zipCode) {
+    // Direct zip code comparison with radius
+    if (radius <= 10) {
+      return profileZip === parsedInput.zipCode
+    } else if (radius <= 25) {
+      return profileZip.substring(0, 4) === parsedInput.zipCode.substring(0, 4)
+    } else {
+      return profileZip.substring(0, 3) === parsedInput.zipCode.substring(0, 3)
+    }
+  }
+  
+  // For city or city/state searches, get the profile's location
+  const profileLocation = await getLocationFromZipCode(profileZip)
+  if (!profileLocation) return false
+  
+  if (parsedInput.type === 'city' && parsedInput.city) {
+    // Match city name (case insensitive)
+    return profileLocation.city.toLowerCase().includes(parsedInput.city)
+  }
+  
+  if (parsedInput.type === 'city_state' && parsedInput.city && parsedInput.state) {
+    // Match both city and state
+    const cityMatch = profileLocation.city.toLowerCase().includes(parsedInput.city)
+    const stateMatch = profileLocation.state.toLowerCase() === parsedInput.state || 
+                       profileLocation.state.toLowerCase().includes(parsedInput.state)
+    return cityMatch && stateMatch
+  }
+  
+  return false
+}

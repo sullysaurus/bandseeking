@@ -5,6 +5,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
+import { matchesLocationSearch } from '@/lib/zipcode-utils'
 import Navigation from '@/components/layout/Navigation'
 import SearchProfileCard from '@/components/SearchProfileCard'
 
@@ -13,7 +14,7 @@ export default function NeoBrutalistSearchClient() {
   const [profiles, setProfiles] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [hasSearched, setHasSearched] = useState(false)
-  const [zipCode, setZipCode] = useState('')
+  const [location, setLocation] = useState('')
   const [radius, setRadius] = useState(25)
   const [instrument, setInstrument] = useState('')
   const [experience, setExperience] = useState('')
@@ -128,24 +129,12 @@ export default function NeoBrutalistSearchClient() {
       
       let filteredData = data || []
       
-      // Filter by zip code and radius if provided
-      if (zipCode.trim()) {
-        const searchZip = zipCode.trim()
-        filteredData = filteredData.filter(profile => {
-          const profileZip = profile.user?.zip_code
-          if (!profileZip) return false
-          
-          // Exact match for smaller radius, broader match for larger radius
-          if (radius <= 10) {
-            return profileZip === searchZip
-          } else if (radius <= 25) {
-            // Match first 4 digits for medium radius (same area)
-            return profileZip.substring(0, 4) === searchZip.substring(0, 4)
-          } else {
-            // Match first 3 digits for large radius (broader region)
-            return profileZip.substring(0, 3) === searchZip.substring(0, 3)
-          }
-        })
+      // Filter by location if provided (supports zip code, city, or city/state)
+      if (location.trim()) {
+        const locationMatches = await Promise.all(
+          filteredData.map(profile => matchesLocationSearch(profile, location, radius))
+        )
+        filteredData = filteredData.filter((_, index) => locationMatches[index])
       }
 
       setProfiles(filteredData)
@@ -154,6 +143,11 @@ export default function NeoBrutalistSearchClient() {
     } finally {
       setLoading(false)
     }
+  }
+
+  const handleFormSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    handleSearch()
   }
 
   return (
@@ -165,15 +159,15 @@ export default function NeoBrutalistSearchClient() {
           
           {/* Search Form */}
           <div className="bg-white border-4 border-black p-4 mb-6 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
-            <div className="flex flex-col md:flex-row gap-3">
+            <form onSubmit={handleFormSubmit} className="flex flex-col md:flex-row gap-3">
               <div className="flex-1">
                 <label className="block font-black mb-1 text-sm">LOCATION</label>
                 <div className="flex gap-2">
                   <input
                     type="text"
-                    placeholder="ZIP CODE"
-                    value={zipCode}
-                    onChange={(e) => setZipCode(e.target.value)}
+                    placeholder="ZIP CODE, CITY, OR CITY, STATE"
+                    value={location}
+                    onChange={(e) => setLocation(e.target.value)}
                     className="flex-1 px-3 py-2 border-3 border-black font-bold focus:outline-none focus:bg-yellow-100"
                   />
                   <select 
@@ -226,14 +220,14 @@ export default function NeoBrutalistSearchClient() {
 
               <div className="flex items-end">
                 <button 
-                  onClick={handleSearch}
+                  type="submit"
                   disabled={loading}
                   className="w-full md:w-auto px-6 py-2 bg-pink-400 border-3 border-black font-black hover:bg-pink-500 transition-colors shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] disabled:opacity-50 whitespace-nowrap"
                 >
                   {loading ? 'SEARCHING...' : 'SEARCH NOW →'}
                 </button>
               </div>
-            </div>
+            </form>
           </div>
 
           {/* Results Count */}
