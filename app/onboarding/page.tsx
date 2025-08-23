@@ -16,6 +16,7 @@ export default function OnboardingPage() {
   const router = useRouter()
   const [currentStep, setCurrentStep] = useState(1)
   const [loading, setLoading] = useState(false)
+  const [authLoading, setAuthLoading] = useState(true)
   const [userId, setUserId] = useState<string | null>(null)
   const [formData, setFormData] = useState({
     bio: '',
@@ -111,7 +112,11 @@ export default function OnboardingPage() {
       if (existingProfile) {
         console.log('User already has profile, redirecting to dashboard')
         router.push('/dashboard')
+        return
       }
+
+      // If we reach here, user is authenticated and needs to complete onboarding
+      setAuthLoading(false)
     } catch (error) {
       console.error('Error checking auth:', error)
       router.push('/auth/login')
@@ -266,32 +271,32 @@ export default function OnboardingPage() {
       case 1:
         return (
           <div className="space-y-6">
-            <div>
-              <h2 className="text-2xl font-bold mb-2">Tell us about yourself</h2>
-              <p className="text-gray-600">Let other musicians get to know you</p>
+            <div className="text-center">
+              <h2 className="text-4xl font-black mb-2">TELL US ABOUT YOURSELF</h2>
+              <p className="font-bold text-lg">Let other musicians get to know you</p>
             </div>
-            <div className="space-y-4">
+            <div className="space-y-6">
               <div>
-                <label className="block text-sm font-medium mb-2">Bio</label>
+                <label className="block font-black mb-3 text-lg">BIO</label>
                 <textarea
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black"
+                  className="w-full px-4 py-4 border-4 border-black font-bold focus:outline-none focus:bg-yellow-100 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
                   rows={4}
-                  placeholder="Tell us about your musical journey, influences, and what you're looking for..."
+                  placeholder="TELL US ABOUT YOUR MUSICAL JOURNEY..."
                   value={formData.bio}
                   onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium mb-2">Profile Image</label>
-                <div className="space-y-3">
+                <label className="block font-black mb-3 text-lg">PROFILE PHOTO</label>
+                <div className="space-y-4">
                   {formData.profileImage && (
                     <div className="flex justify-center">
-                      <div className="w-24 h-24 relative rounded-full overflow-hidden bg-gray-100">
+                      <div className="w-32 h-32 border-4 border-black bg-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
                         <Image
                           src={URL.createObjectURL(formData.profileImage)}
                           alt="Profile preview"
-                          width={96}
-                          height={96}
+                          width={128}
+                          height={128}
                           className="w-full h-full object-cover"
                         />
                       </div>
@@ -300,10 +305,10 @@ export default function OnboardingPage() {
                   <input
                     type="file"
                     accept="image/*"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black"
+                    className="w-full px-4 py-3 border-4 border-black font-bold focus:outline-none focus:bg-yellow-100 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
                     onChange={(e) => setFormData({ ...formData, profileImage: e.target.files?.[0] || null })}
                   />
-                  <p className="text-sm text-gray-500">Upload a profile photo (optional)</p>
+                  <p className="font-bold text-center">UPLOAD A PROFILE PHOTO (OPTIONAL)</p>
                 </div>
               </div>
             </div>
@@ -313,41 +318,41 @@ export default function OnboardingPage() {
       case 2:
         return (
           <div className="space-y-6">
-            <div>
-              <h2 className="text-2xl font-bold mb-2">Your Instruments</h2>
-              <p className="text-gray-600">What do you play?</p>
+            <div className="text-center">
+              <h2 className="text-4xl font-black mb-2">YOUR INSTRUMENTS</h2>
+              <p className="font-bold text-lg">What do you play?</p>
             </div>
-            <div className="space-y-4">
+            <div className="space-y-6">
               <div>
-                <label className="block text-sm font-medium mb-2">Main Instrument</label>
+                <label className="block font-black mb-3 text-lg">MAIN INSTRUMENT</label>
                 <select
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black"
+                  className="w-full px-4 py-4 border-4 border-black font-black focus:outline-none focus:bg-yellow-100 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
                   value={formData.mainInstrument}
                   onChange={(e) => setFormData({ ...formData, mainInstrument: e.target.value })}
                 >
-                  <option value="">Select an instrument</option>
+                  <option value="">SELECT AN INSTRUMENT</option>
                   {instruments.map((instrument) => (
                     <option key={instrument} value={instrument}>
-                      {instrument}
+                      {instrument.toUpperCase()}
                     </option>
                   ))}
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-medium mb-2">Experience Level</label>
-                <div className="grid grid-cols-2 gap-3">
+                <label className="block font-black mb-3 text-lg">EXPERIENCE LEVEL</label>
+                <div className="grid grid-cols-2 gap-4">
                   {experienceLevels.map((level) => (
                     <button
                       key={level.value}
                       type="button"
                       onClick={() => setFormData({ ...formData, experienceLevel: level.value })}
-                      className={`p-3 rounded-lg border ${
+                      className={`p-4 border-4 border-black font-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all ${
                         formData.experienceLevel === level.value
-                          ? 'border-black bg-black text-white'
-                          : 'border-gray-300 hover:border-gray-400'
+                          ? 'bg-pink-400 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]'
+                          : 'bg-white hover:bg-cyan-300'
                       }`}
                     >
-                      {level.label}
+                      {level.label.toUpperCase()}
                     </button>
                   ))}
                 </div>
@@ -359,19 +364,23 @@ export default function OnboardingPage() {
       case 3:
         return (
           <div className="space-y-6">
-            <div>
-              <h2 className="text-2xl font-bold mb-2">What are you looking for?</h2>
-              <p className="text-gray-600">Select all that apply</p>
+            <div className="text-center">
+              <h2 className="text-4xl font-black mb-2">WHAT ARE YOU LOOKING FOR?</h2>
+              <p className="font-bold text-lg">Select all that apply</p>
             </div>
-            <div className="space-y-2">
+            <div className="space-y-4">
               {seekingOptions.map((option) => (
                 <label
                   key={option}
-                  className="flex items-center p-3 rounded-lg border border-gray-300 hover:border-gray-400 cursor-pointer"
+                  className={`flex items-center p-4 border-4 border-black cursor-pointer font-bold shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all ${
+                    formData.seeking.includes(option)
+                      ? 'bg-purple-400 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]'
+                      : 'bg-white hover:bg-cyan-300'
+                  }`}
                 >
                   <input
                     type="checkbox"
-                    className="mr-3"
+                    className="mr-4 w-5 h-5"
                     checked={formData.seeking.includes(option)}
                     onChange={(e) => {
                       if (e.target.checked) {
@@ -381,7 +390,7 @@ export default function OnboardingPage() {
                       }
                     }}
                   />
-                  <span>{option}</span>
+                  <span className="text-lg">{option.toUpperCase()}</span>
                 </label>
               ))}
             </div>
@@ -391,22 +400,26 @@ export default function OnboardingPage() {
       case 4:
         return (
           <div className="space-y-6">
-            <div>
-              <h2 className="text-2xl font-bold mb-2">Musical Preferences</h2>
-              <p className="text-gray-600">What genres do you play?</p>
+            <div className="text-center">
+              <h2 className="text-4xl font-black mb-2">MUSICAL PREFERENCES</h2>
+              <p className="font-bold text-lg">What genres do you play?</p>
             </div>
-            <div className="space-y-4">
+            <div className="space-y-6">
               <div>
-                <label className="block text-sm font-medium mb-2">Genres (select all that apply)</label>
-                <div className="grid grid-cols-2 gap-2 max-h-64 overflow-y-auto">
+                <label className="block font-black mb-3 text-lg">GENRES (SELECT ALL THAT APPLY)</label>
+                <div className="grid grid-cols-2 gap-3 max-h-80 overflow-y-auto p-2">
                   {genres.map((genre) => (
                     <label
                       key={genre}
-                      className="flex items-center p-2 rounded border border-gray-300 hover:border-gray-400 cursor-pointer"
+                      className={`flex items-center p-3 border-4 border-black cursor-pointer font-bold shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all ${
+                        formData.genres.includes(genre)
+                          ? 'bg-blue-300 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]'
+                          : 'bg-white hover:bg-cyan-200'
+                      }`}
                     >
                       <input
                         type="checkbox"
-                        className="mr-2"
+                        className="mr-3 w-4 h-4"
                         checked={formData.genres.includes(genre)}
                         onChange={(e) => {
                           if (e.target.checked) {
@@ -416,17 +429,17 @@ export default function OnboardingPage() {
                           }
                         }}
                       />
-                      <span className="text-sm">{genre}</span>
+                      <span className="text-sm">{genre.toUpperCase()}</span>
                     </label>
                   ))}
                 </div>
               </div>
               <div>
-                <label className="block text-sm font-medium mb-2">Influences</label>
+                <label className="block font-black mb-3 text-lg">INFLUENCES</label>
                 <textarea
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black"
+                  className="w-full px-4 py-4 border-4 border-black font-bold focus:outline-none focus:bg-yellow-100 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
                   rows={3}
-                  placeholder="List your musical influences, favorite artists, bands..."
+                  placeholder="LIST YOUR MUSICAL INFLUENCES, FAVORITE ARTISTS, BANDS..."
                   value={formData.influences}
                   onChange={(e) => setFormData({ ...formData, influences: e.target.value })}
                 />
@@ -438,26 +451,26 @@ export default function OnboardingPage() {
       case 5:
         return (
           <div className="space-y-6">
-            <div>
-              <h2 className="text-2xl font-bold mb-2">Availability & Logistics</h2>
-              <p className="text-gray-600">When can you practice and how far can you travel?</p>
+            <div className="text-center">
+              <h2 className="text-4xl font-black mb-2">AVAILABILITY & LOGISTICS</h2>
+              <p className="font-bold text-lg">When can you practice and how far can you travel?</p>
             </div>
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium mb-2">Availability</label>
-                <div className="grid grid-cols-2 gap-3">
+                <label className="block font-black mb-3 text-lg">AVAILABILITY</label>
+                <div className="grid grid-cols-2 gap-4">
                   {availabilityOptions.map((option) => (
                     <button
                       key={option.value}
                       type="button"
                       onClick={() => setFormData({ ...formData, availability: option.value })}
-                      className={`p-3 rounded-lg border ${
+                      className={`p-4 border-4 border-black font-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all ${
                         formData.availability === option.value
-                          ? 'border-black bg-black text-white'
-                          : 'border-gray-300 hover:border-gray-400'
+                          ? 'bg-yellow-300 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]'
+                          : 'bg-white hover:bg-cyan-300'
                       }`}
                     >
-                      {option.label}
+                      {option.label.toUpperCase()}
                     </button>
                   ))}
                 </div>
@@ -582,56 +595,80 @@ export default function OnboardingPage() {
     }
   }
 
-  return (
-    <div className="min-h-screen bg-white">
-      <div className="max-w-2xl mx-auto px-4 py-12">
-        {/* Progress Bar */}
-        <div className="mb-8">
-          <div className="flex justify-between mb-2">
-            <span className="text-sm text-gray-600">Step {currentStep} of {TOTAL_STEPS}</span>
-            <span className="text-sm text-gray-600">{Math.round((currentStep / TOTAL_STEPS) * 100)}% Complete</span>
+  // Show loading screen while checking authentication
+  if (authLoading) {
+    return (
+      <div className="min-h-screen bg-lime-300 flex items-center justify-center">
+        <div className="bg-white border-8 border-black p-8 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-4 border-black mx-auto mb-4"></div>
+            <p className="font-black text-xl">LOADING YOUR PROFILE...</p>
           </div>
-          <div className="w-full bg-gray-200 rounded-full h-2">
-            <div
-              className="bg-black h-2 rounded-full transition-all duration-300"
-              style={{ width: `${(currentStep / TOTAL_STEPS) * 100}%` }}
-            />
+        </div>
+      </div>
+    )
+  }
+
+  return (
+    <div className="min-h-screen bg-lime-300">
+      <div className="max-w-4xl mx-auto px-4 py-8">
+        {/* Progress Header */}
+        <div className="mb-8 text-center">
+          <h1 className="text-6xl font-black mb-4">PROFILE SETUP</h1>
+          <div className="bg-white border-4 border-black p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+            <div className="flex justify-between mb-3">
+              <span className="font-black">STEP {currentStep} OF {TOTAL_STEPS}</span>
+              <span className="font-black">{Math.round((currentStep / TOTAL_STEPS) * 100)}% COMPLETE</span>
+            </div>
+            <div className="w-full bg-black h-4 border-2 border-black">
+              <div
+                className="bg-pink-400 h-full transition-all duration-300"
+                style={{ width: `${(currentStep / TOTAL_STEPS) * 100}%` }}
+              />
+            </div>
           </div>
         </div>
 
         {/* Step Content */}
-        <div className="mb-8">
+        <div className="mb-8 bg-white border-4 border-black p-8 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
           {renderStep()}
         </div>
 
         {/* Navigation Buttons */}
         <div className="flex justify-between">
-          <Button
-            variant="ghost"
+          <button
             onClick={handlePrevious}
             disabled={currentStep === 1}
-            className="flex items-center"
+            className={`px-6 py-3 border-4 border-black font-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all flex items-center ${
+              currentStep === 1 
+                ? 'bg-gray-300 text-gray-500 cursor-not-allowed' 
+                : 'bg-yellow-300 hover:bg-yellow-400'
+            }`}
           >
-            <ChevronLeft className="w-4 h-4 mr-1" />
-            Previous
-          </Button>
+            <ChevronLeft className="w-5 h-5 mr-2" />
+            PREVIOUS
+          </button>
 
           {currentStep === TOTAL_STEPS ? (
-            <Button
+            <button
               onClick={handleSubmit}
               disabled={loading}
-              className="flex items-center"
+              className={`px-8 py-3 border-4 border-black font-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all flex items-center ${
+                loading 
+                  ? 'bg-gray-300 text-gray-500 cursor-not-allowed' 
+                  : 'bg-pink-400 hover:bg-pink-500'
+              }`}
             >
-              {loading ? 'Publishing...' : 'Publish Profile'}
-            </Button>
+              {loading ? 'PUBLISHING...' : 'PUBLISH PROFILE →'}
+            </button>
           ) : (
-            <Button
+            <button
               onClick={handleNext}
-              className="flex items-center"
+              className="px-6 py-3 bg-pink-400 border-4 border-black font-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:bg-pink-500 transition-all flex items-center"
             >
-              Next
-              <ChevronRight className="w-4 h-4 ml-1" />
-            </Button>
+              NEXT
+              <ChevronRight className="w-5 h-5 ml-2" />
+            </button>
           )}
         </div>
       </div>
