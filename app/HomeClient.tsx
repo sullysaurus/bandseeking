@@ -21,7 +21,19 @@ export default function HomeClient({ initialProfiles }: HomeClientProps) {
     try {
       const { data: { user } } = await supabase.auth.getUser()
       if (user) {
-        router.push('/dashboard')
+        // Check if user has completed their profile
+        const { data: userRecord } = await supabase
+          .from('users')
+          .select('profile_completed')
+          .eq('id', user.id)
+          .single()
+        
+        if (userRecord && userRecord.profile_completed) {
+          router.push('/dashboard')
+        } else {
+          // User is authenticated but hasn't completed onboarding
+          router.push('/onboarding')
+        }
         return
       }
     } catch (error) {
