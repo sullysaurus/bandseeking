@@ -313,7 +313,7 @@ export default function OnboardingPage() {
           <div className="space-y-6">
             <div className="text-center">
               <h2 className="text-4xl font-black mb-2">BASIC INFORMATION</h2>
-              <p className="font-bold text-lg">Let's start with the basics</p>
+              <p className="font-bold text-lg">Let&apos;s start with the basics</p>
             </div>
             <div className="space-y-4">
               <div>

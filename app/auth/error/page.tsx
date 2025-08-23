@@ -29,7 +29,7 @@ export default function AuthErrorPage() {
                 </div>
                 <div className="flex items-start">
                   <span className="block w-3 h-3 bg-black mt-1 mr-3 flex-shrink-0"></span>
-                  <span>YOU'RE ALREADY VERIFIED</span>
+                  <span>YOU&apos;RE ALREADY VERIFIED</span>
                 </div>
                 <div className="flex items-start">
                   <span className="block w-3 h-3 bg-black mt-1 mr-3 flex-shrink-0"></span>

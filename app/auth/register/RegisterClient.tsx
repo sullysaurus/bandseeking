@@ -90,7 +90,7 @@ export default function RegisterClient() {
                 </button>
                 
                 <p className="text-center font-bold text-sm text-gray-600 mt-4">
-                  WE'LL COLLECT YOUR DETAILS AFTER SIGN UP
+                  WE&apos;LL COLLECT YOUR DETAILS AFTER SIGN UP
                 </p>
               </div>
             ) : (
