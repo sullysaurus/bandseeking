@@ -1,10 +1,17 @@
-import type { Metadata } from 'next'
+import type { Metadata, Viewport } from 'next'
 import { Inter } from 'next/font/google'
 import { SpeedInsights } from "@vercel/speed-insights/next"
 import Footer from '@/components/layout/Footer'
 import './globals.css'
 
 const inter = Inter({ subsets: ['latin'] })
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 5,
+  themeColor: '#000000',
+}
 
 export const metadata: Metadata = {
   title: {
@@ -13,8 +20,6 @@ export const metadata: Metadata = {
   },
   description: 'Find and connect with musicians in your area for bands, collaborations, and music projects',
   metadataBase: new URL('https://www.bandseeking.com'),
-  viewport: 'width=device-width, initial-scale=1, maximum-scale=5',
-  themeColor: '#000000',
   manifest: '/manifest.json',
   robots: {
     index: true,
