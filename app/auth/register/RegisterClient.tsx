@@ -25,7 +25,7 @@ export default function RegisterClient() {
   const router = useRouter()
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const [showEmailForm, setShowEmailForm] = useState(false)
+  const [showEmailForm, setShowEmailForm] = useState(true)
 
   const {
     register,
@@ -49,7 +49,26 @@ export default function RegisterClient() {
       if (authError) throw authError
 
       if (authData.user) {
-        router.push('/auth/verify?email=' + encodeURIComponent(data.email))
+        // Check if email confirmation is required
+        if (authData.user.email_confirmed_at) {
+          // Email is auto-confirmed, sign them in automatically
+          const { error: signInError } = await supabase.auth.signInWithPassword({
+            email: data.email,
+            password: data.password
+          })
+          
+          if (signInError) {
+            console.error('Auto sign-in failed:', signInError)
+            // Still redirect to login so they can sign in manually
+            router.push('/auth/login')
+          } else {
+            // Successfully signed in, go to onboarding
+            router.push('/onboarding')
+          }
+        } else {
+          // Email confirmation required, go to verify page
+          router.push('/auth/verify?email=' + encodeURIComponent(data.email))
+        }
       }
     } catch (err: any) {
       setError(err.message || 'An error occurred during registration')
@@ -61,46 +80,18 @@ export default function RegisterClient() {
   return (
     <>
       <Navigation />
-      <div className="min-h-screen bg-pink-300 flex items-center justify-center px-4 py-12">
+      <div className="min-h-screen bg-pink-300 flex items-center justify-center px-4 py-8 md:py-12">
         <div className="w-full max-w-md">
-          <div className="bg-white border-8 border-black p-8 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
-            <div className="text-center mb-8">
-              <h1 className="text-4xl font-black mb-2">JOIN THE BAND!</h1>
-              <p className="font-bold text-lg">START YOUR MUSIC JOURNEY</p>
+          <div className="bg-white border-4 md:border-8 border-black p-6 md:p-8 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] md:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
+            <div className="text-center mb-6 md:mb-8">
+              <h1 className="text-3xl md:text-4xl font-black mb-2">JOIN THE BAND!</h1>
+              <p className="font-bold text-base md:text-lg">START YOUR MUSIC JOURNEY</p>
             </div>
 
-            {!showEmailForm ? (
-              <div className="space-y-4">
-                <GoogleAuthButton text="SIGN UP WITH GOOGLE" />
-                
-                <div className="relative my-6">
-                  <div className="absolute inset-0 flex items-center">
-                    <div className="w-full border-t-4 border-black"></div>
-                  </div>
-                  <div className="relative flex justify-center">
-                    <span className="bg-white px-4 font-black text-sm">OR</span>
-                  </div>
-                </div>
-                
-                <button
-                  onClick={() => setShowEmailForm(true)}
-                  className="w-full px-6 py-3 bg-cyan-300 border-4 border-black font-black text-lg hover:bg-cyan-400 transition-colors shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
-                >
-                  SIGN UP WITH EMAIL →
-                </button>
-                
-                <p className="text-center font-bold text-sm text-gray-600 mt-4">
+            <>
+                <p className="text-center font-bold text-sm text-gray-600 mb-6">
                   WE&apos;LL COLLECT YOUR DETAILS AFTER SIGN UP
                 </p>
-              </div>
-            ) : (
-              <>
-                <button
-                  onClick={() => setShowEmailForm(false)}
-                  className="mb-6 font-black text-sm hover:text-pink-400 transition-colors"
-                >
-                  ← BACK TO OPTIONS
-                </button>
                 
                 <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
                   <div>
@@ -109,7 +100,7 @@ export default function RegisterClient() {
                       type="email"
                       placeholder="YOUR@EMAIL.COM"
                       {...register('email')}
-                      className="w-full px-4 py-3 border-4 border-black font-bold placeholder:text-gray-400 focus:outline-none focus:bg-yellow-100 transition-colors"
+                      className="w-full px-4 py-3 border-4 border-black font-bold text-base placeholder:text-gray-400 focus:outline-none focus:bg-yellow-100 transition-colors"
                     />
                     {errors.email && (
                       <p className="mt-1 font-bold text-sm text-red-600">{errors.email.message}</p>
@@ -122,7 +113,7 @@ export default function RegisterClient() {
                       type="password"
                       placeholder="••••••••"
                       {...register('password')}
-                      className="w-full px-4 py-3 border-4 border-black font-bold placeholder:text-gray-400 focus:outline-none focus:bg-yellow-100 transition-colors"
+                      className="w-full px-4 py-3 border-4 border-black font-bold text-base placeholder:text-gray-400 focus:outline-none focus:bg-yellow-100 transition-colors"
                     />
                     {errors.password && (
                       <p className="mt-1 font-bold text-sm text-red-600">{errors.password.message}</p>
@@ -135,7 +126,7 @@ export default function RegisterClient() {
                       type="password"
                       placeholder="••••••••"
                       {...register('confirmPassword')}
-                      className="w-full px-4 py-3 border-4 border-black font-bold placeholder:text-gray-400 focus:outline-none focus:bg-yellow-100 transition-colors"
+                      className="w-full px-4 py-3 border-4 border-black font-bold text-base placeholder:text-gray-400 focus:outline-none focus:bg-yellow-100 transition-colors"
                     />
                     {errors.confirmPassword && (
                       <p className="mt-1 font-bold text-sm text-red-600">{errors.confirmPassword.message}</p>
@@ -151,13 +142,12 @@ export default function RegisterClient() {
                   <button
                     type="submit"
                     disabled={isLoading}
-                    className="w-full px-6 py-3 bg-black text-white border-4 border-black font-black text-lg hover:bg-lime-400 hover:text-black transition-colors shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] disabled:opacity-50"
+                    className="w-full px-4 md:px-6 py-3 bg-black text-white border-4 border-black font-black text-base md:text-lg hover:bg-lime-400 hover:text-black transition-colors shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] disabled:opacity-50"
                   >
                     {isLoading ? 'CREATING ACCOUNT...' : 'CREATE ACCOUNT →'}
                   </button>
                 </form>
-              </>
-            )}
+            </>
 
             <div className="mt-8 pt-6 border-t-4 border-black">
               <p className="text-center font-bold">
@@ -165,7 +155,7 @@ export default function RegisterClient() {
               </p>
               <Link 
                 href="/auth/login" 
-                className="block mt-2 px-6 py-3 bg-yellow-300 border-4 border-black font-black text-center hover:bg-yellow-400 transition-colors shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
+                className="block mt-2 px-4 md:px-6 py-3 bg-yellow-300 border-4 border-black font-black text-center hover:bg-yellow-400 transition-colors shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
               >
                 SIGN IN →
               </Link>

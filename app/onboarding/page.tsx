@@ -310,64 +310,64 @@ export default function OnboardingPage() {
     switch (currentStep) {
       case 1:
         return (
-          <div className="space-y-6">
+          <div className="space-y-4 md:space-y-6">
             <div className="text-center">
-              <h2 className="text-4xl font-black mb-2">BASIC INFORMATION</h2>
-              <p className="font-bold text-lg">Let&apos;s start with the basics</p>
+              <h2 className="text-2xl md:text-4xl font-black mb-1 md:mb-2">BASIC INFORMATION</h2>
+              <p className="font-bold text-sm md:text-lg">Let&apos;s start with the basics</p>
             </div>
-            <div className="space-y-4">
+            <div className="space-y-3 md:space-y-4">
               <div>
-                <label className="block font-black mb-2 text-sm">FULL NAME</label>
+                <label className="block font-black mb-1 md:mb-2 text-xs md:text-sm">FULL NAME</label>
                 <input
                   placeholder="YOUR NAME"
                   value={formData.fullName}
                   onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
-                  className="w-full px-4 py-3 border-4 border-black font-bold placeholder:text-gray-400 focus:outline-none focus:bg-yellow-100 transition-colors"
+                  className="w-full px-3 md:px-4 py-2 md:py-3 border-2 md:border-4 border-black font-bold text-base placeholder:text-gray-400 focus:outline-none focus:bg-yellow-100 transition-colors"
                 />
               </div>
               
               <div>
-                <label className="block font-black mb-2 text-sm">USERNAME</label>
+                <label className="block font-black mb-1 md:mb-2 text-xs md:text-sm">USERNAME</label>
                 <input
                   placeholder="PICK A USERNAME"
                   value={formData.username}
                   onChange={(e) => setFormData({ ...formData, username: e.target.value.toLowerCase().replace(/[^a-z0-9_]/g, '') })}
-                  className="w-full px-4 py-3 border-4 border-black font-bold placeholder:text-gray-400 focus:outline-none focus:bg-yellow-100 transition-colors"
+                  className="w-full px-3 md:px-4 py-2 md:py-3 border-2 md:border-4 border-black font-bold text-base placeholder:text-gray-400 focus:outline-none focus:bg-yellow-100 transition-colors"
                 />
                 <p className="mt-1 font-bold text-xs text-gray-600">LETTERS, NUMBERS, UNDERSCORES ONLY</p>
               </div>
               
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-2 gap-2 md:gap-4">
                 <div>
-                  <label className="block font-black mb-2 text-sm">CITY</label>
+                  <label className="block font-black mb-1 md:mb-2 text-xs md:text-sm">CITY</label>
                   <input
                     placeholder="YOUR CITY"
                     value={formData.city}
                     onChange={(e) => setFormData({ ...formData, city: e.target.value })}
-                    className="w-full px-4 py-3 border-4 border-black font-bold placeholder:text-gray-400 focus:outline-none focus:bg-yellow-100 transition-colors"
+                    className="w-full px-3 md:px-4 py-2 md:py-3 border-2 md:border-4 border-black font-bold text-base placeholder:text-gray-400 focus:outline-none focus:bg-yellow-100 transition-colors"
                   />
                 </div>
                 
                 <div>
-                  <label className="block font-black mb-2 text-sm">STATE</label>
+                  <label className="block font-black mb-1 md:mb-2 text-xs md:text-sm">STATE</label>
                   <input
-                    placeholder="STATE"
+                    placeholder="ST"
                     maxLength={2}
                     value={formData.state}
                     onChange={(e) => setFormData({ ...formData, state: e.target.value.toUpperCase() })}
-                    className="w-full px-4 py-3 border-4 border-black font-bold placeholder:text-gray-400 focus:outline-none focus:bg-yellow-100 transition-colors uppercase"
+                    className="w-full px-3 md:px-4 py-2 md:py-3 border-2 md:border-4 border-black font-bold text-base placeholder:text-gray-400 focus:outline-none focus:bg-yellow-100 transition-colors uppercase"
                   />
                 </div>
               </div>
               
               <div>
-                <label className="block font-black mb-2 text-sm">ZIP CODE</label>
+                <label className="block font-black mb-1 md:mb-2 text-xs md:text-sm">ZIP CODE</label>
                 <input
                   placeholder="12345"
                   maxLength={5}
                   value={formData.zipCode}
                   onChange={(e) => setFormData({ ...formData, zipCode: e.target.value.replace(/\D/g, '') })}
-                  className="w-full px-4 py-3 border-4 border-black font-bold placeholder:text-gray-400 focus:outline-none focus:bg-yellow-100 transition-colors"
+                  className="w-full px-3 md:px-4 py-2 md:py-3 border-2 md:border-4 border-black font-bold text-base placeholder:text-gray-400 focus:outline-none focus:bg-yellow-100 transition-colors"
                 />
               </div>
             </div>
@@ -376,16 +376,16 @@ export default function OnboardingPage() {
 
       case 2:
         return (
-          <div className="space-y-6">
+          <div className="space-y-4 md:space-y-6">
             <div className="text-center">
-              <h2 className="text-4xl font-black mb-2">TELL US ABOUT YOURSELF</h2>
-              <p className="font-bold text-lg">Let other musicians get to know you</p>
+              <h2 className="text-2xl md:text-4xl font-black mb-1 md:mb-2">TELL US ABOUT YOURSELF</h2>
+              <p className="font-bold text-sm md:text-lg">Let other musicians get to know you</p>
             </div>
-            <div className="space-y-6">
+            <div className="space-y-4 md:space-y-6">
               <div>
-                <label className="block font-black mb-3 text-lg">BIO</label>
+                <label className="block font-black mb-2 md:mb-3 text-sm md:text-lg">BIO</label>
                 <textarea
-                  className="w-full px-4 py-4 border-4 border-black font-bold focus:outline-none focus:bg-yellow-100 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
+                  className="w-full px-3 md:px-4 py-2 md:py-4 border-2 md:border-4 border-black font-bold text-base focus:outline-none focus:bg-yellow-100 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] md:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
                   rows={4}
                   placeholder="TELL US ABOUT YOUR MUSICAL JOURNEY..."
                   value={formData.bio}
@@ -393,11 +393,11 @@ export default function OnboardingPage() {
                 />
               </div>
               <div>
-                <label className="block font-black mb-3 text-lg">PROFILE PHOTO</label>
-                <div className="space-y-4">
+                <label className="block font-black mb-2 md:mb-3 text-sm md:text-lg">PROFILE PHOTO</label>
+                <div className="space-y-3 md:space-y-4">
                   {formData.profileImage && (
                     <div className="flex justify-center">
-                      <div className="w-32 h-32 border-4 border-black bg-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+                      <div className="w-24 h-24 md:w-32 md:h-32 border-2 md:border-4 border-black bg-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] md:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
                         <Image
                           src={URL.createObjectURL(formData.profileImage)}
                           alt="Profile preview"
@@ -411,10 +411,10 @@ export default function OnboardingPage() {
                   <input
                     type="file"
                     accept="image/*"
-                    className="w-full px-4 py-3 border-4 border-black font-bold focus:outline-none focus:bg-yellow-100 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
+                    className="w-full px-3 md:px-4 py-2 md:py-3 border-2 md:border-4 border-black font-bold text-sm md:text-base focus:outline-none focus:bg-yellow-100 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] md:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
                     onChange={(e) => setFormData({ ...formData, profileImage: e.target.files?.[0] || null })}
                   />
-                  <p className="font-bold text-center">UPLOAD A PROFILE PHOTO (OPTIONAL)</p>
+                  <p className="font-bold text-center text-xs md:text-base">UPLOAD A PROFILE PHOTO (OPTIONAL)</p>
                 </div>
               </div>
             </div>
@@ -423,16 +423,16 @@ export default function OnboardingPage() {
 
       case 3:
         return (
-          <div className="space-y-6">
+          <div className="space-y-4 md:space-y-6">
             <div className="text-center">
-              <h2 className="text-4xl font-black mb-2">YOUR INSTRUMENTS</h2>
-              <p className="font-bold text-lg">What do you play?</p>
+              <h2 className="text-2xl md:text-4xl font-black mb-1 md:mb-2">YOUR INSTRUMENTS</h2>
+              <p className="font-bold text-sm md:text-lg">What do you play?</p>
             </div>
-            <div className="space-y-6">
+            <div className="space-y-4 md:space-y-6">
               <div>
-                <label className="block font-black mb-3 text-lg">MAIN INSTRUMENT</label>
+                <label className="block font-black mb-2 md:mb-3 text-sm md:text-lg">MAIN INSTRUMENT</label>
                 <select
-                  className="w-full px-4 py-4 border-4 border-black font-black focus:outline-none focus:bg-yellow-100 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
+                  className="w-full px-3 md:px-4 py-3 md:py-4 border-2 md:border-4 border-black font-black text-base focus:outline-none focus:bg-yellow-100 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] md:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
                   value={formData.mainInstrument}
                   onChange={(e) => setFormData({ ...formData, mainInstrument: e.target.value })}
                 >
@@ -445,16 +445,16 @@ export default function OnboardingPage() {
                 </select>
               </div>
               <div>
-                <label className="block font-black mb-3 text-lg">EXPERIENCE LEVEL</label>
-                <div className="grid grid-cols-2 gap-4">
+                <label className="block font-black mb-2 md:mb-3 text-sm md:text-lg">EXPERIENCE LEVEL</label>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
                   {experienceLevels.map((level) => (
                     <button
                       key={level.value}
                       type="button"
                       onClick={() => setFormData({ ...formData, experienceLevel: level.value })}
-                      className={`p-4 border-4 border-black font-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all ${
+                      className={`p-3 md:p-4 border-2 md:border-4 border-black font-black text-sm md:text-base shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] md:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all ${
                         formData.experienceLevel === level.value
-                          ? 'bg-pink-400 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]'
+                          ? 'bg-pink-400 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] md:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]'
                           : 'bg-white hover:bg-cyan-300'
                       }`}
                     >
@@ -469,24 +469,24 @@ export default function OnboardingPage() {
 
       case 4:
         return (
-          <div className="space-y-6">
+          <div className="space-y-4 md:space-y-6">
             <div className="text-center">
-              <h2 className="text-4xl font-black mb-2">WHAT ARE YOU LOOKING FOR?</h2>
-              <p className="font-bold text-lg">Select all that apply</p>
+              <h2 className="text-2xl md:text-4xl font-black mb-1 md:mb-2">WHAT ARE YOU LOOKING FOR?</h2>
+              <p className="font-bold text-sm md:text-lg">Select all that apply</p>
             </div>
-            <div className="space-y-4">
+            <div className="space-y-3 md:space-y-4">
               {seekingOptions.map((option) => (
                 <label
                   key={option}
-                  className={`flex items-center p-4 border-4 border-black cursor-pointer font-bold shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all ${
+                  className={`flex items-center p-3 md:p-4 border-2 md:border-4 border-black cursor-pointer font-bold shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] md:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all ${
                     formData.seeking.includes(option)
-                      ? 'bg-purple-400 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]'
+                      ? 'bg-purple-400 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] md:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]'
                       : 'bg-white hover:bg-cyan-300'
                   }`}
                 >
                   <input
                     type="checkbox"
-                    className="mr-4 w-5 h-5"
+                    className="mr-3 md:mr-4 w-4 h-4 md:w-5 md:h-5"
                     checked={formData.seeking.includes(option)}
                     onChange={(e) => {
                       if (e.target.checked) {
@@ -496,7 +496,7 @@ export default function OnboardingPage() {
                       }
                     }}
                   />
-                  <span className="text-lg">{option.toUpperCase()}</span>
+                  <span className="text-sm md:text-lg">{option.toUpperCase()}</span>
                 </label>
               ))}
             </div>
@@ -505,27 +505,27 @@ export default function OnboardingPage() {
 
       case 5:
         return (
-          <div className="space-y-6">
+          <div className="space-y-4 md:space-y-6">
             <div className="text-center">
-              <h2 className="text-4xl font-black mb-2">MUSICAL PREFERENCES</h2>
-              <p className="font-bold text-lg">What genres do you play?</p>
+              <h2 className="text-2xl md:text-4xl font-black mb-1 md:mb-2">MUSICAL PREFERENCES</h2>
+              <p className="font-bold text-sm md:text-lg">What genres do you play?</p>
             </div>
-            <div className="space-y-6">
+            <div className="space-y-4 md:space-y-6">
               <div>
-                <label className="block font-black mb-3 text-lg">GENRES (SELECT ALL THAT APPLY)</label>
-                <div className="grid grid-cols-2 gap-3 max-h-80 overflow-y-auto p-2">
+                <label className="block font-black mb-2 md:mb-3 text-sm md:text-lg">GENRES (SELECT ALL THAT APPLY)</label>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-3 max-h-64 md:max-h-80 overflow-y-auto p-1 md:p-2">
                   {genres.map((genre) => (
                     <label
                       key={genre}
-                      className={`flex items-center p-3 border-4 border-black cursor-pointer font-bold shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all ${
+                      className={`flex items-center p-2 md:p-3 border-2 md:border-4 border-black cursor-pointer font-bold shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] md:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all ${
                         formData.genres.includes(genre)
-                          ? 'bg-blue-300 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]'
+                          ? 'bg-blue-300 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] md:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]'
                           : 'bg-white hover:bg-cyan-200'
                       }`}
                     >
                       <input
                         type="checkbox"
-                        className="mr-3 w-4 h-4"
+                        className="mr-2 md:mr-3 w-3 h-3 md:w-4 md:h-4"
                         checked={formData.genres.includes(genre)}
                         onChange={(e) => {
                           if (e.target.checked) {
@@ -535,15 +535,15 @@ export default function OnboardingPage() {
                           }
                         }}
                       />
-                      <span className="text-sm">{genre.toUpperCase()}</span>
+                      <span className="text-xs md:text-sm">{genre.toUpperCase()}</span>
                     </label>
                   ))}
                 </div>
               </div>
               <div>
-                <label className="block font-black mb-3 text-lg">INFLUENCES</label>
+                <label className="block font-black mb-2 md:mb-3 text-sm md:text-lg">INFLUENCES</label>
                 <textarea
-                  className="w-full px-4 py-4 border-4 border-black font-bold focus:outline-none focus:bg-yellow-100 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
+                  className="w-full px-3 md:px-4 py-3 md:py-4 border-2 md:border-4 border-black font-bold text-base focus:outline-none focus:bg-yellow-100 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] md:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
                   rows={3}
                   placeholder="LIST YOUR MUSICAL INFLUENCES, FAVORITE ARTISTS, BANDS..."
                   value={formData.influences}
@@ -556,23 +556,23 @@ export default function OnboardingPage() {
 
       case 6:
         return (
-          <div className="space-y-6">
+          <div className="space-y-4 md:space-y-6">
             <div className="text-center">
-              <h2 className="text-4xl font-black mb-2">AVAILABILITY & LOGISTICS</h2>
-              <p className="font-bold text-lg">When can you practice and how far can you travel?</p>
+              <h2 className="text-2xl md:text-4xl font-black mb-1 md:mb-2">AVAILABILITY & LOGISTICS</h2>
+              <p className="font-bold text-sm md:text-lg">When can you practice and how far can you travel?</p>
             </div>
             <div className="space-y-4">
               <div>
-                <label className="block font-black mb-3 text-lg">AVAILABILITY</label>
-                <div className="grid grid-cols-2 gap-4">
+                <label className="block font-black mb-2 md:mb-3 text-sm md:text-lg">AVAILABILITY</label>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
                   {availabilityOptions.map((option) => (
                     <button
                       key={option.value}
                       type="button"
                       onClick={() => setFormData({ ...formData, availability: option.value })}
-                      className={`p-4 border-4 border-black font-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all ${
+                      className={`p-3 md:p-4 border-2 md:border-4 border-black font-black text-sm md:text-base shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] md:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all ${
                         formData.availability === option.value
-                          ? 'bg-yellow-300 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]'
+                          ? 'bg-yellow-300 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] md:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]'
                           : 'bg-white hover:bg-cyan-300'
                       }`}
                     >
@@ -582,28 +582,28 @@ export default function OnboardingPage() {
                 </div>
               </div>
               <div className="space-y-3">
-                <label className="flex items-center">
+                <label className="flex items-center p-3 border-2 border-black bg-white font-bold cursor-pointer hover:bg-gray-50">
                   <input
                     type="checkbox"
-                    className="mr-3"
+                    className="mr-3 w-4 h-4 md:w-5 md:h-5"
                     checked={formData.hasTransportation}
                     onChange={(e) => setFormData({ ...formData, hasTransportation: e.target.checked })}
                   />
-                  <span>I have reliable transportation</span>
+                  <span className="text-sm md:text-base">I HAVE RELIABLE TRANSPORTATION</span>
                 </label>
-                <label className="flex items-center">
+                <label className="flex items-center p-3 border-2 border-black bg-white font-bold cursor-pointer hover:bg-gray-50">
                   <input
                     type="checkbox"
-                    className="mr-3"
+                    className="mr-3 w-4 h-4 md:w-5 md:h-5"
                     checked={formData.hasOwnEquipment}
                     onChange={(e) => setFormData({ ...formData, hasOwnEquipment: e.target.checked })}
                   />
-                  <span>I have my own equipment</span>
+                  <span className="text-sm md:text-base">I HAVE MY OWN EQUIPMENT</span>
                 </label>
               </div>
               <div>
-                <label className="block text-sm font-medium mb-2">
-                  Willing to travel: {formData.willingToTravelMiles} miles
+                <label className="block font-black mb-2 text-sm md:text-base">
+                  WILLING TO TRAVEL: {formData.willingToTravelMiles} MILES
                 </label>
                 <input
                   type="range"
@@ -612,7 +612,7 @@ export default function OnboardingPage() {
                   step="5"
                   value={formData.willingToTravelMiles}
                   onChange={(e) => setFormData({ ...formData, willingToTravelMiles: parseInt(e.target.value) })}
-                  className="w-full"
+                  className="w-full h-3 md:h-4 bg-gray-300 border-2 border-black appearance-none cursor-pointer"
                 />
               </div>
             </div>
@@ -621,29 +621,33 @@ export default function OnboardingPage() {
 
       case 7:
         return (
-          <div className="space-y-6">
-            <div>
-              <h2 className="text-2xl font-bold mb-2">Review Your Profile</h2>
-              <p className="text-gray-600">Make sure everything looks good</p>
+          <div className="space-y-4 md:space-y-6">
+            <div className="text-center">
+              <h2 className="text-2xl md:text-4xl font-black mb-1 md:mb-2">REVIEW YOUR PROFILE</h2>
+              <p className="font-bold text-sm md:text-lg">Make sure everything looks good</p>
             </div>
             <div className="space-y-4">
-              <div className="p-4 bg-gray-50 rounded-lg">
-                <h3 className="font-semibold mb-2">Profile Summary</h3>
-                <div className="space-y-2 text-sm">
-                  <p><strong>Main Instrument:</strong> {formData.mainInstrument}</p>
-                  <p><strong>Experience:</strong> {formData.experienceLevel}</p>
-                  <p><strong>Genres:</strong> {formData.genres.join(', ') || 'None selected'}</p>
-                  <p><strong>Looking for:</strong> {formData.seeking.join(', ') || 'None selected'}</p>
-                  <p><strong>Availability:</strong> {formData.availability}</p>
-                  <p><strong>Travel Distance:</strong> {formData.willingToTravelMiles} miles</p>
+              <div className="p-3 md:p-4 bg-yellow-100 border-2 md:border-4 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] md:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+                <h3 className="font-black mb-2 md:mb-3 text-sm md:text-lg">PROFILE SUMMARY</h3>
+                <div className="space-y-1 md:space-y-2 text-xs md:text-sm font-bold">
+                  <p><span className="text-pink-600">MAIN INSTRUMENT:</span> {formData.mainInstrument || 'Not selected'}</p>
+                  <p><span className="text-pink-600">EXPERIENCE:</span> {formData.experienceLevel || 'Not selected'}</p>
+                  <p><span className="text-pink-600">GENRES:</span> {formData.genres.length > 0 ? formData.genres.join(', ') : 'None selected'}</p>
+                  <p><span className="text-pink-600">LOOKING FOR:</span> {formData.seeking.length > 0 ? formData.seeking.join(', ') : 'None selected'}</p>
+                  <p><span className="text-pink-600">AVAILABILITY:</span> {formData.availability || 'Not selected'}</p>
+                  <p><span className="text-pink-600">TRAVEL DISTANCE:</span> {formData.willingToTravelMiles} miles</p>
                 </div>
               </div>
-              <div className="flex items-center justify-center py-4">
-                <Check className="w-12 h-12 text-green-500" />
+              <div className="flex items-center justify-center py-3 md:py-4">
+                <div className="w-16 h-16 md:w-20 md:h-20 bg-green-400 border-2 md:border-4 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] md:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] flex items-center justify-center">
+                  <Check className="w-8 h-8 md:w-12 md:h-12 text-black" />
+                </div>
               </div>
-              <p className="text-center text-gray-600">
-                Your profile will be published and visible to other musicians
-              </p>
+              <div className="text-center p-3 md:p-4 bg-cyan-300 border-2 md:border-4 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] md:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+                <p className="font-black text-xs md:text-base">
+                  YOUR PROFILE WILL BE PUBLISHED AND VISIBLE TO OTHER MUSICIANS!
+                </p>
+              </div>
             </div>
           </div>
         )
@@ -669,16 +673,16 @@ export default function OnboardingPage() {
 
   return (
     <div className="min-h-screen bg-lime-300">
-      <div className="max-w-4xl mx-auto px-4 py-8">
+      <div className="max-w-4xl mx-auto px-4 py-4 md:py-8">
         {/* Progress Header */}
-        <div className="mb-8 text-center">
-          <h1 className="text-6xl font-black mb-4">PROFILE SETUP</h1>
-          <div className="bg-white border-4 border-black p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
-            <div className="flex justify-between mb-3">
-              <span className="font-black">STEP {currentStep} OF {TOTAL_STEPS}</span>
-              <span className="font-black">{Math.round((currentStep / TOTAL_STEPS) * 100)}% COMPLETE</span>
+        <div className="mb-4 md:mb-8 text-center">
+          <h1 className="text-3xl md:text-6xl font-black mb-2 md:mb-4">PROFILE SETUP</h1>
+          <div className="bg-white border-2 md:border-4 border-black p-3 md:p-4 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] md:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+            <div className="flex justify-between mb-2 md:mb-3 text-xs md:text-base">
+              <span className="font-black">STEP {currentStep}/{TOTAL_STEPS}</span>
+              <span className="font-black">{Math.round((currentStep / TOTAL_STEPS) * 100)}%</span>
             </div>
-            <div className="w-full bg-black h-4 border-2 border-black">
+            <div className="w-full bg-black h-3 md:h-4 border border-black">
               <div
                 className="bg-pink-400 h-full transition-all duration-300"
                 style={{ width: `${(currentStep / TOTAL_STEPS) * 100}%` }}
@@ -688,44 +692,45 @@ export default function OnboardingPage() {
         </div>
 
         {/* Step Content */}
-        <div className="mb-8 bg-white border-4 border-black p-8 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
+        <div className="mb-4 md:mb-8 bg-white border-2 md:border-4 border-black p-4 md:p-8 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] md:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
           {renderStep()}
         </div>
 
         {/* Navigation Buttons */}
-        <div className="flex justify-between">
+        <div className="flex justify-between gap-2">
           <button
             onClick={handlePrevious}
             disabled={currentStep === 1}
-            className={`px-6 py-3 border-4 border-black font-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all flex items-center ${
+            className={`px-3 md:px-6 py-2 md:py-3 border-2 md:border-4 border-black font-black text-sm md:text-base shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] md:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] md:hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all flex items-center ${
               currentStep === 1 
                 ? 'bg-gray-300 text-gray-500 cursor-not-allowed' 
                 : 'bg-yellow-300 hover:bg-yellow-400'
             }`}
           >
-            <ChevronLeft className="w-5 h-5 mr-2" />
-            PREVIOUS
+            <ChevronLeft className="w-4 h-4 md:w-5 md:h-5 mr-1 md:mr-2" />
+            <span className="hidden md:inline">PREVIOUS</span>
+            <span className="md:hidden">BACK</span>
           </button>
 
           {currentStep === TOTAL_STEPS ? (
             <button
               onClick={handleSubmit}
               disabled={loading}
-              className={`px-8 py-3 border-4 border-black font-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all flex items-center ${
+              className={`px-4 md:px-8 py-2 md:py-3 border-2 md:border-4 border-black font-black text-sm md:text-base shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] md:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] md:hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all flex items-center ${
                 loading 
                   ? 'bg-gray-300 text-gray-500 cursor-not-allowed' 
                   : 'bg-pink-400 hover:bg-pink-500'
               }`}
             >
-              {loading ? 'PUBLISHING...' : 'PUBLISH PROFILE →'}
+              {loading ? 'PUBLISHING...' : 'PUBLISH →'}
             </button>
           ) : (
             <button
               onClick={handleNext}
-              className="px-6 py-3 bg-pink-400 border-4 border-black font-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:bg-pink-500 transition-all flex items-center"
+              className="px-3 md:px-6 py-2 md:py-3 bg-pink-400 border-2 md:border-4 border-black font-black text-sm md:text-base shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] md:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] md:hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:bg-pink-500 transition-all flex items-center"
             >
               NEXT
-              <ChevronRight className="w-5 h-5 ml-2" />
+              <ChevronRight className="w-4 h-4 md:w-5 md:h-5 ml-1 md:ml-2" />
             </button>
           )}
         </div>

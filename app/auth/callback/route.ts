@@ -1,10 +1,11 @@
 import { createClient } from '@supabase/supabase-js'
 import { NextRequest, NextResponse } from 'next/server'
-import { ensureUserRecord } from '@/lib/auth-helpers'
 
 export async function GET(request: NextRequest) {
   const requestUrl = new URL(request.url)
   const code = requestUrl.searchParams.get('code')
+
+  console.log('Auth callback called with code:', code ? 'present' : 'missing')
 
   if (code) {
     const supabase = createClient(
@@ -13,37 +14,36 @@ export async function GET(request: NextRequest) {
     )
     
     try {
-      const { error } = await supabase.auth.exchangeCodeForSession(code)
+      console.log('Exchanging code for session...')
+      const { data, error } = await supabase.auth.exchangeCodeForSession(code)
       
       if (error) {
-        console.error('Auth callback error:', error)
+        console.error('Auth exchange error:', error)
         return NextResponse.redirect(new URL('/auth/error', request.url))
       }
-      
-      // Ensure user record exists and get user data
-      const userData = await ensureUserRecord()
-      
-      console.log('Auth callback - User data:', {
-        id: userData.id,
-        profile_completed: userData.profile_completed,
-        isNewUser: userData.isNewUser
-      })
-      
-      if (userData.profile_completed) {
-        // If profile is completed, go to dashboard
-        console.log('Redirecting to dashboard')
-        return NextResponse.redirect(new URL('/dashboard', request.url))
-      } else {
-        // If profile not completed or new user, go to onboarding
-        console.log('Redirecting to onboarding')
-        return NextResponse.redirect(new URL('/onboarding', request.url))
+
+      if (!data.user) {
+        console.error('No user data after exchange')
+        return NextResponse.redirect(new URL('/auth/error', request.url))
       }
+
+      console.log('User authenticated:', {
+        id: data.user.id,
+        email: data.user.email,
+        metadata: data.user.user_metadata
+      })
+
+      // Simple approach: just redirect to onboarding for now
+      // The onboarding flow will handle user creation
+      console.log('Redirecting to onboarding...')
+      return NextResponse.redirect(new URL('/onboarding', request.url))
+
     } catch (error) {
-      console.error('Error in auth callback:', error)
+      console.error('Unexpected error in auth callback:', error)
       return NextResponse.redirect(new URL('/auth/error', request.url))
     }
   }
 
-  // If no code or error, redirect to login
+  console.log('No code provided, redirecting to login')
   return NextResponse.redirect(new URL('/auth/login', request.url))
 }

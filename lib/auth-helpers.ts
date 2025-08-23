@@ -8,51 +8,62 @@ export async function ensureUserRecord() {
       throw new Error('User not authenticated')
     }
 
-    console.log('Checking user record for:', user.id)
+    console.log('Ensuring user record for:', user.id)
 
-    // Check if user record exists in database
-    const { data: userRecord, error: userRecordError } = await supabase
+    // First try to get existing user record
+    const { data: existingUser, error: selectError } = await supabase
       .from('users')
       .select('id, profile_completed, username, full_name')
       .eq('id', user.id)
       .single()
 
-    if (userRecordError && userRecordError.code === 'PGRST116') {
-      // User record doesn't exist, create it
-      console.log('Creating missing user record...')
+    if (existingUser) {
+      console.log('User record found:', existingUser)
+      await updateUserLastActive(user.id)
+      return { ...existingUser, isNewUser: false }
+    }
+
+    // If user doesn't exist, create them
+    if (selectError && selectError.code === 'PGRST116') {
+      console.log('Creating new user record...')
       
+      // Generate safe username
+      let username = user.user_metadata?.full_name?.toLowerCase().replace(/[^a-z0-9]/g, '') || 
+                    user.email?.split('@')[0]?.replace(/[^a-z0-9]/g, '') || 
+                    `user${user.id.substring(0, 8)}`
+      
+      if (username.length < 3) {
+        username = `user${user.id.substring(0, 8)}`
+      }
+
       const userData = {
         id: user.id,
         email: user.email || '',
-        username: user.user_metadata?.username || user.email?.split('@')[0] || `user_${user.id.substring(0, 8)}`,
-        full_name: user.user_metadata?.full_name || user.user_metadata?.username || 'User',
-        city: user.user_metadata?.city || null,
-        state: user.user_metadata?.state || null,
-        zip_code: user.user_metadata?.zip_code || null,
+        username: username,
+        full_name: user.user_metadata?.full_name || user.user_metadata?.name || 'User',
         profile_completed: false
       }
 
-      const { error: createUserError } = await supabase
+      const { data: newUser, error: insertError } = await supabase
         .from('users')
         .insert(userData)
+        .select('id, profile_completed, username, full_name')
+        .single()
 
-      if (createUserError) {
-        console.error('Failed to create user record:', createUserError)
-        throw createUserError
+      if (insertError) {
+        console.error('Failed to create user record:', insertError)
+        throw insertError
       }
 
-      console.log('User record created successfully:', userData)
-      return { ...userData, isNewUser: true }
-    } else if (userRecordError) {
-      console.error('Error checking user record:', userRecordError)
-      throw userRecordError
+      console.log('New user created:', newUser)
+      await updateUserLastActive(user.id)
+      return { ...newUser, isNewUser: true }
     }
 
-    console.log('User record exists:', userRecord)
-    // Update last_active for existing user
-    await updateUserLastActive(user.id)
-    
-    return { ...userRecord, isNewUser: false }
+    // If there was a different error
+    console.error('Error fetching user record:', selectError)
+    throw selectError
+
   } catch (error) {
     console.error('Error in ensureUserRecord:', error)
     throw error

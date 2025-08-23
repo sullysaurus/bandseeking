@@ -17,7 +17,7 @@ export default function GoogleAuthButton({ text = 'CONTINUE WITH GOOGLE', classN
     setError(null)
 
     try {
-      const { error } = await supabase.auth.signInWithOAuth({
+      const { data, error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
           redirectTo: `${window.location.origin}/auth/callback`,
@@ -28,8 +28,15 @@ export default function GoogleAuthButton({ text = 'CONTINUE WITH GOOGLE', classN
         }
       })
 
-      if (error) throw error
+      if (error) {
+        console.error('OAuth sign in error:', error)
+        throw error
+      }
+
+      console.log('OAuth initiated:', data)
+      // Don't set loading to false here - the redirect will happen
     } catch (err: any) {
+      console.error('OAuth button error:', err)
       setError(err.message || 'Failed to sign in with Google')
       setIsLoading(false)
     }
@@ -40,7 +47,7 @@ export default function GoogleAuthButton({ text = 'CONTINUE WITH GOOGLE', classN
       <button
         onClick={handleGoogleSignIn}
         disabled={isLoading}
-        className={`w-full px-6 py-3 bg-white border-4 border-black font-black text-lg hover:bg-blue-100 transition-colors shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] disabled:opacity-50 flex items-center justify-center gap-3 ${className}`}
+        className={`w-full px-4 md:px-6 py-3 bg-white border-4 border-black font-black text-base md:text-lg hover:bg-blue-100 transition-colors shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] disabled:opacity-50 flex items-center justify-center gap-2 md:gap-3 ${className}`}
       >
         <svg 
           className="w-6 h-6" 
