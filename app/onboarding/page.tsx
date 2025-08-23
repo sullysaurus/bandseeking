@@ -10,7 +10,7 @@ import Button from '@/components/ui/Button'
 import Input from '@/components/ui/Input'
 import { ChevronLeft, ChevronRight, Check } from 'lucide-react'
 
-const TOTAL_STEPS = 7
+const TOTAL_STEPS = 8
 
 export default function OnboardingPage() {
   const router = useRouter()
@@ -19,6 +19,11 @@ export default function OnboardingPage() {
   const [authLoading, setAuthLoading] = useState(true)
   const [userId, setUserId] = useState<string | null>(null)
   const [formData, setFormData] = useState({
+    fullName: '',
+    username: '',
+    city: '',
+    state: '',
+    zipCode: '',
     bio: '',
     profileImage: null as File | null,
     mainInstrument: '',
@@ -123,9 +128,44 @@ export default function OnboardingPage() {
     }
   }
 
-  const handleNext = () => {
+  const handleNext = async () => {
     // Validate current step before proceeding
-    if (currentStep === 2) {
+    if (currentStep === 1) {
+      if (!formData.fullName || formData.fullName.length < 2) {
+        alert('Please enter your full name')
+        return
+      }
+      if (!formData.username || formData.username.length < 3) {
+        alert('Please enter a username (at least 3 characters)')
+        return
+      }
+      if (!formData.city || formData.city.length < 2) {
+        alert('Please enter your city')
+        return
+      }
+      if (!formData.state || formData.state.length < 2) {
+        alert('Please enter your state')
+        return
+      }
+      if (!formData.zipCode || !/^\d{5}$/.test(formData.zipCode)) {
+        alert('Please enter a valid 5-digit ZIP code')
+        return
+      }
+      
+      // Check username availability
+      const { data, error } = await supabase
+        .from('users')
+        .select('username')
+        .eq('username', formData.username)
+        .single()
+      
+      if (data) {
+        alert('Username is already taken. Please choose another.')
+        return
+      }
+    }
+    
+    if (currentStep === 3) {
       if (!formData.mainInstrument) {
         alert('Please select your main instrument')
         return
@@ -233,10 +273,17 @@ export default function OnboardingPage() {
 
       console.log('Profile created successfully:', profileData)
 
-      // Update user profile_completed flag
+      // Update user with all information including profile_completed flag
       const { error: userError } = await supabase
         .from('users')
-        .update({ profile_completed: true })
+        .update({ 
+          profile_completed: true,
+          full_name: formData.fullName,
+          username: formData.username,
+          city: formData.city,
+          state: formData.state,
+          zip_code: formData.zipCode
+        })
         .eq('id', userId)
 
       if (userError) {
@@ -269,6 +316,72 @@ export default function OnboardingPage() {
   const renderStep = () => {
     switch (currentStep) {
       case 1:
+        return (
+          <div className="space-y-6">
+            <div className="text-center">
+              <h2 className="text-4xl font-black mb-2">BASIC INFORMATION</h2>
+              <p className="font-bold text-lg">Let's start with the basics</p>
+            </div>
+            <div className="space-y-4">
+              <div>
+                <label className="block font-black mb-2 text-sm">FULL NAME</label>
+                <input
+                  placeholder="YOUR NAME"
+                  value={formData.fullName}
+                  onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
+                  className="w-full px-4 py-3 border-4 border-black font-bold placeholder:text-gray-400 focus:outline-none focus:bg-yellow-100 transition-colors"
+                />
+              </div>
+              
+              <div>
+                <label className="block font-black mb-2 text-sm">USERNAME</label>
+                <input
+                  placeholder="PICK A USERNAME"
+                  value={formData.username}
+                  onChange={(e) => setFormData({ ...formData, username: e.target.value.toLowerCase().replace(/[^a-z0-9_]/g, '') })}
+                  className="w-full px-4 py-3 border-4 border-black font-bold placeholder:text-gray-400 focus:outline-none focus:bg-yellow-100 transition-colors"
+                />
+                <p className="mt-1 font-bold text-xs text-gray-600">LETTERS, NUMBERS, UNDERSCORES ONLY</p>
+              </div>
+              
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block font-black mb-2 text-sm">CITY</label>
+                  <input
+                    placeholder="YOUR CITY"
+                    value={formData.city}
+                    onChange={(e) => setFormData({ ...formData, city: e.target.value })}
+                    className="w-full px-4 py-3 border-4 border-black font-bold placeholder:text-gray-400 focus:outline-none focus:bg-yellow-100 transition-colors"
+                  />
+                </div>
+                
+                <div>
+                  <label className="block font-black mb-2 text-sm">STATE</label>
+                  <input
+                    placeholder="STATE"
+                    maxLength={2}
+                    value={formData.state}
+                    onChange={(e) => setFormData({ ...formData, state: e.target.value.toUpperCase() })}
+                    className="w-full px-4 py-3 border-4 border-black font-bold placeholder:text-gray-400 focus:outline-none focus:bg-yellow-100 transition-colors uppercase"
+                  />
+                </div>
+              </div>
+              
+              <div>
+                <label className="block font-black mb-2 text-sm">ZIP CODE</label>
+                <input
+                  placeholder="12345"
+                  maxLength={5}
+                  value={formData.zipCode}
+                  onChange={(e) => setFormData({ ...formData, zipCode: e.target.value.replace(/\D/g, '') })}
+                  className="w-full px-4 py-3 border-4 border-black font-bold placeholder:text-gray-400 focus:outline-none focus:bg-yellow-100 transition-colors"
+                />
+              </div>
+            </div>
+          </div>
+        )
+
+      case 2:
         return (
           <div className="space-y-6">
             <div className="text-center">
@@ -315,7 +428,7 @@ export default function OnboardingPage() {
           </div>
         )
 
-      case 2:
+      case 3:
         return (
           <div className="space-y-6">
             <div className="text-center">
@@ -361,7 +474,7 @@ export default function OnboardingPage() {
           </div>
         )
 
-      case 3:
+      case 4:
         return (
           <div className="space-y-6">
             <div className="text-center">
@@ -397,7 +510,7 @@ export default function OnboardingPage() {
           </div>
         )
 
-      case 4:
+      case 5:
         return (
           <div className="space-y-6">
             <div className="text-center">
@@ -448,7 +561,7 @@ export default function OnboardingPage() {
           </div>
         )
 
-      case 5:
+      case 6:
         return (
           <div className="space-y-6">
             <div className="text-center">
@@ -513,7 +626,7 @@ export default function OnboardingPage() {
           </div>
         )
 
-      case 6:
+      case 7:
         return (
           <div className="space-y-6">
             <div>
@@ -561,7 +674,7 @@ export default function OnboardingPage() {
           </div>
         )
 
-      case 7:
+      case 8:
         return (
           <div className="space-y-6">
             <div>
