@@ -5,6 +5,8 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
+import { getLastActiveStatus } from '@/lib/auth-helpers'
+import { formatLocationDisplay } from '@/lib/zipcode-utils'
 
 interface ProfileCardProps {
   profile: any
@@ -101,6 +103,22 @@ export default function ProfileCard({ profile }: ProfileCardProps) {
           
           {/* Primary Tags Row */}
           <div className="flex flex-wrap gap-2">
+            {/* Last Active Status */}
+            {user.last_active && (() => {
+              const activeStatus = getLastActiveStatus(user.last_active)
+              return (
+                <span className={`px-2 py-1 border-2 border-black font-black text-xs ${
+                  activeStatus.status === 'online' ? 'bg-green-400' :
+                  activeStatus.status === 'recent' ? 'bg-yellow-400' :
+                  activeStatus.status === 'hours' ? 'bg-orange-400' :
+                  activeStatus.status === 'days' ? 'bg-red-400' :
+                  'bg-gray-400'
+                }`}>
+                  {activeStatus.text}
+                </span>
+              )
+            })()}
+            
             {/* Instrument Tag */}
             <span className="px-2 py-1 bg-pink-400 border-2 border-black font-black text-xs">
               {profile.main_instrument?.toUpperCase() || 'MUSICIAN'}
@@ -126,7 +144,7 @@ export default function ProfileCard({ profile }: ProfileCardProps) {
       {user.zip_code && (
         <div className="mb-4">
           <span className="px-2 py-1 bg-cyan-300 border-2 border-black font-black text-xs">
-            📍 {user.zip_code}
+            📍 {formatLocationDisplay(user.zip_code)}
           </span>
         </div>
       )}

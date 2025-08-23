@@ -26,6 +26,8 @@ export async function ensureUserRecord() {
         email: user.email || '',
         username: user.user_metadata?.username || user.email?.split('@')[0] || `user_${user.id.substring(0, 8)}`,
         full_name: user.user_metadata?.full_name || user.user_metadata?.username || 'User',
+        city: user.user_metadata?.city || null,
+        state: user.user_metadata?.state || null,
         zip_code: user.user_metadata?.zip_code || null,
         profile_completed: false
       }
@@ -47,6 +49,9 @@ export async function ensureUserRecord() {
     }
 
     console.log('User record exists:', userRecord)
+    // Update last_active for existing user
+    await updateUserLastActive(user.id)
+    
     return { ...userRecord, isNewUser: false }
   } catch (error) {
     console.error('Error in ensureUserRecord:', error)
@@ -76,5 +81,44 @@ export async function getUserProfile() {
   } catch (error) {
     console.error('Error getting user profile:', error)
     return null
+  }
+}
+
+export async function updateUserLastActive(userId: string) {
+  try {
+    const { error } = await supabase
+      .from('users')
+      .update({ last_active: new Date().toISOString() })
+      .eq('id', userId)
+
+    if (error) {
+      console.error('Error updating last_active:', error)
+    }
+  } catch (error) {
+    console.error('Error in updateUserLastActive:', error)
+  }
+}
+
+export function getLastActiveStatus(lastActive: string) {
+  const now = new Date()
+  const lastActiveDate = new Date(lastActive)
+  const diffInMinutes = Math.floor((now.getTime() - lastActiveDate.getTime()) / (1000 * 60))
+  
+  if (diffInMinutes < 5) {
+    return { status: 'online', text: 'ONLINE' }
+  } else if (diffInMinutes < 30) {
+    return { status: 'recent', text: `${diffInMinutes}M AGO` }
+  } else if (diffInMinutes < 60) {
+    return { status: 'recent', text: 'RECENTLY ACTIVE' }
+  } else if (diffInMinutes < 1440) { // 24 hours
+    const hours = Math.floor(diffInMinutes / 60)
+    return { status: 'hours', text: `${hours}H AGO` }
+  } else {
+    const days = Math.floor(diffInMinutes / 1440)
+    if (days < 30) {
+      return { status: 'days', text: `${days}D AGO` }
+    } else {
+      return { status: 'inactive', text: 'INACTIVE' }
+    }
   }
 }

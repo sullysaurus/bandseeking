@@ -76,6 +76,8 @@ export default function OnboardingPage() {
           email: user.email || '',
           username: user.user_metadata?.username || user.email?.split('@')[0] || 'user',
           full_name: user.user_metadata?.full_name || 'User',
+          city: user.user_metadata?.city || null,
+          state: user.user_metadata?.state || null,
           zip_code: user.user_metadata?.zip_code || null,
           profile_completed: false
         })

@@ -5,6 +5,8 @@ import { useParams } from 'next/navigation'
 import Image from 'next/image'
 import Link from 'next/link'
 import { supabase } from '@/lib/supabase'
+import { getLastActiveStatus } from '@/lib/auth-helpers'
+import { formatLocationDisplay } from '@/lib/zipcode-utils'
 import Navigation from '@/components/layout/Navigation'
 import { useRouter } from 'next/navigation'
 
@@ -224,13 +226,27 @@ export default function ProfileClient() {
                       )}
                       {user.zip_code && (
                         <span className="px-3 py-1 bg-cyan-300 border-2 border-black font-black text-xs">
-                          📍 {user.zip_code}
+                          📍 {formatLocationDisplay(user.zip_code)}
                         </span>
                       )}
                     </div>
                     
                     {/* Additional Info */}
                     <div className="space-y-2 pt-3">
+                      {user.last_active && (() => {
+                        const activeStatus = getLastActiveStatus(user.last_active)
+                        return (
+                          <div className={`font-bold text-sm ${
+                            activeStatus.status === 'online' ? 'text-green-600' :
+                            activeStatus.status === 'recent' ? 'text-yellow-600' :
+                            activeStatus.status === 'hours' ? 'text-orange-600' :
+                            activeStatus.status === 'days' ? 'text-red-600' :
+                            'text-gray-500'
+                          }`}>
+                            🟢 {activeStatus.text}
+                          </div>
+                        )
+                      })()}
                       {profile.availability && (
                         <div className="font-bold text-sm">
                           📅 AVAILABILITY: {profile.availability.toUpperCase()}

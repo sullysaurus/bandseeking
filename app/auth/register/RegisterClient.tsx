@@ -17,6 +17,8 @@ const registerSchema = z.object({
   email: z.string().email('Invalid email address'),
   password: z.string().min(6, 'Password must be at least 6 characters'),
   confirmPassword: z.string(),
+  city: z.string().min(2, 'City must be at least 2 characters'),
+  state: z.string().min(2, 'State must be at least 2 characters'),
   zipCode: z.string().regex(/^\d{5}$/, 'Please enter a valid 5-digit ZIP code')
 }).refine((data) => data.password === data.confirmPassword, {
   message: "Passwords don't match",
@@ -87,6 +89,8 @@ export default function RegisterClient() {
           data: {
             full_name: data.fullName,
             username: data.username,
+            city: data.city,
+            state: data.state,
             zip_code: data.zipCode
           }
         }
@@ -179,6 +183,33 @@ export default function RegisterClient() {
                 {errors.confirmPassword && (
                   <p className="mt-1 font-bold text-sm text-red-600">{errors.confirmPassword.message}</p>
                 )}
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block font-black mb-2 text-sm">CITY</label>
+                  <input
+                    placeholder="YOUR CITY"
+                    {...register('city')}
+                    className="w-full px-4 py-3 border-4 border-black font-bold placeholder:text-gray-400 focus:outline-none focus:bg-yellow-100 transition-colors"
+                  />
+                  {errors.city && (
+                    <p className="mt-1 font-bold text-sm text-red-600">{errors.city.message}</p>
+                  )}
+                </div>
+                
+                <div>
+                  <label className="block font-black mb-2 text-sm">STATE</label>
+                  <input
+                    placeholder="STATE"
+                    maxLength={2}
+                    {...register('state')}
+                    className="w-full px-4 py-3 border-4 border-black font-bold placeholder:text-gray-400 focus:outline-none focus:bg-yellow-100 transition-colors uppercase"
+                  />
+                  {errors.state && (
+                    <p className="mt-1 font-bold text-sm text-red-600">{errors.state.message}</p>
+                  )}
+                </div>
               </div>
 
               <div>

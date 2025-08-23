@@ -21,6 +21,9 @@ export default function ChatPage() {
   const [receiver, setReceiver] = useState<any>(null)
   const [loading, setLoading] = useState(true)
   const [sending, setSending] = useState(false)
+  const [connectionStatus, setConnectionStatus] = useState<string>('connecting')
+  const reconnectionTimeoutRef = useRef<NodeJS.Timeout | null>(null)
+  const heartbeatIntervalRef = useRef<NodeJS.Timeout | null>(null)
 
   useEffect(() => {
     checkAuth()
@@ -29,6 +32,24 @@ export default function ChatPage() {
   useEffect(() => {
     scrollToBottom()
   }, [messages])
+
+  // Handle page visibility changes - reconnect when user returns
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible' && connectionStatus === 'disconnected' && currentUser) {
+        console.log('Page became visible, checking connection...')
+        // Force a reconnection attempt
+        const cleanup = subscribeToMessages(currentUser.id)
+        return cleanup
+      }
+    }
+    
+    document.addEventListener('visibilitychange', handleVisibilityChange)
+    
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange)
+    }
+  }, [connectionStatus, currentUser, receiverId])
 
   useEffect(() => {
     let cleanup: (() => void) | null = null
@@ -39,6 +60,12 @@ export default function ChatPage() {
     
     return () => {
       if (cleanup) cleanup()
+      if (reconnectionTimeoutRef.current) {
+        clearTimeout(reconnectionTimeoutRef.current)
+      }
+      if (heartbeatIntervalRef.current) {
+        clearInterval(heartbeatIntervalRef.current)
+      }
     }
   }, [currentUser, receiverId])
 
@@ -101,72 +128,116 @@ export default function ChatPage() {
   }
 
   const subscribeToMessages = (userId: string) => {
-    // Create a unique channel name for this conversation
-    // Sort the IDs to ensure both users subscribe to the same channel
-    const channelName = [userId, receiverId].sort().join('-')
+    let subscription: any = null
+    let isCleanedUp = false
     
-    console.log('Setting up real-time subscription for messages', {
-      userId,
-      receiverId,
-      channel: `messages-${channelName}`
-    })
-    
-    const subscription = supabase
-      .channel(`messages-${channelName}`)
-      .on(
-        'postgres_changes',
-        {
-          event: 'INSERT',
-          schema: 'public',
-          table: 'messages'
-        },
-        (payload: any) => {
-          console.log('Realtime event received:', {
-            eventType: payload.eventType,
-            new: payload.new,
-            old: payload.old
-          })
-          
-          if (payload.eventType === 'INSERT') {
-            const newMsg = payload.new
-            console.log('Checking message:', {
-              sender: newMsg.sender_id,
-              receiver: newMsg.receiver_id,
-              expectedSender: userId,
-              expectedReceiver: receiverId,
-              willAdd: (newMsg.sender_id === userId && newMsg.receiver_id === receiverId) ||
-                       (newMsg.sender_id === receiverId && newMsg.receiver_id === userId)
-            })
+    const createSubscription = () => {
+      if (isCleanedUp) return
+      
+      // Create a unique channel name for this conversation
+      const channelName = [userId, receiverId].sort().join('-')
+      
+      console.log('Setting up real-time subscription for messages', {
+        userId,
+        receiverId,
+        channel: `messages-${channelName}`
+      })
+      
+      setConnectionStatus('connecting')
+      
+      subscription = supabase
+        .channel(`messages-${channelName}`)
+        .on(
+          'postgres_changes',
+          {
+            event: 'INSERT',
+            schema: 'public',
+            table: 'messages'
+          },
+          (payload: any) => {
+            console.log('Realtime event received:', payload)
             
-            // Only add messages that are part of this conversation
-            if ((newMsg.sender_id === userId && newMsg.receiver_id === receiverId) ||
-                (newMsg.sender_id === receiverId && newMsg.receiver_id === userId)) {
-              console.log('Adding message to UI')
-              setMessages(prev => {
-                console.log('Previous messages:', prev.length)
-                return [...prev, newMsg]
-              })
-              if (newMsg.receiver_id === userId) {
-                markMessagesAsRead(userId)
+            if (payload.eventType === 'INSERT') {
+              const newMsg = payload.new
+              
+              // Only add messages that are part of this conversation
+              if ((newMsg.sender_id === userId && newMsg.receiver_id === receiverId) ||
+                  (newMsg.sender_id === receiverId && newMsg.receiver_id === userId)) {
+                console.log('Adding message to UI')
+                setMessages(prev => {
+                  // Prevent duplicates
+                  if (prev.some(msg => msg.id === newMsg.id)) {
+                    return prev
+                  }
+                  return [...prev, newMsg]
+                })
+                if (newMsg.receiver_id === userId) {
+                  markMessagesAsRead(userId)
+                }
               }
             }
           }
-        }
-      )
-      .subscribe((status) => {
-        console.log('Subscription status:', status)
-        if (status === 'CHANNEL_ERROR') {
-          console.error('Subscription error - check Supabase Realtime settings')
-        }
-      })
+        )
+        .subscribe((status) => {
+          console.log('Subscription status:', status)
+          setConnectionStatus(status)
+          
+          if (status === 'SUBSCRIBED') {
+            setConnectionStatus('connected')
+            // Start heartbeat to keep connection alive
+            if (heartbeatIntervalRef.current) {
+              clearInterval(heartbeatIntervalRef.current)
+            }
+            heartbeatIntervalRef.current = setInterval(() => {
+              // Send a presence update to keep connection alive
+              if (!isCleanedUp && subscription) {
+                console.log('Sending heartbeat to maintain connection')
+                subscription.send({
+                  type: 'heartbeat',
+                  event: 'ping',
+                  payload: { timestamp: Date.now() }
+                })
+              }
+            }, 60000) // Every 60 seconds
+          } else if (status === 'CHANNEL_ERROR' || status === 'TIMED_OUT' || status === 'CLOSED') {
+            setConnectionStatus('disconnected')
+            console.log('Real-time connection lost, attempting to reconnect in 3 seconds...')
+            
+            // Attempt to reconnect after a delay
+            if (!isCleanedUp && reconnectionTimeoutRef.current === null) {
+              reconnectionTimeoutRef.current = setTimeout(() => {
+                reconnectionTimeoutRef.current = null
+                if (subscription) {
+                  subscription.unsubscribe()
+                }
+                console.log('Attempting to reconnect to real-time messaging...')
+                createSubscription()
+              }, 3000)
+            }
+          }
+        })
+    }
+    
+    createSubscription()
 
     return () => {
       console.log('Cleaning up subscription')
-      subscription.unsubscribe()
+      isCleanedUp = true
+      if (subscription) {
+        subscription.unsubscribe()
+      }
+      if (heartbeatIntervalRef.current) {
+        clearInterval(heartbeatIntervalRef.current)
+        heartbeatIntervalRef.current = null
+      }
+      if (reconnectionTimeoutRef.current) {
+        clearTimeout(reconnectionTimeoutRef.current)
+        reconnectionTimeoutRef.current = null
+      }
     }
   }
 
-  const sendMessage = async (e: React.FormEvent) => {
+  const sendMessage = async (e: React.FormEvent, retryCount = 0) => {
     e.preventDefault()
     
     if (!newMessage.trim() || !currentUser) return
@@ -183,6 +254,19 @@ export default function ChatPage() {
       setNewMessage('')
     } catch (error) {
       console.error('Error sending message:', error)
+      
+      // Retry up to 2 times if connection seems to be the issue
+      if (retryCount < 2 && (connectionStatus === 'disconnected' || connectionStatus === 'connecting')) {
+        console.log(`Retrying message send (attempt ${retryCount + 1}/2)`)
+        setTimeout(() => {
+          const fakeEvent = { preventDefault: () => {} } as React.FormEvent
+          sendMessage(fakeEvent, retryCount + 1)
+        }, 2000)
+        return // Don't reset sending state yet
+      }
+      
+      // Show user-friendly error after retries fail
+      alert('Failed to send message. Please check your connection and try again.')
     } finally {
       setSending(false)
     }
@@ -214,7 +298,24 @@ export default function ChatPage() {
                 <div className="flex items-center justify-between">
                   <div>
                     <h2 className="text-2xl font-black mb-1">{receiver.full_name.toUpperCase()}</h2>
-                    <p className="font-bold text-gray-600">@{receiver.username}</p>
+                    <div className="flex items-center gap-3">
+                      <p className="font-bold text-gray-600">@{receiver.username}</p>
+                      {/* Connection Status Indicator - only show when not connected */}
+                      {connectionStatus !== 'connected' && (
+                        <div className="flex items-center gap-1">
+                          <div className={`w-2 h-2 rounded-full ${
+                            connectionStatus === 'connecting' ? 'bg-yellow-400 animate-pulse' :
+                            'bg-red-400'
+                          }`}></div>
+                          <span className={`text-xs font-bold ${
+                            connectionStatus === 'connecting' ? 'text-yellow-600' :
+                            'text-red-600'
+                          }`}>
+                            {connectionStatus === 'connecting' ? 'CONNECTING...' : 'RECONNECTING...'}
+                          </span>
+                        </div>
+                      )}
+                    </div>
                   </div>
                   <Link 
                     href={`/profile/${receiver.username}`} 
