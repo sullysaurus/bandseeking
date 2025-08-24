@@ -6,6 +6,27 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { supabase } from '@/lib/supabase'
 
+// Helper function to format last active time
+const getActiveStatus = (lastActive: string | null) => {
+  if (!lastActive) return { text: 'LAST SEEN: UNKNOWN', status: 'unknown' }
+  
+  const now = new Date()
+  const lastActiveDate = new Date(lastActive)
+  const diffMinutes = Math.floor((now.getTime() - lastActiveDate.getTime()) / (1000 * 60))
+  
+  if (diffMinutes < 5) return { text: 'ONLINE', status: 'online' }
+  if (diffMinutes < 30) return { text: `${diffMinutes}M AGO`, status: 'recent' }
+  if (diffMinutes < 60) return { text: 'ACTIVE RECENTLY', status: 'recent' }
+  
+  const diffHours = Math.floor(diffMinutes / 60)
+  if (diffHours < 24) return { text: `${diffHours}H AGO`, status: 'hours' }
+  
+  const diffDays = Math.floor(diffHours / 24)
+  if (diffDays < 7) return { text: `${diffDays}D AGO`, status: 'days' }
+  
+  return { text: 'INACTIVE', status: 'inactive' }
+}
+
 interface HomeClientProps {
   initialProfiles: any[]
 }
@@ -13,41 +34,15 @@ interface HomeClientProps {
 export default function HomeClient({ initialProfiles }: HomeClientProps) {
   const router = useRouter()
   const [loading, setLoading] = useState(true)
-  const [isAuthCallback, setIsAuthCallback] = useState(false)
   const [recentMusicians, setRecentMusicians] = useState<any[]>(initialProfiles || [])
 
   useEffect(() => {
-    handleAuthCallback()
+    checkAuthStatus()
   }, [])
 
-  const handleAuthCallback = async () => {
+  const checkAuthStatus = async () => {
     try {
-      // Check if this is an auth callback (email confirmation)
-      const urlParams = new URLSearchParams(window.location.search)
-      const code = urlParams.get('code')
-      
-      if (code) {
-        setIsAuthCallback(true)
-        
-        // Clear the URL parameters immediately to prevent double processing
-        window.history.replaceState({}, '', '/')
-        
-        try {
-          // Exchange the code for a session
-          const { data, error } = await supabase.auth.exchangeCodeForSession(code)
-          
-          if (error) {
-            console.log('Code exchange error (likely already used):', error.message)
-          }
-          
-          // Wait a moment for the session to be established
-          await new Promise(resolve => setTimeout(resolve, 300))
-        } catch (exchangeError) {
-          console.log('Code exchange failed, checking existing session...')
-        }
-      }
-      
-      // Now check auth status and redirect
+      // Check if user is already logged in
       const { data: { user } } = await supabase.auth.getUser()
       if (user) {
         // Redirect to onboarding, let it decide what to do next
@@ -55,7 +50,7 @@ export default function HomeClient({ initialProfiles }: HomeClientProps) {
         return
       }
     } catch (error) {
-      console.error('Error in auth callback:', error)
+      console.error('Error checking auth status:', error)
     } finally {
       setLoading(false)
     }
@@ -68,10 +63,10 @@ export default function HomeClient({ initialProfiles }: HomeClientProps) {
           <div className="text-center">
             <div className="animate-spin rounded-full h-12 w-12 md:h-16 md:w-16 border-b-4 border-black mx-auto mb-6"></div>
             <h1 className="text-2xl md:text-3xl font-black mb-2">
-              {isAuthCallback ? 'CONFIRMING EMAIL...' : 'LOADING...'}
+              LOADING...
             </h1>
             <p className="text-sm md:text-lg font-bold text-gray-600">
-              {isAuthCallback ? 'SETTING UP YOUR PROFILE' : 'CHECKING YOUR ACCOUNT'}
+              CHECKING YOUR ACCOUNT
             </p>
           </div>
         </div>
@@ -173,6 +168,20 @@ export default function HomeClient({ initialProfiles }: HomeClientProps) {
                             <div className="flex-1 min-w-0">
                               <p className="font-black text-sm truncate">{musician.user.full_name.toUpperCase()}</p>
                               <p className="text-xs text-gray-600 font-bold truncate">@{musician.user.username}</p>
+                              {musician.user.city && musician.user.state && (
+                                <p className="text-xs text-gray-500 font-bold truncate">
+                                  {musician.user.city.toUpperCase()}, {musician.user.state.toUpperCase()}
+                                </p>
+                              )}
+                              <div className={`text-xs font-bold ${
+                                getActiveStatus(musician.user.last_active).status === 'online' ? 'text-green-600' :
+                                getActiveStatus(musician.user.last_active).status === 'recent' ? 'text-yellow-600' :
+                                getActiveStatus(musician.user.last_active).status === 'hours' ? 'text-orange-600' :
+                                getActiveStatus(musician.user.last_active).status === 'days' ? 'text-red-600' :
+                                'text-gray-500'
+                              }`}>
+                                {getActiveStatus(musician.user.last_active).text}
+                              </div>
                             </div>
                           </div>
                           <div className="space-y-2 mb-3">
@@ -235,6 +244,20 @@ export default function HomeClient({ initialProfiles }: HomeClientProps) {
                           <div className="flex-1 min-w-0">
                             <p className="font-black text-sm truncate">{musician.user.full_name.toUpperCase()}</p>
                             <p className="text-xs text-gray-600 font-bold truncate">@{musician.user.username}</p>
+                            {musician.user.city && musician.user.state && (
+                              <p className="text-xs text-gray-500 font-bold truncate">
+                                {musician.user.city.toUpperCase()}, {musician.user.state.toUpperCase()}
+                              </p>
+                            )}
+                            <div className={`text-xs font-bold ${
+                              getActiveStatus(musician.user.last_active).status === 'online' ? 'text-green-600' :
+                              getActiveStatus(musician.user.last_active).status === 'recent' ? 'text-yellow-600' :
+                              getActiveStatus(musician.user.last_active).status === 'hours' ? 'text-orange-600' :
+                              getActiveStatus(musician.user.last_active).status === 'days' ? 'text-red-600' :
+                              'text-gray-500'
+                            }`}>
+                              {getActiveStatus(musician.user.last_active).text}
+                            </div>
                           </div>
                         </div>
                         <div className="flex flex-wrap gap-1 mb-3">

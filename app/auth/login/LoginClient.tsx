@@ -8,7 +8,6 @@ import { ensureUserRecord } from '@/lib/auth-helpers'
 import Navigation from '@/components/layout/Navigation'
 import Input from '@/components/ui/Input'
 import Button from '@/components/ui/Button'
-import GoogleAuthButton from '@/components/auth/GoogleAuthButton'
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -72,17 +71,6 @@ export default function LoginClient() {
               <p className="font-bold text-base md:text-lg">LET&apos;S MAKE SOME NOISE</p>
             </div>
 
-            <div className="mb-6">
-              <GoogleAuthButton text="SIGN IN WITH GOOGLE" />
-              <div className="relative my-6">
-                <div className="absolute inset-0 flex items-center">
-                  <div className="w-full border-t-4 border-black"></div>
-                </div>
-                <div className="relative flex justify-center">
-                  <span className="bg-white px-4 font-black text-sm">OR</span>
-                </div>
-              </div>
-            </div>
 
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
               <div>
