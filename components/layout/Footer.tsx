@@ -73,7 +73,7 @@ export default function Footer() {
                 className="w-8 h-8 bg-white border-2 border-gray-400"
               />
               <p className="font-bold text-gray-400 text-sm">
-                © 2024 BANDSEEKING. ALL RIGHTS RESERVED.
+                © 2025 BANDSEEKING. ALL RIGHTS RESERVED.
               </p>
             </div>
             <p className="font-bold text-gray-500 text-xs">
