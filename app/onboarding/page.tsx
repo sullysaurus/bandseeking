@@ -235,7 +235,7 @@ export default function OnboardingPage() {
           if (formData.appleMusicUrl) links.apple_music = formData.appleMusicUrl
           return Object.keys(links).length > 0 ? links : null
         })(),
-        availability: formData.availability.length > 0 ? formData.availability[0] : null,
+        availability: formData.availability.length > 0 ? formData.availability : null,
         has_transportation: formData.hasTransportation,
         has_own_equipment: formData.hasOwnEquipment,
         willing_to_travel_miles: formData.willingToTravelMiles,
@@ -459,19 +459,19 @@ export default function OnboardingPage() {
               <h2 className="text-2xl md:text-4xl font-black mb-1 md:mb-2">WHAT ARE YOU LOOKING FOR?</h2>
               <p className="font-bold text-sm md:text-lg">Select all that apply</p>
             </div>
-            <div className="space-y-3 md:space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-3">
               {seekingOptions.map((option) => (
                 <label
                   key={option}
-                  className={`flex items-center p-3 md:p-4 border-2 md:border-4 border-black cursor-pointer font-bold shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] md:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all ${
+                  className={`flex items-center p-2 md:p-3 border-2 md:border-4 border-black cursor-pointer font-bold shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] md:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all ${
                     formData.seeking.includes(option)
-                      ? 'bg-purple-400 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] md:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]'
-                      : 'bg-white hover:bg-cyan-300'
+                      ? 'bg-purple-400 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] md:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]'
+                      : 'bg-white hover:bg-cyan-200'
                   }`}
                 >
                   <input
                     type="checkbox"
-                    className="mr-3 md:mr-4 w-4 h-4 md:w-5 md:h-5"
+                    className="mr-2 md:mr-3 w-3 h-3 md:w-4 md:h-4"
                     checked={formData.seeking.includes(option)}
                     onChange={(e) => {
                       if (e.target.checked) {
@@ -481,7 +481,7 @@ export default function OnboardingPage() {
                       }
                     }}
                   />
-                  <span className="text-sm md:text-lg">{option.toUpperCase()}</span>
+                  <span className="text-xs md:text-sm">{option.toUpperCase()}</span>
                 </label>
               ))}
             </div>

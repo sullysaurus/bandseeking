@@ -1,4 +1,4 @@
--- Enable UUID extension
+Can we add zip code, instrument, and what they're looking for to the sign up form? -- Enable UUID extension
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 -- Users table
@@ -26,7 +26,7 @@ CREATE TABLE profiles (
   seeking TEXT[],
   genres TEXT[],
   influences TEXT,
-  availability TEXT[],
+  availability VARCHAR CHECK (availability IN ('weekdays', 'weekends', 'evenings', 'flexible')),
   has_transportation BOOLEAN DEFAULT FALSE,
   has_own_equipment BOOLEAN DEFAULT FALSE,
   willing_to_travel_miles INTEGER DEFAULT 25,

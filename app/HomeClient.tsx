@@ -106,7 +106,7 @@ export default function HomeClient({ initialProfiles }: HomeClientProps) {
               BAND
             </h2>
             <p className="text-lg md:text-xl font-bold mb-8 max-w-2xl">
-              Connect with musicians who get your vibe. Make real connections.
+              Connect with musicians in your area. Always free.
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
               <Link href="/auth/register" className="inline-block px-6 py-3 bg-black text-white border-4 border-black font-black text-lg hover:bg-pink-400 hover:text-black transition-colors shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
@@ -114,7 +114,7 @@ export default function HomeClient({ initialProfiles }: HomeClientProps) {
               </Link>
               <button 
                 onClick={() => router.push('/auth/register')}
-                className="inline-block px-6 py-3 bg-white border-4 border-black font-black text-lg hover:bg-cyan-300 transition-colors shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
+                className="inline-block px-6 py-3 bg-white text-black border-4 border-black font-black text-lg hover:bg-cyan-300 transition-colors shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
               >
                 BROWSE MUSICIANS
               </button>
