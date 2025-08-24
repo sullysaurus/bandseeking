@@ -26,7 +26,7 @@ CREATE TABLE profiles (
   seeking TEXT[],
   genres TEXT[],
   influences TEXT,
-  availability VARCHAR CHECK (availability IN ('weekdays', 'weekends', 'evenings', 'flexible')),
+  availability TEXT[],
   has_transportation BOOLEAN DEFAULT FALSE,
   has_own_equipment BOOLEAN DEFAULT FALSE,
   willing_to_travel_miles INTEGER DEFAULT 25,
