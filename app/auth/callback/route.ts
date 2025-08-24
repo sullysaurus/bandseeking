@@ -33,8 +33,7 @@ export async function GET(request: NextRequest) {
         metadata: data.user.user_metadata
       })
 
-      // Simple approach: just redirect to onboarding for now
-      // The onboarding flow will handle user creation
+      // Redirect to onboarding for profile setup
       console.log('Redirecting to onboarding...')
       return NextResponse.redirect(new URL('/onboarding', request.url))
 

@@ -61,44 +61,14 @@ export default function OnboardingPage() {
       console.log('User authenticated:', user.id)
       setUserId(user.id)
 
-      // Check if user record exists in database
-      const { data: userRecord, error: userRecordError } = await supabase
-        .from('users')
-        .select('id, profile_completed')
-        .eq('id', user.id)
-        .single()
-
-      if (userRecordError && userRecordError.code === 'PGRST116') {
-        // User record doesn't exist, create it
-        console.log('User record not found, creating...')
-        const { error: createUserError } = await supabase.from('users').insert({
-          id: user.id,
-          email: user.email || '',
-          username: user.user_metadata?.username || user.email?.split('@')[0] || 'user',
-          full_name: user.user_metadata?.full_name || 'User',
-          city: user.user_metadata?.city || null,
-          state: user.user_metadata?.state || null,
-          zip_code: user.user_metadata?.zip_code || null,
-          profile_completed: false
-        })
-
-        if (createUserError) {
-          console.error('Error creating user record:', createUserError)
-          throw createUserError
-        }
-        console.log('User record created successfully')
-      } else if (userRecordError) {
-        console.error('Error checking user record:', userRecordError)
-        throw userRecordError
-      } else {
-        console.log('User record exists:', userRecord)
-        
-        // If profile is already completed, redirect to dashboard
-        if (userRecord.profile_completed) {
-          console.log('Profile already completed, redirecting to dashboard')
-          router.push('/dashboard')
-          return
-        }
+      // Ensure user record exists using the helper
+      const userRecord = await ensureUserRecord()
+      
+      // If profile is already completed, redirect to dashboard
+      if (userRecord.profile_completed) {
+        console.log('Profile already completed, redirecting to dashboard')
+        router.push('/dashboard')
+        return
       }
 
       // Check if user already has a profile
@@ -285,7 +255,9 @@ export default function OnboardingPage() {
       }
 
       console.log('Profile completion flag updated')
-      router.push('/dashboard')
+      
+      // Redirect to their profile page to see the complete profile
+      router.push(`/profile/${formData.username}`)
     } catch (error) {
       console.error('Error creating profile:', error)
       
@@ -733,6 +705,20 @@ export default function OnboardingPage() {
               <ChevronRight className="w-4 h-4 md:w-5 md:h-5 ml-1 md:ml-2" />
             </button>
           )}
+        </div>
+
+        {/* Skip Option */}
+        <div className="mt-6 text-center">
+          <button
+            onClick={() => {
+              if (confirm('You can complete your profile anytime from the dashboard. Continue without setting up your profile?')) {
+                router.push('/dashboard')
+              }
+            }}
+            className="font-bold text-sm md:text-base text-gray-600 hover:text-black underline transition-colors"
+          >
+            SKIP FOR NOW
+          </button>
         </div>
       </div>
     </div>

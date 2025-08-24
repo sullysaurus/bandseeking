@@ -14,30 +14,43 @@ export default function HomeClient({ initialProfiles }: HomeClientProps) {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    checkAuthAndRedirect()
+    handleAuthCallback()
   }, [])
 
-  const checkAuthAndRedirect = async () => {
+  const handleAuthCallback = async () => {
     try {
+      // Check if this is an auth callback (email confirmation)
+      const urlParams = new URLSearchParams(window.location.search)
+      const code = urlParams.get('code')
+      
+      if (code) {
+        // Clear the URL parameters immediately to prevent double processing
+        window.history.replaceState({}, '', '/')
+        
+        try {
+          // Exchange the code for a session
+          const { data, error } = await supabase.auth.exchangeCodeForSession(code)
+          
+          if (error) {
+            console.log('Code exchange error (likely already used):', error.message)
+          }
+          
+          // Wait a moment for the session to be established
+          await new Promise(resolve => setTimeout(resolve, 500))
+        } catch (exchangeError) {
+          console.log('Code exchange failed, checking existing session...')
+        }
+      }
+      
+      // Now check auth status and redirect
       const { data: { user } } = await supabase.auth.getUser()
       if (user) {
-        // Check if user has completed their profile
-        const { data: userRecord } = await supabase
-          .from('users')
-          .select('profile_completed')
-          .eq('id', user.id)
-          .single()
-        
-        if (userRecord && userRecord.profile_completed) {
-          router.push('/dashboard')
-        } else {
-          // User is authenticated but hasn't completed onboarding
-          router.push('/onboarding')
-        }
+        // Redirect to onboarding, let it decide what to do next
+        router.push('/onboarding')
         return
       }
     } catch (error) {
-      console.error('Error checking auth:', error)
+      console.error('Error in auth callback:', error)
     } finally {
       setLoading(false)
     }

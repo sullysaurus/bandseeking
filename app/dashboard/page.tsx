@@ -23,10 +23,7 @@ export default function DashboardPage() {
     try {
       const userData = await ensureUserRecord()
       
-      if (!userData.profile_completed) {
-        router.push('/onboarding')
-        return
-      }
+      // Allow access to dashboard even without completed profile
 
       setUser(userData)
 
