@@ -220,7 +220,7 @@ export default function OnboardingPage() {
       const { data: profileData, error: profileError } = await supabase.from('profiles').insert({
         user_id: userId,
         bio: formData.bio || '',
-        profile_image_url: profileImageUrl,
+        profile_image_url: profileImageUrl || '/logo.png',
         main_instrument: formData.mainInstrument,
         secondary_instruments: formData.secondaryInstruments.length > 0 ? formData.secondaryInstruments : null,
         experience_level: formData.experienceLevel as any,
