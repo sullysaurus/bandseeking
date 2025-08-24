@@ -299,24 +299,42 @@ export default function HomeClient({ initialProfiles }: HomeClientProps) {
           <div className="bg-black text-white border-4 border-black p-6 md:p-8 shadow-[4px_4px_0px_0px_rgba(255,255,255,1)]">
             <h3 className="text-2xl md:text-3xl font-black mb-6 text-yellow-300">QUICK LINKS</h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              <Link href="/search?instrument=guitar" className="block p-3 bg-white text-black border-2 border-white font-black hover:bg-yellow-300 transition-colors">
+              <button 
+                onClick={() => router.push('/auth/register')}
+                className="block p-3 bg-white text-black border-2 border-white font-black hover:bg-yellow-300 transition-colors w-full text-left"
+              >
                 → FIND GUITARISTS
-              </Link>
-              <Link href="/search?instrument=drums" className="block p-3 bg-white text-black border-2 border-white font-black hover:bg-yellow-300 transition-colors">
+              </button>
+              <button 
+                onClick={() => router.push('/auth/register')}
+                className="block p-3 bg-white text-black border-2 border-white font-black hover:bg-yellow-300 transition-colors w-full text-left"
+              >
                 → FIND DRUMMERS
-              </Link>
-              <Link href="/search?instrument=bass" className="block p-3 bg-white text-black border-2 border-white font-black hover:bg-yellow-300 transition-colors">
+              </button>
+              <button 
+                onClick={() => router.push('/auth/register')}
+                className="block p-3 bg-white text-black border-2 border-white font-black hover:bg-yellow-300 transition-colors w-full text-left"
+              >
                 → FIND BASSISTS
-              </Link>
-              <Link href="/search?instrument=vocals" className="block p-3 bg-white text-black border-2 border-white font-black hover:bg-yellow-300 transition-colors">
+              </button>
+              <button 
+                onClick={() => router.push('/auth/register')}
+                className="block p-3 bg-white text-black border-2 border-white font-black hover:bg-yellow-300 transition-colors w-full text-left"
+              >
                 → FIND VOCALISTS
-              </Link>
-              <Link href="/search?instrument=keyboard" className="block p-3 bg-white text-black border-2 border-white font-black hover:bg-yellow-300 transition-colors">
+              </button>
+              <button 
+                onClick={() => router.push('/auth/register')}
+                className="block p-3 bg-white text-black border-2 border-white font-black hover:bg-yellow-300 transition-colors w-full text-left"
+              >
                 → FIND KEYBOARDISTS
-              </Link>
-              <Link href="/search" className="block p-3 bg-pink-400 text-black border-2 border-white font-black hover:bg-pink-500 transition-colors">
+              </button>
+              <button 
+                onClick={() => router.push('/auth/register')}
+                className="block p-3 bg-pink-400 text-black border-2 border-white font-black hover:bg-pink-500 transition-colors w-full text-left"
+              >
                 → VIEW ALL
-              </Link>
+              </button>
             </div>
           </div>
         </div>
