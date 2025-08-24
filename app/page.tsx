@@ -22,6 +22,9 @@ export const metadata: Metadata = {
   }
 }
 
+// Force dynamic rendering to always show latest profiles
+export const dynamic = 'force-dynamic'
+
 export default async function HomePage() {
   // Fetch profiles server-side
   const profiles = await getRecentProfiles(6)

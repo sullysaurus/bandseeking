@@ -12,6 +12,7 @@ const supabaseServer = createClient(supabaseUrl, supabaseServiceKey, {
 
 export async function getRecentProfiles(limit = 12) {
   try {
+    console.log('Fetching recent profiles with limit:', limit)
     const { data, error } = await supabaseServer
       .from('profiles')
       .select(`
@@ -27,6 +28,7 @@ export async function getRecentProfiles(limit = 12) {
       return []
     }
 
+    console.log('Found profiles:', data?.length || 0)
     return data || []
   } catch (error) {
     console.error('Error in getRecentProfiles:', error)

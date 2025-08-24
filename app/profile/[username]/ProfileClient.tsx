@@ -250,7 +250,9 @@ export default function ProfileClient() {
                       })()}
                       {profile.availability && (
                         <div className="font-bold text-sm">
-                          AVAILABILITY: {profile.availability.toUpperCase()}
+                          AVAILABILITY: {Array.isArray(profile.availability) 
+                            ? profile.availability.map(a => a.toUpperCase()).join(', ')
+                            : profile.availability.toUpperCase()}
                         </div>
                       )}
                       {profile.has_transportation && (

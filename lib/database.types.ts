@@ -58,7 +58,7 @@ export interface Database {
           seeking: string[] | null
           genres: string[] | null
           influences: string | null
-          availability: 'weekdays' | 'weekends' | 'evenings' | 'flexible' | null
+          availability: ('weekdays' | 'weekends' | 'evenings' | 'flexible')[] | null
           has_transportation: boolean
           has_own_equipment: boolean
           willing_to_travel_miles: number
@@ -79,7 +79,7 @@ export interface Database {
           seeking?: string[] | null
           genres?: string[] | null
           influences?: string | null
-          availability?: 'weekdays' | 'weekends' | 'evenings' | 'flexible' | null
+          availability?: ('weekdays' | 'weekends' | 'evenings' | 'flexible')[] | null
           has_transportation?: boolean
           has_own_equipment?: boolean
           willing_to_travel_miles?: number
@@ -100,7 +100,7 @@ export interface Database {
           seeking?: string[] | null
           genres?: string[] | null
           influences?: string | null
-          availability?: 'weekdays' | 'weekends' | 'evenings' | 'flexible' | null
+          availability?: ('weekdays' | 'weekends' | 'evenings' | 'flexible')[] | null
           has_transportation?: boolean
           has_own_equipment?: boolean
           willing_to_travel_miles?: number
