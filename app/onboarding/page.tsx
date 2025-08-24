@@ -32,7 +32,7 @@ export default function OnboardingPage() {
     seeking: [] as string[],
     genres: [] as string[],
     influences: '',
-    availability: '',
+    availability: [],
     hasTransportation: false,
     hasOwnEquipment: false,
     willingToTravelMiles: 25
@@ -222,7 +222,7 @@ export default function OnboardingPage() {
         seeking: formData.seeking.length > 0 ? formData.seeking : null,
         genres: formData.genres.length > 0 ? formData.genres : null,
         influences: formData.influences || null,
-        availability: formData.availability || null,
+        availability: formData.availability.length > 0 ? formData.availability : null,
         has_transportation: formData.hasTransportation,
         has_own_equipment: formData.hasOwnEquipment,
         willing_to_travel_miles: formData.willingToTravelMiles,
@@ -535,21 +535,31 @@ export default function OnboardingPage() {
             </div>
             <div className="space-y-4">
               <div>
-                <label className="block font-black mb-2 md:mb-3 text-sm md:text-lg">AVAILABILITY</label>
+                <label className="block font-black mb-2 md:mb-3 text-sm md:text-lg">AVAILABILITY (SELECT ALL THAT APPLY)</label>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
                   {availabilityOptions.map((option) => (
-                    <button
+                    <label
                       key={option.value}
-                      type="button"
-                      onClick={() => setFormData({ ...formData, availability: option.value })}
-                      className={`p-3 md:p-4 border-2 md:border-4 border-black font-black text-sm md:text-base shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] md:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all ${
-                        formData.availability === option.value
+                      className={`flex items-center p-3 md:p-4 border-2 md:border-4 border-black cursor-pointer font-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] md:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all ${
+                        formData.availability.includes(option.value)
                           ? 'bg-yellow-300 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] md:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]'
                           : 'bg-white hover:bg-cyan-300'
                       }`}
                     >
-                      {option.label.toUpperCase()}
-                    </button>
+                      <input
+                        type="checkbox"
+                        className="mr-3 w-4 h-4 md:w-5 md:h-5"
+                        checked={formData.availability.includes(option.value)}
+                        onChange={(e) => {
+                          if (e.target.checked) {
+                            setFormData({ ...formData, availability: [...formData.availability, option.value] })
+                          } else {
+                            setFormData({ ...formData, availability: formData.availability.filter(a => a !== option.value) })
+                          }
+                        }}
+                      />
+                      <span className="text-sm md:text-base">{option.label.toUpperCase()}</span>
+                    </label>
                   ))}
                 </div>
               </div>
@@ -606,7 +616,7 @@ export default function OnboardingPage() {
                   <p><span className="text-pink-600">EXPERIENCE:</span> {formData.experienceLevel || 'Not selected'}</p>
                   <p><span className="text-pink-600">GENRES:</span> {formData.genres.length > 0 ? formData.genres.join(', ') : 'None selected'}</p>
                   <p><span className="text-pink-600">LOOKING FOR:</span> {formData.seeking.length > 0 ? formData.seeking.join(', ') : 'None selected'}</p>
-                  <p><span className="text-pink-600">AVAILABILITY:</span> {formData.availability || 'Not selected'}</p>
+                  <p><span className="text-pink-600">AVAILABILITY:</span> {formData.availability.length > 0 ? formData.availability.join(', ') : 'Not selected'}</p>
                   <p><span className="text-pink-600">TRAVEL DISTANCE:</span> {formData.willingToTravelMiles} miles</p>
                 </div>
               </div>
