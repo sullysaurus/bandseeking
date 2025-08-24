@@ -92,8 +92,41 @@ export default function DashboardPage() {
       <div className="min-h-screen bg-lime-300">
         <div className="max-w-6xl mx-auto px-4 py-8">
           <div className="mb-8">
-            <h1 className="text-4xl md:text-5xl font-black mb-2">WELCOME BACK!</h1>
-            <p className="font-bold text-xl">{user.full_name.toUpperCase()}</p>
+            <div className="flex items-center justify-between mb-4">
+              <div>
+                <h1 className="text-4xl md:text-5xl font-black mb-2">
+                  {new Date().getHours() < 12 ? 'GOOD MORNING!' : 
+                   new Date().getHours() < 17 ? 'GOOD AFTERNOON!' : 'GOOD EVENING!'}
+                </h1>
+                <p className="font-bold text-xl">{user.full_name.toUpperCase()}</p>
+              </div>
+              {profile?.profile_image_url && (
+                <Image
+                  src={profile.profile_image_url}
+                  alt={user.full_name}
+                  width={80}
+                  height={80}
+                  className="w-16 h-16 md:w-20 md:h-20 border-4 border-black object-cover shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
+                />
+              )}
+            </div>
+            
+            {/* Quick Tips for new users */}
+            {!profile?.is_published && (
+              <div className="bg-gradient-to-r from-yellow-300 to-orange-300 border-4 border-black p-4 mb-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+                <div className="flex items-start gap-3">
+                  <div className="text-2xl">🚀</div>
+                  <div>
+                    <h3 className="font-black text-lg mb-2">COMPLETE YOUR PROFILE TO GET DISCOVERED!</h3>
+                    <p className="font-bold text-sm mb-3">Your profile is in draft mode. Publish it to start connecting with musicians!</p>
+                    <Link href="/dashboard/profile" className="inline-block px-3 py-1 bg-black text-white border-2 border-black font-black text-sm hover:bg-white hover:text-black transition-colors">
+                      COMPLETE PROFILE →
+                    </Link>
+                  </div>
+                </div>
+              </div>
+            )}
+            
             {user.email === 'dsully15@gmail.com' && (
               <Link href="/admin" className="inline-block mt-4 px-4 py-2 bg-red-500 border-4 border-black font-black text-white hover:bg-red-600 transition-colors shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
                 ADMIN PANEL →
@@ -103,26 +136,63 @@ export default function DashboardPage() {
 
           {/* Quick Stats */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+            <Link href="/dashboard/profile" className="block">
+              <div className="bg-white border-4 border-black p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all cursor-pointer">
+                <div className="flex items-center gap-2 mb-1">
+                  <span className="text-lg">{profile?.is_published ? '🟢' : '🟡'}</span>
+                  <p className="font-black text-sm">STATUS</p>
+                </div>
+                <p className={`text-2xl font-black ${profile?.is_published ? 'text-green-500' : 'text-yellow-500'}`}>
+                  {profile?.is_published ? 'LIVE' : 'DRAFT'}
+                </p>
+                {!profile?.is_published && (
+                  <p className="text-xs font-bold text-gray-600 mt-1">Click to publish</p>
+                )}
+              </div>
+            </Link>
+
+            <Link href="/dashboard/saved" className="block">
+              <div className="bg-white border-4 border-black p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all cursor-pointer">
+                <div className="flex items-center gap-2 mb-1">
+                  <span className="text-lg">❤️</span>
+                  <p className="font-black text-sm">SAVED</p>
+                </div>
+                <p className="text-2xl font-black text-cyan-500">{savedCount}</p>
+                <p className="text-xs font-bold text-gray-600 mt-1">
+                  {savedCount === 0 ? 'Find musicians' : 'View collection'}
+                </p>
+              </div>
+            </Link>
+
+            <Link href="/dashboard/messages" className="block">
+              <div className="bg-white border-4 border-black p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all cursor-pointer relative">
+                <div className="flex items-center gap-2 mb-1">
+                  <span className="text-lg">💬</span>
+                  <p className="font-black text-sm">MESSAGES</p>
+                  {messageCount > 0 && (
+                    <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-black px-2 py-1 border-2 border-black">
+                      {messageCount}
+                    </span>
+                  )}
+                </div>
+                <p className="text-2xl font-black text-yellow-500">{messageCount}</p>
+                <p className="text-xs font-bold text-gray-600 mt-1">
+                  {messageCount === 0 ? 'No new messages' : `${messageCount} unread`}
+                </p>
+              </div>
+            </Link>
+
             <div className="bg-white border-4 border-black p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all">
-              <p className="font-black text-sm mb-1">STATUS</p>
-              <p className="text-2xl font-black text-pink-400">
-                {profile?.is_published ? 'LIVE' : 'DRAFT'}
+              <div className="flex items-center gap-2 mb-1">
+                <span className="text-lg">🎵</span>
+                <p className="font-black text-sm">YOUR VIBE</p>
+              </div>
+              <p className="text-lg font-black text-purple-500">
+                {profile?.main_instrument?.toUpperCase() || 'MUSICIAN'}
               </p>
-            </div>
-
-            <div className="bg-white border-4 border-black p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all">
-              <p className="font-black text-sm mb-1">SAVED</p>
-              <p className="text-2xl font-black text-cyan-500">{savedCount}</p>
-            </div>
-
-            <div className="bg-white border-4 border-black p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all">
-              <p className="font-black text-sm mb-1">MESSAGES</p>
-              <p className="text-2xl font-black text-yellow-500">{messageCount}</p>
-            </div>
-
-            <div className="bg-white border-4 border-black p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all">
-              <p className="font-black text-sm mb-1">VIEWS</p>
-              <p className="text-2xl font-black">-</p>
+              <p className="text-xs font-bold text-gray-600 mt-1">
+                {profile?.experience_level || 'Set your level'}
+              </p>
             </div>
           </div>
 
@@ -130,9 +200,16 @@ export default function DashboardPage() {
           {recentMusicians.length > 0 && (
             <div className="mb-8">
               <div className="flex items-center justify-between mb-4">
-                <h2 className="text-2xl font-black">NEW MUSICIANS</h2>
+                <div>
+                  <h2 className="text-2xl font-black flex items-center gap-2">
+                    ✨ FRESH TALENT
+                  </h2>
+                  <p className="font-bold text-sm text-gray-700">
+                    {recentMusicians.length} newest musicians just joined!
+                  </p>
+                </div>
                 <Link href="/search" className="px-3 py-1 bg-black text-white border-2 border-black font-black text-sm hover:bg-white hover:text-black transition-colors">
-                  VIEW ALL →
+                  DISCOVER MORE →
                 </Link>
               </div>
               
@@ -242,17 +319,42 @@ export default function DashboardPage() {
             </div>
           )}
 
+          {/* Quick Actions Bar */}
+          <div className="bg-white border-4 border-black p-4 mb-8 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+            <h3 className="font-black text-lg mb-3 flex items-center gap-2">
+              ⚡ QUICK ACTIONS
+            </h3>
+            <div className="flex flex-wrap gap-2">
+              <Link href="/search" className="px-3 py-1 bg-black text-white border-2 border-black font-black text-xs hover:bg-cyan-400 hover:text-black transition-colors">
+                🔍 FIND MUSICIANS
+              </Link>
+              <Link href="/dashboard/profile" className="px-3 py-1 bg-pink-400 text-black border-2 border-black font-black text-xs hover:bg-pink-500 transition-colors">
+                ✏️ EDIT PROFILE
+              </Link>
+              <Link href="/dashboard/messages" className="px-3 py-1 bg-cyan-300 text-black border-2 border-black font-black text-xs hover:bg-cyan-400 transition-colors">
+                💬 MESSAGES {messageCount > 0 && `(${messageCount})`}
+              </Link>
+              {profile?.is_published && (
+                <Link href={`/profile/${user.username}`} className="px-3 py-1 bg-lime-300 text-black border-2 border-black font-black text-xs hover:bg-lime-400 transition-colors">
+                  👀 VIEW YOUR PROFILE
+                </Link>
+              )}
+            </div>
+          </div>
+
           {/* Main Actions */}
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {/* Browse Musicians */}
             <Link href="/search" className="block">
               <div className="bg-black text-white border-4 border-black p-6 shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] hover:shadow-[8px_8px_0px_0px_rgba(255,255,255,1)] transition-all">
-                <h2 className="text-2xl font-black mb-4 text-yellow-300">BROWSE MUSICIANS</h2>
+                <h2 className="text-2xl font-black mb-4 text-yellow-300 flex items-center gap-2">
+                  🎸 BROWSE MUSICIANS
+                </h2>
                 <p className="font-bold mb-4">
-                  Connect with local talent.
+                  Connect with local talent. Find your perfect bandmate or collaborator!
                 </p>
                 <div className="bg-white text-black px-4 py-2 font-black text-center hover:bg-yellow-300 border-2 border-white transition-colors">
-                  BROWSE →
+                  START SEARCHING →
                 </div>
               </div>
             </Link>
@@ -260,12 +362,17 @@ export default function DashboardPage() {
             {/* Profile Card */}
             <Link href="/dashboard/profile" className="block">
               <div className="bg-pink-400 border-4 border-black p-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] transition-all">
-                <h2 className="text-2xl font-black mb-4">EDIT PROFILE</h2>
+                <h2 className="text-2xl font-black mb-4 flex items-center gap-2">
+                  ✨ {profile?.is_published ? 'UPDATE PROFILE' : 'COMPLETE PROFILE'}
+                </h2>
                 <p className="font-bold mb-4">
-                  Update your info, add photos, set your vibe.
+                  {profile?.is_published 
+                    ? 'Keep your profile fresh and up-to-date!'
+                    : 'Finish setting up to start connecting with musicians!'
+                  }
                 </p>
                 <div className="bg-black text-white px-4 py-2 font-black text-center hover:bg-white hover:text-black border-2 border-black transition-colors">
-                  MANAGE →
+                  {profile?.is_published ? 'UPDATE →' : 'COMPLETE →'}
                 </div>
               </div>
             </Link>
@@ -331,6 +438,24 @@ export default function DashboardPage() {
               </Link>
             )}
           </div>
+          
+          {/* Pro Tips for published users */}
+          {profile?.is_published && savedCount === 0 && (
+            <div className="mt-8">
+              <div className="bg-gradient-to-r from-blue-300 to-purple-300 border-4 border-black p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+                <div className="flex items-start gap-3">
+                  <div className="text-2xl">💡</div>
+                  <div>
+                    <h3 className="font-black text-lg mb-2">GET STARTED CONNECTING!</h3>
+                    <p className="font-bold text-sm mb-3">Your profile is live! Start browsing musicians and save the ones you'd like to collaborate with.</p>
+                    <Link href="/search" className="inline-block px-3 py-1 bg-black text-white border-2 border-black font-black text-sm hover:bg-white hover:text-black transition-colors">
+                      BROWSE MUSICIANS →
+                    </Link>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </>
