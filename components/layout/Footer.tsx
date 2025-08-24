@@ -10,7 +10,7 @@ export default function Footer() {
           {/* Logo/Brand */}
           <div className="text-center md:text-left">
             <h3 className="text-2xl font-black mb-2">BANDSEEKING</h3>
-            <p className="font-bold text-gray-300">Find musicians. Make music. No BS.</p>
+            <p className="font-bold text-gray-300">Find musicians. Make music.</p>
           </div>
           
           {/* Help Section */}
