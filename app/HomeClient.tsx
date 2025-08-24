@@ -294,6 +294,70 @@ export default function HomeClient({ initialProfiles }: HomeClientProps) {
             )}
           </div>
 
+          {/* Coming Soon Section */}
+          <div className="mb-8">
+            <div className="text-center mb-6">
+              <h2 className="text-2xl md:text-3xl font-black mb-2">COMING SOON</h2>
+              <p className="font-bold text-lg">Big features in development to make your music journey even better</p>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
+              <div className="bg-white border-4 border-black p-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all opacity-75">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-12 h-12 bg-purple-400 border-2 border-black flex items-center justify-center">
+                    <span className="text-2xl font-black">🎵</span>
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-black">CREATE & MANAGE BANDS</h3>
+                    <span className="px-2 py-1 bg-orange-400 border border-black font-black text-xs">COMING SOON</span>
+                  </div>
+                </div>
+                <p className="font-bold text-gray-700">
+                  Form official bands, manage members, share files, and coordinate rehearsals all in one place.
+                </p>
+              </div>
+
+              <div className="bg-white border-4 border-black p-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all opacity-75">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-12 h-12 bg-green-400 border-2 border-black flex items-center justify-center">
+                    <span className="text-2xl font-black">🏟️</span>
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-black">VENUE DATABASE</h3>
+                    <span className="px-2 py-1 bg-orange-400 border border-black font-black text-xs">COMING SOON</span>
+                  </div>
+                </div>
+                <p className="font-bold text-gray-700">
+                  Discover local venues, check availability, and book gigs directly through the platform.
+                </p>
+              </div>
+
+              <div className="bg-white border-4 border-black p-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all opacity-75">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-12 h-12 bg-yellow-400 border-2 border-black flex items-center justify-center">
+                    <span className="text-2xl font-black">💼</span>
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-black">GIG OPPORTUNITIES</h3>
+                    <span className="px-2 py-1 bg-orange-400 border border-black font-black text-xs">COMING SOON</span>
+                  </div>
+                </div>
+                <p className="font-bold text-gray-700">
+                  Find paying gigs, session work, and performance opportunities posted by venues and artists.
+                </p>
+              </div>
+            </div>
+
+            <div className="text-center mt-6 p-4 bg-gray-100 border-2 border-black">
+              <p className="font-black text-sm mb-2">WANT TO BE NOTIFIED WHEN THESE LAUNCH?</p>
+              <button 
+                onClick={() => router.push('/auth/register')}
+                className="px-6 py-2 bg-black text-white border-2 border-black font-black text-sm hover:bg-gray-800 transition-colors shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
+              >
+                JOIN THE WAITLIST →
+              </button>
+            </div>
+          </div>
 
           {/* Quick Links */}
           <div className="bg-black text-white border-4 border-black p-6 md:p-8 shadow-[4px_4px_0px_0px_rgba(255,255,255,1)]">

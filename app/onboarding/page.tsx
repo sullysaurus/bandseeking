@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
 import { ensureUserRecord, getUserProfile } from '@/lib/auth-helpers'
 import { instruments, genres, seekingOptions, experienceLevels, availabilityOptions } from '@/lib/utils'
+import { isValidYouTubeUrl, normalizeYouTubeUrl, getYouTubeEmbedUrl } from '@/lib/youtube-utils'
 import Image from 'next/image'
 import Button from '@/components/ui/Button'
 import Input from '@/components/ui/Input'
@@ -33,6 +34,9 @@ export default function OnboardingPage() {
     genres: [] as string[],
     influences: '',
     youtubeUrl: '',
+    bandcampUrl: '',
+    spotifyUrl: '',
+    appleMusicUrl: '',
     availability: [] as string[],
     hasTransportation: false,
     hasOwnEquipment: false,
@@ -223,8 +227,15 @@ export default function OnboardingPage() {
         seeking: formData.seeking.length > 0 ? formData.seeking : null,
         genres: formData.genres.length > 0 ? formData.genres : null,
         influences: formData.influences || null,
-        social_links: formData.youtubeUrl ? { youtube: formData.youtubeUrl } : null,
-        availability: formData.availability.length > 0 ? formData.availability : null,
+        social_links: (() => {
+          const links: any = {}
+          if (formData.youtubeUrl) links.youtube = normalizeYouTubeUrl(formData.youtubeUrl) || formData.youtubeUrl
+          if (formData.bandcampUrl) links.bandcamp = formData.bandcampUrl
+          if (formData.spotifyUrl) links.spotify = formData.spotifyUrl
+          if (formData.appleMusicUrl) links.apple_music = formData.appleMusicUrl
+          return Object.keys(links).length > 0 ? links : null
+        })(),
+        availability: formData.availability.length > 0 ? formData.availability[0] : null,
         has_transportation: formData.hasTransportation,
         has_own_equipment: formData.hasOwnEquipment,
         willing_to_travel_miles: formData.willingToTravelMiles,
@@ -611,27 +622,90 @@ export default function OnboardingPage() {
               <p className="font-bold text-sm md:text-lg">Add a link of yourself playing or one of your favorite bands or something that inspires you</p>
             </div>
             <div className="space-y-4 md:space-y-6">
-              <div>
-                <Input
-                  label="YOUTUBE URL (OPTIONAL)"
-                  type="url"
-                  placeholder="https://youtube.com/watch?v=..."
-                  value={formData.youtubeUrl}
-                  onChange={(e) => setFormData({ ...formData, youtubeUrl: e.target.value })}
-                  className="text-sm md:text-base"
-                />
-                <p className="text-xs md:text-sm text-gray-600 mt-2 font-bold">
-                  This will be displayed on your profile to give others a sense of your musical style
-                </p>
-                {formData.youtubeUrl && formData.youtubeUrl.includes('youtube.com') && (
-                  <div className="mt-4 p-3 bg-gray-100 border-2 border-black">
-                    <p className="text-xs font-bold mb-2">PREVIEW:</p>
-                    <div className="aspect-video bg-white border-2 border-black flex items-center justify-center">
-                      <p className="text-sm font-bold text-gray-600">VIDEO PREVIEW</p>
-                    </div>
-                  </div>
-                )}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <Input
+                    label="YOUTUBE URL (OPTIONAL)"
+                    type="url"
+                    placeholder="https://youtube.com/watch?v=..."
+                    value={formData.youtubeUrl}
+                    onChange={(e) => setFormData({ ...formData, youtubeUrl: e.target.value })}
+                    className="text-sm md:text-base"
+                  />
+                </div>
+                <div>
+                  <Input
+                    label="SPOTIFY URL (OPTIONAL)"
+                    type="url"
+                    placeholder="https://open.spotify.com/artist/..."
+                    value={formData.spotifyUrl}
+                    onChange={(e) => setFormData({ ...formData, spotifyUrl: e.target.value })}
+                    className="text-sm md:text-base"
+                  />
+                </div>
+                <div>
+                  <Input
+                    label="BANDCAMP URL (OPTIONAL)"
+                    type="url"
+                    placeholder="https://yourband.bandcamp.com"
+                    value={formData.bandcampUrl}
+                    onChange={(e) => setFormData({ ...formData, bandcampUrl: e.target.value })}
+                    className="text-sm md:text-base"
+                  />
+                </div>
+                <div>
+                  <Input
+                    label="APPLE MUSIC URL (OPTIONAL)"
+                    type="url"
+                    placeholder="https://music.apple.com/artist/..."
+                    value={formData.appleMusicUrl}
+                    onChange={(e) => setFormData({ ...formData, appleMusicUrl: e.target.value })}
+                    className="text-sm md:text-base"
+                  />
+                </div>
               </div>
+              <p className="text-xs md:text-sm text-gray-600 font-bold text-center">
+                Add links to your music on any platform to showcase your sound
+              </p>
+              
+              {/* YouTube Preview */}
+              {formData.youtubeUrl && (() => {
+                const embedUrl = getYouTubeEmbedUrl(formData.youtubeUrl)
+                const isValid = isValidYouTubeUrl(formData.youtubeUrl)
+                
+                return (
+                  <div className="mt-4 p-3 bg-gray-100 border-2 border-black">
+                    <p className="text-xs font-bold mb-2">
+                      {isValid ? '✅ VALID YOUTUBE URL' : '❌ INVALID YOUTUBE URL'}
+                    </p>
+                    {embedUrl ? (
+                      <div className="aspect-video bg-white border-2 border-black">
+                        <iframe
+                          width="100%"
+                          height="100%"
+                          src={embedUrl}
+                          title="YouTube video preview"
+                          frameBorder="0"
+                          allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                          className="w-full h-full"
+                        ></iframe>
+                      </div>
+                    ) : (
+                      <div className="aspect-video bg-white border-2 border-black flex items-center justify-center">
+                        <p className="text-sm font-bold text-gray-600">
+                          {formData.youtubeUrl ? 'INVALID YOUTUBE URL' : 'VIDEO PREVIEW'}
+                        </p>
+                      </div>
+                    )}
+                    {isValid && (
+                      <p className="text-xs text-green-600 font-bold mt-2">
+                        Supports: youtube.com/watch, youtu.be, and mobile links
+                      </p>
+                    )}
+                  </div>
+                )
+              })()}
+              
               <div className="text-center p-4 bg-yellow-100 border-2 border-black">
                 <p className="font-bold text-sm">
                   💡 TIP: This step is completely optional - you can always add this later from your profile settings!
@@ -657,7 +731,14 @@ export default function OnboardingPage() {
                   <p><span className="text-pink-600">GENRES:</span> {formData.genres.length > 0 ? formData.genres.join(', ') : 'None selected'}</p>
                   <p><span className="text-pink-600">LOOKING FOR:</span> {formData.seeking.length > 0 ? formData.seeking.join(', ') : 'None selected'}</p>
                   <p><span className="text-pink-600">AVAILABILITY:</span> {formData.availability.length > 0 ? formData.availability.join(', ') : 'Not selected'}</p>
-                  <p><span className="text-pink-600">YOUTUBE:</span> {formData.youtubeUrl || 'None added'}</p>
+                  <p><span className="text-pink-600">MUSIC LINKS:</span> {
+                    [
+                      formData.youtubeUrl ? 'YouTube' : null,
+                      formData.spotifyUrl ? 'Spotify' : null,
+                      formData.bandcampUrl ? 'Bandcamp' : null,
+                      formData.appleMusicUrl ? 'Apple Music' : null
+                    ].filter(Boolean).join(', ') || 'None added'
+                  }</p>
                   <p><span className="text-pink-600">TRAVEL DISTANCE:</span> {formData.willingToTravelMiles} miles</p>
                 </div>
               </div>

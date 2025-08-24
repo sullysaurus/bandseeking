@@ -7,6 +7,7 @@ import Link from 'next/link'
 import { supabase } from '@/lib/supabase'
 import { getLastActiveStatus } from '@/lib/auth-helpers'
 import { formatLocationDisplay } from '@/lib/zipcode-utils'
+import { getYouTubeEmbedUrl } from '@/lib/youtube-utils'
 import Navigation from '@/components/layout/Navigation'
 import { useRouter } from 'next/navigation'
 
@@ -324,21 +325,87 @@ export default function ProfileClient() {
               </div>
             )}
 
-            {/* YouTube Video */}
-            {profile.social_links && profile.social_links.youtube && (
+            {/* Music Links */}
+            {profile.social_links && (profile.social_links.youtube || profile.social_links.spotify || profile.social_links.bandcamp || profile.social_links.apple_music) && (
               <div className="bg-white border-4 border-black p-6 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
                 <h2 className="text-2xl font-black mb-4">MUSIC</h2>
-                <div className="aspect-video">
-                  <iframe
-                    width="100%"
-                    height="100%"
-                    src={`https://www.youtube.com/embed/${profile.social_links.youtube.split('v=')[1]?.split('&')[0] || profile.social_links.youtube.split('/').pop()}`}
-                    title="YouTube video player"
-                    frameBorder="0"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                    allowFullScreen
-                    className="border-4 border-black"
-                  ></iframe>
+                
+                {/* YouTube Video */}
+                {profile.social_links.youtube && (() => {
+                  const embedUrl = getYouTubeEmbedUrl(profile.social_links.youtube)
+                  return embedUrl ? (
+                    <div className="aspect-video mb-4">
+                      <iframe
+                        width="100%"
+                        height="100%"
+                        src={embedUrl}
+                        title="YouTube video player"
+                        frameBorder="0"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                        allowFullScreen
+                        className="border-4 border-black"
+                      ></iframe>
+                    </div>
+                  ) : null
+                })()}
+
+                {/* Music Platform Links */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  {profile.social_links.youtube && (
+                    <a 
+                      href={profile.social_links.youtube}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-3 p-3 bg-red-500 border-2 border-black font-black text-white hover:bg-red-600 transition-colors shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
+                    >
+                      <div className="w-6 h-6 bg-white flex items-center justify-center">
+                        <span className="text-red-500 text-xs font-black">▶</span>
+                      </div>
+                      <span className="text-sm">YOUTUBE</span>
+                    </a>
+                  )}
+                  
+                  {profile.social_links.spotify && (
+                    <a 
+                      href={profile.social_links.spotify}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-3 p-3 bg-green-500 border-2 border-black font-black text-white hover:bg-green-600 transition-colors shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
+                    >
+                      <div className="w-6 h-6 bg-white rounded-full flex items-center justify-center">
+                        <span className="text-green-500 text-xs font-black">♫</span>
+                      </div>
+                      <span className="text-sm">SPOTIFY</span>
+                    </a>
+                  )}
+                  
+                  {profile.social_links.bandcamp && (
+                    <a 
+                      href={profile.social_links.bandcamp}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-3 p-3 bg-cyan-500 border-2 border-black font-black text-white hover:bg-cyan-600 transition-colors shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
+                    >
+                      <div className="w-6 h-6 bg-white flex items-center justify-center">
+                        <span className="text-cyan-500 text-xs font-black">BC</span>
+                      </div>
+                      <span className="text-sm">BANDCAMP</span>
+                    </a>
+                  )}
+                  
+                  {profile.social_links.apple_music && (
+                    <a 
+                      href={profile.social_links.apple_music}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-3 p-3 bg-gray-800 border-2 border-black font-black text-white hover:bg-gray-900 transition-colors shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
+                    >
+                      <div className="w-6 h-6 bg-white flex items-center justify-center">
+                        <span className="text-gray-800 text-xs font-black">🍎</span>
+                      </div>
+                      <span className="text-sm">APPLE MUSIC</span>
+                    </a>
+                  )}
                 </div>
               </div>
             )}
