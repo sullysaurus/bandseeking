@@ -96,9 +96,9 @@ export default function HomeClient({ initialProfiles }: HomeClientProps) {
         <div className="max-w-6xl mx-auto">
           <div className="bg-white border-8 border-black p-6 md:p-12 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] mb-8">
             <h2 className="text-4xl md:text-6xl font-black mb-4 leading-none">
-              FIND YOUR<br />
-              <span className="text-pink-400">PERFECT</span><br />
-              BAND
+              A BETTER WAY<br />
+              <span className="text-pink-400">TO FIND</span><br />
+              MUSICIANS
             </h2>
             <p className="text-lg md:text-xl font-bold mb-8 max-w-2xl">
               Connect instantly with musicians in your area. See who&apos;s online, message for free, and start making music together today!
