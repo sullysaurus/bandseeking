@@ -107,7 +107,7 @@ export default function SearchClient() {
     if (filters.availability.length > 0) {
       filtered = filtered.filter(profile => {
         if (Array.isArray(profile.availability)) {
-          return profile.availability.some(item => filters.availability.includes(item))
+          return profile.availability.some((item: string) => filters.availability.includes(item))
         } else {
           return filters.availability.includes(profile.availability)
         }
