@@ -101,7 +101,7 @@ export default function HomeClient({ initialProfiles }: HomeClientProps) {
               BAND
             </h2>
             <p className="text-lg md:text-xl font-bold mb-8 max-w-2xl">
-              Connect with musicians in your area. Always free.
+              Connect instantly with musicians in your area. See who's online, message for free, and start making music together today!
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
               <Link href="/auth/register" className="inline-block px-6 py-3 bg-black text-white border-4 border-black font-black text-lg hover:bg-pink-400 hover:text-black transition-colors shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
@@ -119,23 +119,23 @@ export default function HomeClient({ initialProfiles }: HomeClientProps) {
           {/* Features Grid */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 mb-8">
             <div className="bg-pink-400 border-4 border-black p-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] transition-all">
-              <h3 className="text-2xl font-black mb-2">REAL MUSICIANS</h3>
-              <p className="font-bold">No fake profiles. Just real people who actually play.</p>
+              <h3 className="text-2xl font-black mb-2">INSTANT MESSAGING</h3>
+              <p className="font-bold">Chat directly with musicians. See who's online and start conversations instantly!</p>
             </div>
             <div className="bg-cyan-300 border-4 border-black p-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] transition-all">
-              <h3 className="text-2xl font-black mb-2">LOCAL SCENE</h3>
-              <p className="font-bold">Find musicians in your area. Real connections, real jams.</p>
+              <h3 className="text-2xl font-black mb-2">LIVE ACTIVITY</h3>
+              <p className="font-bold">See when musicians were last active. Connect with people who are actually available to jam!</p>
             </div>
             <div className="bg-lime-400 border-4 border-black p-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] transition-all">
-              <h3 className="text-2xl font-black mb-2">NO FEES</h3>
-              <p className="font-bold">100% free. Forever. We&apos;re here for the music.</p>
+              <h3 className="text-2xl font-black mb-2">ALWAYS FREE</h3>
+              <p className="font-bold">100% free forever. No hidden fees, no premium tiers. Just musicians helping musicians!</p>
             </div>
           </div>
 
           {/* Recent Musicians */}
           <div className="mb-8">
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-2xl md:text-3xl font-black">NEW MUSICIANS</h2>
+              <h2 className="text-2xl md:text-3xl font-black">FRESH TALENT</h2>
               <Link href="/auth/register" className="px-4 py-2 bg-pink-400 border-2 border-black font-black text-sm hover:bg-pink-500 transition-colors shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
                 JOIN TO VIEW ALL →
               </Link>
@@ -320,8 +320,8 @@ export default function HomeClient({ initialProfiles }: HomeClientProps) {
           {/* Coming Soon Section */}
           <div className="mb-8">
             <div className="text-center mb-6">
-              <h2 className="text-2xl md:text-3xl font-black mb-2">COMING SOON</h2>
-              <p className="font-bold text-lg">Big features in development to make your music journey even better</p>
+              <h2 className="text-2xl md:text-3xl font-black mb-2">WHAT'S NEXT</h2>
+              <p className="font-bold text-lg">Amazing new features coming soon to supercharge your music career!</p>
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
