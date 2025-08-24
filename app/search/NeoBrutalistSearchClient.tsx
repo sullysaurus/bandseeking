@@ -256,9 +256,9 @@ export default function NeoBrutalistSearchClient() {
                     type="button"
                     onClick={findMyLocation}
                     disabled={isGettingLocation}
-                    className="px-3 py-2 md:px-4 md:py-3 bg-cyan-400 border-2 md:border-4 border-black font-black text-sm md:text-base hover:bg-cyan-500 transition-colors flex items-center gap-1 disabled:opacity-50 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] md:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] md:hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]"
+                    className="px-2 py-1 md:px-3 md:py-2 bg-cyan-400 border-2 md:border-3 border-black font-black text-xs md:text-sm hover:bg-cyan-500 transition-colors flex items-center gap-1 disabled:opacity-50 shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] md:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] md:hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]"
                   >
-                    <MapPin className="w-4 h-4" />
+                    <MapPin className="w-3 h-3 md:w-4 md:h-4" />
                     {isGettingLocation ? '...' : 'MY LOCATION'}
                   </button>
                 </div>
