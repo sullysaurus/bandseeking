@@ -447,7 +447,7 @@ export default function DashboardPage() {
                   <div className="text-2xl">💡</div>
                   <div>
                     <h3 className="font-black text-lg mb-2">GET STARTED CONNECTING!</h3>
-                    <p className="font-bold text-sm mb-3">Your profile is live! Start browsing musicians and save the ones you'd like to collaborate with.</p>
+                    <p className="font-bold text-sm mb-3">Your profile is live! Start browsing musicians and save the ones you&apos;d like to collaborate with.</p>
                     <Link href="/search" className="inline-block px-3 py-1 bg-black text-white border-2 border-black font-black text-sm hover:bg-white hover:text-black transition-colors">
                       BROWSE MUSICIANS →
                     </Link>

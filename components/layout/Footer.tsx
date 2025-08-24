@@ -49,7 +49,7 @@ export default function Footer() {
           {/* Help Section */}
           <div className="text-center md:text-right">
             <h4 className="text-lg font-black mb-4 text-cyan-300">GET SUPPORT</h4>
-            <p className="font-bold text-gray-300 mb-4">Questions? We're here to help!</p>
+            <p className="font-bold text-gray-300 mb-4">Questions? We&apos;re here to help!</p>
             <a
               href="https://instagram.com/bandseeking"
               target="_blank"
