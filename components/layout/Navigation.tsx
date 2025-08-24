@@ -42,7 +42,7 @@ export default function Navigation() {
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center gap-2">
-            <Link href="/search" className="px-4 py-2 bg-pink-400 border-4 border-black font-black hover:bg-pink-500 transition-colors shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+            <Link href="/search" className="px-3 py-1 bg-pink-400 border-2 border-black font-black text-sm hover:bg-pink-500 transition-colors shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
               BROWSE MUSICIANS
             </Link>
             
