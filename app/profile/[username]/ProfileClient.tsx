@@ -324,6 +324,25 @@ export default function ProfileClient() {
               </div>
             )}
 
+            {/* YouTube Video */}
+            {profile.social_links && profile.social_links.youtube && (
+              <div className="bg-white border-4 border-black p-6 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
+                <h2 className="text-2xl font-black mb-4">MUSIC</h2>
+                <div className="aspect-video">
+                  <iframe
+                    width="100%"
+                    height="100%"
+                    src={`https://www.youtube.com/embed/${profile.social_links.youtube.split('v=')[1]?.split('&')[0] || profile.social_links.youtube.split('/').pop()}`}
+                    title="YouTube video player"
+                    frameBorder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    allowFullScreen
+                    className="border-4 border-black"
+                  ></iframe>
+                </div>
+              </div>
+            )}
+
             {/* Secondary Instruments */}
             {profile.secondary_instruments && profile.secondary_instruments.length > 0 && (
               <div className="bg-white border-4 border-black p-6 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">

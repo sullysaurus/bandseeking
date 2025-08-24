@@ -24,7 +24,7 @@ export const metadata: Metadata = {
 
 export default async function HomePage() {
   // Fetch profiles server-side
-  const profiles = await getRecentProfiles(12)
+  const profiles = await getRecentProfiles(6)
   
   return <HomeClient initialProfiles={profiles} />
 }

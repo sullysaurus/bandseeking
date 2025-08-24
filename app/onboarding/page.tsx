@@ -10,7 +10,7 @@ import Button from '@/components/ui/Button'
 import Input from '@/components/ui/Input'
 import { ChevronLeft, ChevronRight, Check } from 'lucide-react'
 
-const TOTAL_STEPS = 7
+const TOTAL_STEPS = 8
 
 export default function OnboardingPage() {
   const router = useRouter()
@@ -32,7 +32,8 @@ export default function OnboardingPage() {
     seeking: [] as string[],
     genres: [] as string[],
     influences: '',
-    availability: [],
+    youtubeUrl: '',
+    availability: [] as string[],
     hasTransportation: false,
     hasOwnEquipment: false,
     willingToTravelMiles: 25
@@ -222,6 +223,7 @@ export default function OnboardingPage() {
         seeking: formData.seeking.length > 0 ? formData.seeking : null,
         genres: formData.genres.length > 0 ? formData.genres : null,
         influences: formData.influences || null,
+        social_links: formData.youtubeUrl ? { youtube: formData.youtubeUrl } : null,
         availability: formData.availability.length > 0 ? formData.availability : null,
         has_transportation: formData.hasTransportation,
         has_own_equipment: formData.hasOwnEquipment,
@@ -605,6 +607,44 @@ export default function OnboardingPage() {
         return (
           <div className="space-y-4 md:space-y-6">
             <div className="text-center">
+              <h2 className="text-2xl md:text-4xl font-black mb-1 md:mb-2">SHARE YOUR MUSIC</h2>
+              <p className="font-bold text-sm md:text-lg">Add a link of yourself playing or one of your favorite bands or something that inspires you</p>
+            </div>
+            <div className="space-y-4 md:space-y-6">
+              <div>
+                <Input
+                  label="YOUTUBE URL (OPTIONAL)"
+                  type="url"
+                  placeholder="https://youtube.com/watch?v=..."
+                  value={formData.youtubeUrl}
+                  onChange={(e) => setFormData({ ...formData, youtubeUrl: e.target.value })}
+                  className="text-sm md:text-base"
+                />
+                <p className="text-xs md:text-sm text-gray-600 mt-2 font-bold">
+                  This will be displayed on your profile to give others a sense of your musical style
+                </p>
+                {formData.youtubeUrl && formData.youtubeUrl.includes('youtube.com') && (
+                  <div className="mt-4 p-3 bg-gray-100 border-2 border-black">
+                    <p className="text-xs font-bold mb-2">PREVIEW:</p>
+                    <div className="aspect-video bg-white border-2 border-black flex items-center justify-center">
+                      <p className="text-sm font-bold text-gray-600">VIDEO PREVIEW</p>
+                    </div>
+                  </div>
+                )}
+              </div>
+              <div className="text-center p-4 bg-yellow-100 border-2 border-black">
+                <p className="font-bold text-sm">
+                  💡 TIP: This step is completely optional - you can always add this later from your profile settings!
+                </p>
+              </div>
+            </div>
+          </div>
+        )
+
+      case 8:
+        return (
+          <div className="space-y-4 md:space-y-6">
+            <div className="text-center">
               <h2 className="text-2xl md:text-4xl font-black mb-1 md:mb-2">REVIEW YOUR PROFILE</h2>
               <p className="font-bold text-sm md:text-lg">Make sure everything looks good</p>
             </div>
@@ -617,6 +657,7 @@ export default function OnboardingPage() {
                   <p><span className="text-pink-600">GENRES:</span> {formData.genres.length > 0 ? formData.genres.join(', ') : 'None selected'}</p>
                   <p><span className="text-pink-600">LOOKING FOR:</span> {formData.seeking.length > 0 ? formData.seeking.join(', ') : 'None selected'}</p>
                   <p><span className="text-pink-600">AVAILABILITY:</span> {formData.availability.length > 0 ? formData.availability.join(', ') : 'Not selected'}</p>
+                  <p><span className="text-pink-600">YOUTUBE:</span> {formData.youtubeUrl || 'None added'}</p>
                   <p><span className="text-pink-600">TRAVEL DISTANCE:</span> {formData.willingToTravelMiles} miles</p>
                 </div>
               </div>
@@ -738,15 +779,14 @@ export default function OnboardingPage() {
         {/* Skip Option */}
         <div className="mt-6 text-center">
           <button
-            onClick={() => {
-              if (confirm('You can complete your profile anytime from the dashboard. Continue without setting up your profile?')) {
-                router.push('/dashboard')
-              }
-            }}
-            className="font-bold text-sm md:text-base text-gray-600 hover:text-black underline transition-colors"
+            onClick={() => router.push('/dashboard')}
+            className="px-4 py-2 bg-gray-200 border-2 border-black font-bold text-sm md:text-base hover:bg-gray-300 transition-colors shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
           >
-            SKIP FOR NOW
+            I&apos;LL DO THIS LATER
           </button>
+          <p className="text-xs text-gray-600 mt-2 font-bold">
+            You can complete your profile anytime from the dashboard
+          </p>
         </div>
       </div>
     </div>
