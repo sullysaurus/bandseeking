@@ -632,11 +632,29 @@ export default function OnboardingPage() {
   // Show loading screen while checking authentication
   if (authLoading) {
     return (
-      <div className="min-h-screen bg-lime-300 flex items-center justify-center">
-        <div className="bg-white border-8 border-black p-8 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-4 border-black mx-auto mb-4"></div>
-            <p className="font-black text-xl">LOADING YOUR PROFILE...</p>
+      <div className="min-h-screen bg-lime-300">
+        <div className="max-w-4xl mx-auto px-4 py-4 md:py-8">
+          {/* Progress Header Skeleton */}
+          <div className="mb-4 md:mb-8 text-center">
+            <h1 className="text-3xl md:text-6xl font-black mb-2 md:mb-4">PROFILE SETUP</h1>
+            <div className="bg-white border-2 md:border-4 border-black p-3 md:p-4 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] md:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+              <div className="flex justify-between mb-2 md:mb-3 text-xs md:text-base">
+                <span className="font-black">LOADING...</span>
+                <span className="font-black">0%</span>
+              </div>
+              <div className="w-full bg-black h-3 md:h-4 border border-black">
+                <div className="bg-gray-300 h-full w-0 transition-all duration-300" />
+              </div>
+            </div>
+          </div>
+
+          {/* Content Skeleton */}
+          <div className="mb-4 md:mb-8 bg-white border-2 md:border-4 border-black p-4 md:p-8 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] md:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
+            <div className="text-center mb-6">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-4 border-black mx-auto mb-4"></div>
+              <p className="font-black text-xl">PREPARING YOUR PROFILE...</p>
+              <p className="font-bold text-sm mt-2 text-gray-600">This will just take a moment</p>
+            </div>
           </div>
         </div>
       </div>

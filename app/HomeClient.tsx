@@ -12,6 +12,7 @@ interface HomeClientProps {
 export default function HomeClient({ initialProfiles }: HomeClientProps) {
   const router = useRouter()
   const [loading, setLoading] = useState(true)
+  const [isAuthCallback, setIsAuthCallback] = useState(false)
 
   useEffect(() => {
     handleAuthCallback()
@@ -24,6 +25,8 @@ export default function HomeClient({ initialProfiles }: HomeClientProps) {
       const code = urlParams.get('code')
       
       if (code) {
+        setIsAuthCallback(true)
+        
         // Clear the URL parameters immediately to prevent double processing
         window.history.replaceState({}, '', '/')
         
@@ -36,7 +39,7 @@ export default function HomeClient({ initialProfiles }: HomeClientProps) {
           }
           
           // Wait a moment for the session to be established
-          await new Promise(resolve => setTimeout(resolve, 500))
+          await new Promise(resolve => setTimeout(resolve, 300))
         } catch (exchangeError) {
           console.log('Code exchange failed, checking existing session...')
         }
@@ -58,12 +61,16 @@ export default function HomeClient({ initialProfiles }: HomeClientProps) {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-yellow-300 flex items-center justify-center">
-        <div className="bg-white border-4 md:border-8 border-black p-6 md:p-8 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] md:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
+      <div className="min-h-screen bg-lime-300 flex items-center justify-center">
+        <div className="bg-white border-4 md:border-8 border-black p-8 md:p-12 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
           <div className="text-center">
-            <div className="animate-spin rounded-full h-8 w-8 md:h-12 md:w-12 border-b-4 border-black mx-auto mb-4"></div>
-            <p className="text-xl md:text-2xl font-black">LOADING...</p>
-            <p className="text-sm md:text-base font-bold text-gray-600 mt-2">CHECKING YOUR ACCOUNT</p>
+            <div className="animate-spin rounded-full h-12 w-12 md:h-16 md:w-16 border-b-4 border-black mx-auto mb-6"></div>
+            <h1 className="text-2xl md:text-3xl font-black mb-2">
+              {isAuthCallback ? 'CONFIRMING EMAIL...' : 'LOADING...'}
+            </h1>
+            <p className="text-sm md:text-lg font-bold text-gray-600">
+              {isAuthCallback ? 'SETTING UP YOUR PROFILE' : 'CHECKING YOUR ACCOUNT'}
+            </p>
           </div>
         </div>
       </div>
