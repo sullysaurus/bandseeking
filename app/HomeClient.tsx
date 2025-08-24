@@ -184,21 +184,27 @@ export default function HomeClient({ initialProfiles }: HomeClientProps) {
                               </div>
                             </div>
                           </div>
-                          <div className="space-y-2 mb-3">
-                            <span className="inline-block px-2 py-0.5 bg-pink-400 border border-black font-black text-xs">
-                              {musician.main_instrument?.toUpperCase() || 'MUSICIAN'}
-                            </span>
-                            {musician.experience_level && (
-                              <span className={`inline-block px-2 py-0.5 border border-black font-black text-xs ml-1 ${
-                                musician.experience_level === 'beginner' ? 'bg-green-300' :
-                                musician.experience_level === 'intermediate' ? 'bg-yellow-300' :
-                                musician.experience_level === 'advanced' ? 'bg-orange-400' :
-                                musician.experience_level === 'professional' ? 'bg-red-400 text-white' :
-                                'bg-gray-300'
-                              }`}>
-                                {musician.experience_level.charAt(0).toUpperCase()}
+                          <div className="mb-3">
+                            <div className="flex flex-wrap gap-1 items-center">
+                              <span className="inline-block px-2 py-0.5 bg-pink-400 border border-black font-black text-xs">
+                                {musician.main_instrument?.toUpperCase() || 'MUSICIAN'}
                               </span>
-                            )}
+                              {musician.experience_level && (
+                                <span className={`inline-block px-1.5 py-0.5 border border-black font-black text-xs ${
+                                  musician.experience_level === 'beginner' ? 'bg-green-300' :
+                                  musician.experience_level === 'intermediate' ? 'bg-yellow-300' :
+                                  musician.experience_level === 'advanced' ? 'bg-orange-400' :
+                                  musician.experience_level === 'professional' ? 'bg-red-400 text-white' :
+                                  'bg-gray-300'
+                                }`}>
+                                  {musician.experience_level === 'beginner' ? 'BEG' :
+                                   musician.experience_level === 'intermediate' ? 'INT' :
+                                   musician.experience_level === 'advanced' ? 'ADV' :
+                                   musician.experience_level === 'professional' ? 'PRO' :
+                                   'N/A'}
+                                </span>
+                              )}
+                            </div>
                           </div>
                           <div className="flex gap-1">
                             <button
