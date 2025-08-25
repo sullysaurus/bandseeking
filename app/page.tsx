@@ -6,22 +6,22 @@ import LoadingCards from '@/components/LoadingCards'
 
 export const metadata: Metadata = {
   title: 'BandSeeking - Connect with Musicians',
-  description: 'Find and connect with musicians in your area for bands, collaborations, and music projects. Join the community of passionate musicians.',
+  description: 'A better way to connect with musicians. Find band members, collaborate on music projects, and join the community of passionate musicians.',
   keywords: 'musicians, band members, find musicians, music collaboration, band seeking, find band members',
   alternates: {
     canonical: '/',
   },
   openGraph: {
     title: 'BandSeeking - Connect with Musicians',
-    description: 'Find and connect with musicians in your area for bands, collaborations, and music projects.',
+    description: 'A better way to connect with musicians. Find band members, collaborate on music projects, and join the musician community.',
     type: 'website',
     url: 'https://www.bandseeking.com',
     images: [
       {
-        url: '/logo.png',
+        url: '/social.png',
         width: 1200,
-        height: 1200,
-        alt: 'BandSeeking Logo',
+        height: 630,
+        alt: 'BandSeeking - Connect with Musicians',
       }
     ],
     siteName: 'BandSeeking',
@@ -30,8 +30,8 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     title: 'BandSeeking - Connect with Musicians',
-    description: 'Find and connect with musicians in your area for bands, collaborations, and music projects.',
-    images: ['/logo.png'],
+    description: 'A better way to connect with musicians. Find band members, collaborate on music projects, and join the musician community.',
+    images: ['/social.png'],
     creator: '@bandseeking',
     site: '@bandseeking',
   }

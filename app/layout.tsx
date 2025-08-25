@@ -19,7 +19,7 @@ export const metadata: Metadata = {
     template: '%s | BandSeeking',
     default: 'BandSeeking - Connect with Musicians',
   },
-  description: 'Find and connect with musicians in your area for bands, collaborations, and music projects',
+  description: 'A better way to connect with musicians. Find band members, collaborate on music projects, and join the musician community.',
   keywords: 'musicians, band members, find musicians, music collaboration, band seeking, connect with musicians',
   authors: [{ name: 'BandSeeking Team' }],
   creator: 'BandSeeking',
@@ -49,19 +49,19 @@ export const metadata: Metadata = {
     url: 'https://www.bandseeking.com',
     siteName: 'BandSeeking',
     title: 'BandSeeking - Connect with Musicians',
-    description: 'Find and connect with musicians in your area for bands, collaborations, and music projects',
+    description: 'A better way to connect with musicians. Find band members, collaborate on music projects, and join the musician community.',
     images: [{
-      url: '/logo.png',
+      url: '/social.png',
       width: 1200,
-      height: 1200,
-      alt: 'BandSeeking Logo',
+      height: 630,
+      alt: 'BandSeeking - Connect with Musicians',
     }],
   },
   twitter: {
     card: 'summary_large_image',
     site: '@bandseeking',
     creator: '@bandseeking',
-    images: ['/logo.png'],
+    images: ['/social.png'],
   },
 }
 
