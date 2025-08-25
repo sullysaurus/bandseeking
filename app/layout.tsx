@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from 'next'
 import { Inter } from 'next/font/google'
 import { SpeedInsights } from "@vercel/speed-insights/next"
 import { Analytics } from "@vercel/analytics/next"
+import GoogleAnalytics from './GoogleAnalytics'
 import Footer from '@/components/layout/Footer'
 import './globals.css'
 
@@ -30,6 +31,11 @@ export const metadata: Metadata = {
     canonical: '/',
   },
   manifest: '/manifest.json',
+  icons: {
+    icon: '/social.png',
+    shortcut: '/social.png',
+    apple: '/social.png',
+  },
   robots: {
     index: true,
     follow: true,
@@ -73,7 +79,11 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
+      <head>
+        <link rel="icon" href="/social.png" sizes="any" />
+      </head>
       <body className={inter.className}>
+        <GoogleAnalytics />
         <div className="min-h-screen bg-white flex flex-col">
           <main className="flex-grow">
             {children}
