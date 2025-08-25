@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from 'next'
 import { Inter } from 'next/font/google'
 import { SpeedInsights } from "@vercel/speed-insights/next"
+import { Analytics } from "@vercel/analytics/next"
 import Footer from '@/components/layout/Footer'
 import './globals.css'
 
@@ -80,6 +81,7 @@ export default function RootLayout({
           <Footer />
         </div>
         <SpeedInsights />
+        <Analytics />
       </body>
     </html>
   )
