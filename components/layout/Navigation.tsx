@@ -10,22 +10,72 @@ export default function Navigation() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [user, setUser] = useState<any>(null)
   const [isLoading, setIsLoading] = useState(true)
+  const [unreadCount, setUnreadCount] = useState(0)
 
   useEffect(() => {
     const getUser = async () => {
       const { data: { user } } = await supabase.auth.getUser()
       setUser(user)
       setIsLoading(false)
+      
+      if (user) {
+        await fetchUnreadCount(user.id)
+        subscribeToMessages(user.id)
+      }
     }
     getUser()
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user ?? null)
       setIsLoading(false)
+      
+      if (session?.user) {
+        fetchUnreadCount(session.user.id)
+        subscribeToMessages(session.user.id)
+      } else {
+        setUnreadCount(0)
+      }
     })
 
     return () => subscription.unsubscribe()
   }, [])
+
+  const fetchUnreadCount = async (userId: string) => {
+    try {
+      const { data, error } = await supabase
+        .from('messages')
+        .select('id')
+        .eq('receiver_id', userId)
+        .eq('read', false)
+
+      if (error) throw error
+      setUnreadCount(data?.length || 0)
+    } catch (error) {
+      console.error('Error fetching unread count:', error)
+    }
+  }
+
+  const subscribeToMessages = (userId: string) => {
+    const subscription = supabase
+      .channel('navigation_messages')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'messages',
+          filter: `receiver_id=eq.${userId}`
+        },
+        () => {
+          fetchUnreadCount(userId)
+        }
+      )
+      .subscribe()
+
+    return () => {
+      subscription.unsubscribe()
+    }
+  }
 
   const handleSignOut = async () => {
     await supabase.auth.signOut()
@@ -53,8 +103,13 @@ export default function Navigation() {
               <span className="px-3 py-1 font-black text-sm">LOADING...</span>
             ) : user ? (
               <>
-                <Link href="/dashboard/messages" className="px-3 py-1 bg-cyan-300 border-2 border-black font-black text-sm hover:bg-cyan-400 transition-colors shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+                <Link href="/dashboard/messages" className="relative px-3 py-1 bg-cyan-300 border-2 border-black font-black text-sm hover:bg-cyan-400 transition-colors shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
                   MESSAGES
+                  {unreadCount > 0 && (
+                    <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-black min-w-[20px] h-5 rounded-full flex items-center justify-center border-2 border-black">
+                      {unreadCount > 99 ? '99+' : unreadCount}
+                    </span>
+                  )}
                 </Link>
                 <Link href="/dashboard" className="px-3 py-1 bg-lime-300 border-2 border-black font-black text-sm hover:bg-lime-400 transition-colors shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
                   DASHBOARD
@@ -110,10 +165,15 @@ export default function Navigation() {
               <>
                 <Link
                   href="/dashboard/messages"
-                  className="block px-4 py-2 bg-cyan-300 border-2 border-black font-black hover:bg-cyan-400 transition-colors"
+                  className="relative block px-4 py-2 bg-cyan-300 border-2 border-black font-black hover:bg-cyan-400 transition-colors"
                   onClick={() => setIsMenuOpen(false)}
                 >
                   MESSAGES
+                  {unreadCount > 0 && (
+                    <span className="absolute top-1 right-4 bg-red-500 text-white text-xs font-black min-w-[20px] h-5 rounded-full flex items-center justify-center border-2 border-black">
+                      {unreadCount > 99 ? '99+' : unreadCount}
+                    </span>
+                  )}
                 </Link>
                 <Link
                   href="/dashboard"
