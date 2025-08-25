@@ -4,6 +4,8 @@
 interface LocationInfo {
   city: string
   state: string
+  lat?: number
+  lng?: number
 }
 
 // Cache for API results to avoid repeated calls
@@ -28,7 +30,9 @@ async function fetchLocationFromAPI(zipCode: string): Promise<LocationInfo | nul
       const place = data.places[0]
       return {
         city: place['place name'],
-        state: place['state abbreviation']
+        state: place['state abbreviation'],
+        lat: parseFloat(place.latitude),
+        lng: parseFloat(place.longitude)
       }
     }
     
@@ -197,6 +201,26 @@ export async function formatLocationDisplayAsync(zipCode: string): Promise<strin
 }
 
 /**
+ * Calculate distance between two geographic coordinates using Haversine formula
+ * @param lat1 - Latitude of first point
+ * @param lng1 - Longitude of first point  
+ * @param lat2 - Latitude of second point
+ * @param lng2 - Longitude of second point
+ * @returns Distance in miles
+ */
+function calculateDistance(lat1: number, lng1: number, lat2: number, lng2: number): number {
+  const R = 3959 // Earth's radius in miles
+  const dLat = (lat2 - lat1) * Math.PI / 180
+  const dLng = (lng2 - lng1) * Math.PI / 180
+  const a = 
+    Math.sin(dLat/2) * Math.sin(dLat/2) +
+    Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
+    Math.sin(dLng/2) * Math.sin(dLng/2)
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a))
+  return R * c
+}
+
+/**
  * Parse location input to determine if it's a zip code, city, or city/state
  * @param locationInput - User input like "90210", "Los Angeles", or "Los Angeles, CA"
  * @returns object with parsed location data
@@ -242,18 +266,47 @@ export async function matchesLocationSearch(profile: any, locationInput: string,
   if (!locationInput.trim()) return true // No location filter
   
   const profileZip = profile.user?.zip_code
-  if (!profileZip) return false
+  if (!profileZip) {
+    console.log(`Profile ${profile.user?.username} has no zip code`)
+    return false
+  }
   
   const parsedInput = parseLocationInput(locationInput)
+  console.log(`Parsed location input:`, parsedInput)
   
   if (parsedInput.type === 'zipcode' && parsedInput.zipCode) {
-    // Direct zip code comparison with radius
-    if (radius <= 10) {
-      return profileZip === parsedInput.zipCode
-    } else if (radius <= 25) {
-      return profileZip.substring(0, 4) === parsedInput.zipCode.substring(0, 4)
+    // Get coordinates for both zip codes for precise distance calculation
+    const searchLocation = await getLocationFromZipCode(parsedInput.zipCode)
+    const profileLocation = await getLocationFromZipCode(profileZip)
+    
+    console.log(`Search location for ${parsedInput.zipCode}:`, searchLocation)
+    console.log(`Profile location for ${profileZip} (${profile.user?.username}):`, profileLocation)
+    
+    // If both locations have coordinates, use precise distance calculation
+    if (searchLocation?.lat && searchLocation?.lng && profileLocation?.lat && profileLocation?.lng) {
+      const distance = calculateDistance(
+        searchLocation.lat, searchLocation.lng,
+        profileLocation.lat, profileLocation.lng
+      )
+      console.log(`Distance between ${parsedInput.zipCode} and ${profileZip}: ${distance.toFixed(2)} miles (radius: ${radius})`)
+      return distance <= radius
     } else {
-      return profileZip.substring(0, 3) === parsedInput.zipCode.substring(0, 3)
+      console.log(`Missing coordinates - search: ${!!searchLocation}, profile: ${!!profileLocation}`)
+    }
+    
+    // Fallback to improved zip code matching if coordinates unavailable
+    if (radius <= 10) {
+      // For small radius, only exact match or very close zip codes
+      return profileZip === parsedInput.zipCode || 
+             Math.abs(parseInt(profileZip) - parseInt(parsedInput.zipCode)) <= 5
+    } else if (radius <= 25) {
+      // Medium radius - check if first 4 digits match or close numeric range
+      return profileZip.substring(0, 4) === parsedInput.zipCode.substring(0, 4) ||
+             Math.abs(parseInt(profileZip) - parseInt(parsedInput.zipCode)) <= 500
+    } else {
+      // Large radius - first 3 digits or broader range
+      return profileZip.substring(0, 3) === parsedInput.zipCode.substring(0, 3) ||
+             Math.abs(parseInt(profileZip) - parseInt(parsedInput.zipCode)) <= 2000
     }
   }
   
@@ -269,8 +322,38 @@ export async function matchesLocationSearch(profile: any, locationInput: string,
   if (parsedInput.type === 'city_state' && parsedInput.city && parsedInput.state) {
     // Match both city and state
     const cityMatch = profileLocation.city.toLowerCase().includes(parsedInput.city)
-    const stateMatch = profileLocation.state.toLowerCase() === parsedInput.state || 
-                       profileLocation.state.toLowerCase().includes(parsedInput.state)
+    
+    // Improved state matching - handle both abbreviations and full names
+    const inputState = parsedInput.state.toLowerCase()
+    const profileState = profileLocation.state.toLowerCase()
+    
+    // Create a mapping of full state names to abbreviations
+    const stateMap: Record<string, string> = {
+      'north carolina': 'nc', 'south carolina': 'sc', 'california': 'ca',
+      'new york': 'ny', 'florida': 'fl', 'texas': 'tx', 'illinois': 'il',
+      'pennsylvania': 'pa', 'ohio': 'oh', 'georgia': 'ga', 'michigan': 'mi',
+      'new jersey': 'nj', 'virginia': 'va', 'washington': 'wa', 'arizona': 'az',
+      'massachusetts': 'ma', 'tennessee': 'tn', 'indiana': 'in', 'missouri': 'mo',
+      'maryland': 'md', 'wisconsin': 'wi', 'colorado': 'co', 'minnesota': 'mn',
+      'south dakota': 'sd', 'north dakota': 'nd', 'oregon': 'or', 'oklahoma': 'ok',
+      'connecticut': 'ct', 'arkansas': 'ar', 'utah': 'ut', 'nevada': 'nv',
+      'new mexico': 'nm', 'west virginia': 'wv', 'nebraska': 'ne', 'idaho': 'id',
+      'hawaii': 'hi', 'new hampshire': 'nh', 'maine': 'me', 'rhode island': 'ri',
+      'montana': 'mt', 'delaware': 'de', 'kansas': 'ks', 'louisiana': 'la',
+      'wyoming': 'wy', 'alaska': 'ak', 'vermont': 'vt', 'alabama': 'al',
+      'kentucky': 'ky', 'iowa': 'ia', 'mississippi': 'ms'
+    }
+    
+    // Check direct match first
+    const stateMatch = profileState === inputState ||
+                      profileState.includes(inputState) ||
+                      inputState.includes(profileState) ||
+                      // Check if input is full name and profile is abbreviation
+                      stateMap[inputState] === profileState ||
+                      // Check if input is abbreviation and profile is full name
+                      stateMap[profileState] === inputState
+    
+    console.log(`City/State matching: "${parsedInput.city}" in "${profileLocation.city}" = ${cityMatch}, "${inputState}" matches "${profileState}" = ${stateMatch}`)
     return cityMatch && stateMatch
   }
   

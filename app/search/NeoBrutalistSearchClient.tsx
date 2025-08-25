@@ -18,6 +18,7 @@ export default function NeoBrutalistSearchClient() {
   const [hasSearched, setHasSearched] = useState(false)
   const [location, setLocation] = useState('')
   const [radius, setRadius] = useState(25)
+  const [searchText, setSearchText] = useState('')
   const [instrument, setInstrument] = useState('')
   const [experience, setExperience] = useState('')
   const [selectedGenres, setSelectedGenres] = useState<string[]>([])
@@ -39,17 +40,32 @@ export default function NeoBrutalistSearchClient() {
 
   // Auto-filter when search criteria change (debounced)
   useEffect(() => {
+    console.log('Auto-filter useEffect triggered with:', { location: location.trim(), searchText: searchText.trim(), instrument, experience })
+    
     const timeoutId = setTimeout(() => {
-      if (hasSearched || location || instrument || experience) {
+      const hasAnyFilter = location.trim() || searchText.trim() || instrument || experience || 
+                          selectedGenres.length > 0 || selectedSeeking.length > 0 || 
+                          selectedAvailability.length > 0 || hasTransportation || hasEquipment
+      
+      console.log('hasSearched:', hasSearched, 'hasAnyFilter:', hasAnyFilter)
+      
+      if (hasSearched || hasAnyFilter) {
+        console.log('Triggering search due to filters:', { location: location.trim(), searchText: searchText.trim(), instrument, experience, hasAnyFilter })
         handleSearch()
+      } else if (hasSearched && !hasAnyFilter) {
+        // If we had searched before but now all filters are cleared, reset to all profiles
+        console.log('All filters cleared, fetching all profiles')
+        fetchProfiles()
+        setHasSearched(false)
       }
     }, 500)
 
     return () => clearTimeout(timeoutId)
-  }, [location, radius, instrument, experience])
+  }, [location, radius, searchText, instrument, experience, selectedGenres, selectedSeeking, selectedAvailability, hasTransportation, hasEquipment, hasSearched])
 
   const fetchProfiles = async () => {
     try {
+      console.log('fetchProfiles called - getting all published profiles')
       let query = supabase
         .from('profiles')
         .select(`
@@ -61,20 +77,25 @@ export default function NeoBrutalistSearchClient() {
       // Exclude current user's own profile
       if (currentUser) {
         query = query.neq('user_id', currentUser.id)
+        console.log('Excluding current user:', currentUser.id)
       }
       
       const { data, error } = await query.order('created_at', { ascending: false })
 
-      if (error) throw error
-      
-      let filteredData = data || []
-      
-      // Filter out connected profiles (people who have messaged or saved each other)
-      if (currentUser) {
-        const connectedUserIds = await getConnectedUserIds(currentUser.id)
-        filteredData = filteredData.filter(profile => !connectedUserIds.has(profile.user_id))
+      if (error) {
+        console.error('fetchProfiles error:', error)
+        throw error
       }
       
+      console.log('fetchProfiles - raw data from database:', data?.length || 0, 'profiles')
+      console.log('Raw profiles data:', data?.map(p => ({ username: p.user?.username, is_published: p.is_published, user_id: p.user_id })))
+      let filteredData = data || []
+      
+      // For now, let's show all profiles - users can still see people they've interacted with
+      // This is more user-friendly than hiding everyone
+      // We can add a toggle later if users want to hide interacted profiles
+      
+      console.log('fetchProfiles - final profiles set:', filteredData.length)
       setProfiles(filteredData)
     } catch (error) {
       console.error('Error fetching profiles:', error)
@@ -195,9 +216,32 @@ export default function NeoBrutalistSearchClient() {
       if (currentUser) {
         query = query.neq('user_id', currentUser.id)
       }
+      
+      console.log('Search filters:', { searchText: searchText.trim(), instrument, experience, location: location.trim() })
 
-      if (instrument) {
-        query = query.or(`main_instrument.ilike.%${instrument}%,secondary_instruments.cs.{"${instrument}"}`)
+      // Build full-text search query using proper Supabase syntax
+      const hasTextSearch = searchText.trim() || instrument
+      
+      if (hasTextSearch) {
+        let searchTerms = []
+        
+        // Add general search text
+        if (searchText.trim()) {
+          // Split search text into individual terms for better matching
+          const words = searchText.trim().split(/\s+/)
+          searchTerms.push(...words)
+        }
+        
+        if (instrument) {
+          searchTerms.push(instrument)
+        }
+        
+        // Create full-text search query - use | for OR matching (any term matches)
+        const ftsQuery = searchTerms.join(' | ')
+        console.log('Full-text search query:', ftsQuery)
+        
+        // Use the correct textSearch syntax for the fts column
+        query = query.textSearch('fts', ftsQuery)
       }
 
       if (experience) {
@@ -208,25 +252,30 @@ export default function NeoBrutalistSearchClient() {
 
       if (error) throw error
       
+      console.log(`Database query returned ${data?.length || 0} profiles`)
       let filteredData = data || []
       
-      // Filter out connected profiles (people who have messaged or saved each other)
-      if (currentUser) {
-        const connectedUserIds = await getConnectedUserIds(currentUser.id)
-        filteredData = filteredData.filter(profile => !connectedUserIds.has(profile.user_id))
-      }
+      // For now, let's show all profiles - users can still see people they've interacted with
+      // This is more user-friendly than hiding everyone
       
       // Filter by location if provided (supports zip code, city, or city/state)
       if (location.trim()) {
+        console.log(`Filtering ${filteredData.length} profiles by location: "${location}" within ${radius} miles`)
+        console.log('All profiles zip codes:', filteredData.map(p => `${p.user?.username}: ${p.user?.zip_code}`))
+        
         const locationMatches = await Promise.all(
           filteredData.map(profile => matchesLocationSearch(profile, location, radius))
         )
         filteredData = filteredData.filter((_, index) => locationMatches[index])
+        console.log(`Found ${filteredData.length} profiles matching location filter`)
       }
 
       setProfiles(filteredData)
     } catch (error) {
       console.error('Error searching profiles:', error)
+      console.error('Error details:', JSON.stringify(error, null, 2))
+      // Show a fallback of all profiles if search fails
+      fetchProfiles()
     } finally {
       setLoading(false)
     }
@@ -235,6 +284,22 @@ export default function NeoBrutalistSearchClient() {
   const handleFormSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     handleSearch()
+  }
+
+  const clearAllFilters = () => {
+    setLocation('')
+    setRadius(25)
+    setSearchText('')
+    setInstrument('')
+    setExperience('')
+    setSelectedGenres([])
+    setSelectedSeeking([])
+    setSelectedAvailability([])
+    setHasTransportation(false)
+    setHasEquipment(false)
+    setHasSearched(false)
+    // Reset to show all profiles
+    fetchProfiles()
   }
 
   const findMyLocation = async () => {
@@ -274,19 +339,6 @@ export default function NeoBrutalistSearchClient() {
     }
   }
 
-  const clearAllFilters = () => {
-    setLocation('')
-    setRadius(25)
-    setInstrument('')
-    setExperience('')
-    setSelectedGenres([])
-    setSelectedSeeking([])
-    setSelectedAvailability([])
-    setHasTransportation(false)
-    setHasEquipment(false)
-    setHasSearched(false)
-    fetchProfiles() // Reset to show all profiles
-  }
 
   return (
     <>
@@ -306,9 +358,22 @@ export default function NeoBrutalistSearchClient() {
             </button>
           </div>
           
-          {/* Simple Search Bar - Both Mobile and Desktop */}
+          {/* Search Bars - Both Mobile and Desktop */}
           <div className="bg-white border-4 border-black p-4 mb-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
-            <div className="flex gap-2">
+            {/* General Search */}
+            <div className="flex gap-2 mb-3">
+              <input
+                type="text"
+                placeholder="Search musicians by name, instrument, genre, etc..."
+                value={searchText}
+                onChange={(e) => setSearchText(e.target.value)}
+                className="flex-1 px-3 py-2 border-2 border-black font-bold focus:outline-none focus:bg-yellow-100 text-sm"
+              />
+              <Search className="w-6 h-6 mt-2 text-gray-600" />
+            </div>
+            
+            {/* Location Search */}
+            <div className="flex gap-2 mb-3">
               <input
                 type="text"
                 placeholder="Enter location to search..."
@@ -316,6 +381,19 @@ export default function NeoBrutalistSearchClient() {
                 onChange={(e) => setLocation(e.target.value)}
                 className="flex-1 px-3 py-2 border-2 border-black font-bold focus:outline-none focus:bg-yellow-100 text-sm"
               />
+              <select
+                value={radius}
+                onChange={(e) => setRadius(parseInt(e.target.value))}
+                className="px-3 py-2 border-2 border-black font-bold focus:outline-none focus:bg-yellow-100 text-sm"
+              >
+                <option value={5}>5 mi</option>
+                <option value={10}>10 mi</option>
+                <option value={15}>15 mi</option>
+                <option value={20}>20 mi</option>
+                <option value={25}>25 mi</option>
+                <option value={50}>50 mi</option>
+                <option value={100}>100 mi</option>
+              </select>
               <button
                 type="button"
                 onClick={findMyLocation}
@@ -326,6 +404,19 @@ export default function NeoBrutalistSearchClient() {
                 {isGettingLocation ? '...' : 'MY LOCATION'}
               </button>
             </div>
+            
+            {/* Clear All Filters Button - Prominent when filters are active */}
+            {(location.trim() || searchText.trim() || instrument || experience || selectedGenres.length > 0 || selectedSeeking.length > 0 || selectedAvailability.length > 0 || hasTransportation || hasEquipment) && (
+              <div className="flex justify-center">
+                <button
+                  onClick={clearAllFilters}
+                  className="px-6 py-2 bg-red-400 border-4 border-black font-black text-sm shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:bg-red-500 transition-colors flex items-center gap-2"
+                >
+                  <X className="w-4 h-4" />
+                  CLEAR ALL FILTERS
+                </button>
+              </div>
+            )}
             
             {/* Active Filters Preview */}
             {(instrument || experience || selectedGenres.length > 0 || selectedSeeking.length > 0 || selectedAvailability.length > 0 || hasTransportation || hasEquipment) && (
@@ -416,10 +507,11 @@ export default function NeoBrutalistSearchClient() {
                           type="button"
                           onClick={findMyLocation}
                           disabled={isGettingLocation}
-                          className="px-4 py-3 bg-cyan-400 border-4 border-black font-black hover:bg-cyan-500 transition-colors flex items-center gap-2 disabled:opacity-50"
+                          className="px-2 sm:px-4 py-3 bg-cyan-400 border-4 border-black font-black hover:bg-cyan-500 transition-colors flex items-center gap-1 sm:gap-2 disabled:opacity-50 whitespace-nowrap"
                         >
-                          <MapPin className="w-5 h-5" />
-                          {isGettingLocation ? 'FINDING...' : 'FIND ME'}
+                          <MapPin className="w-4 h-4 sm:w-5 sm:h-5" />
+                          <span className="hidden sm:inline">{isGettingLocation ? 'FINDING...' : 'MY LOCATION'}</span>
+                          <span className="sm:hidden text-xs">{isGettingLocation ? '...' : '📍'}</span>
                         </button>
                       </div>
                     </div>

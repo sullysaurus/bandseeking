@@ -56,8 +56,15 @@ export default function SearchProfileCard({
           <h3 className="font-black text-xl mb-2 leading-tight">{profile.user.full_name.toUpperCase()}</h3>
           <p className="font-bold text-sm text-gray-600 mb-2">@{profile.user.username}</p>
           
-          {/* Primary Tags Row */}
-          <div className="flex flex-wrap gap-2">
+          {/* Location and Last Active Row */}
+          <div className="flex flex-wrap gap-2 mb-2">
+            {/* Location */}
+            {profile.user.zip_code && (
+              <span className="px-2 py-1 bg-cyan-300 border-2 border-black font-black text-xs">
+                📍 {locationDisplay}
+              </span>
+            )}
+            
             {/* Last Active Status */}
             {profile.user.last_active && (() => {
               const activeStatus = getLastActiveStatus(profile.user.last_active)
@@ -73,25 +80,21 @@ export default function SearchProfileCard({
                 </span>
               )
             })()}
-            
-            {/* Instrument Tag */}
+          </div>
+          
+          {/* Instruments and Experience Level Row */}
+          <div className="flex flex-wrap gap-2">
+            {/* Main Instrument Tag */}
             <span className="px-2 py-1 bg-pink-400 border-2 border-black font-black text-xs">
               {profile.main_instrument?.toUpperCase() || 'MUSICIAN'}
             </span>
             
-            {/* First Secondary Instrument */}
-            {profile.secondary_instruments && profile.secondary_instruments.length > 0 && (
-              <span className="px-2 py-1 bg-purple-300 border-2 border-black font-black text-xs">
-                {profile.secondary_instruments[0].toUpperCase()}
+            {/* Secondary Instruments */}
+            {profile.secondary_instruments && profile.secondary_instruments.map((instrument: string, index: number) => (
+              <span key={index} className="px-2 py-1 bg-purple-300 border-2 border-black font-black text-xs">
+                {instrument.toUpperCase()}
               </span>
-            )}
-            
-            {/* Additional Instruments Count */}
-            {profile.secondary_instruments && profile.secondary_instruments.length > 1 && (
-              <span className="px-2 py-1 bg-gray-300 border-2 border-black font-black text-xs">
-                +{profile.secondary_instruments.length - 1} MORE
-              </span>
-            )}
+            ))}
             
             {/* Experience Level Tag */}
             {profile.experience_level && (
@@ -109,14 +112,6 @@ export default function SearchProfileCard({
         </div>
       </div>
 
-      {/* Location */}
-      {profile.user.zip_code && (
-        <div className="mb-4 px-6">
-          <span className="px-2 py-1 bg-cyan-300 border-2 border-black font-black text-xs">
-            📍 {locationDisplay}
-          </span>
-        </div>
-      )}
 
       {/* Bio - Key selling point */}
       {profile.bio && (
