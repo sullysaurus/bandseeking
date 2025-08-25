@@ -45,6 +45,9 @@ export default function Navigation() {
             <Link href="/search" className="px-3 py-1 bg-pink-400 border-2 border-black font-black text-sm hover:bg-pink-500 transition-colors shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
               BROWSE MUSICIANS
             </Link>
+            <Link href="/blog" className="px-3 py-1 bg-purple-400 border-2 border-black font-black text-sm hover:bg-purple-500 transition-colors shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+              BLOG
+            </Link>
             
             {isLoading ? (
               <span className="px-3 py-1 font-black text-sm">LOADING...</span>
@@ -92,6 +95,13 @@ export default function Navigation() {
               onClick={() => setIsMenuOpen(false)}
             >
               BROWSE
+            </Link>
+            <Link
+              href="/blog"
+              className="block px-4 py-2 bg-purple-400 border-2 border-black font-black hover:bg-purple-500 transition-colors"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              BLOG
             </Link>
 
             {isLoading ? (
