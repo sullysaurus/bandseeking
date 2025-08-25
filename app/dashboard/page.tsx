@@ -24,9 +24,6 @@ export default function DashboardPage() {
   const checkAuth = async () => {
     try {
       const userData = await ensureUserRecord()
-      
-      // Allow access to dashboard even without completed profile
-
       setUser(userData)
 
       const { data: profileData } = await supabase
@@ -60,7 +57,7 @@ export default function DashboardPage() {
           user:users(*)
         `)
         .eq('is_published', true)
-        .neq('user_id', userData.id) // Don't show current user
+        .neq('user_id', userData.id)
         .order('created_at', { ascending: false })
         .limit(6)
 
@@ -78,7 +75,9 @@ export default function DashboardPage() {
       <>
         <Navigation />
         <div className="min-h-screen bg-lime-300 flex items-center justify-center">
-          <div className="font-black text-2xl">LOADING...</div>
+          <div className="font-black text-2xl" role="status" aria-label="Loading">
+            LOADING...
+          </div>
         </div>
       </>
     )
@@ -89,21 +88,24 @@ export default function DashboardPage() {
   return (
     <>
       <Navigation />
-      <div className="min-h-screen bg-lime-300">
+      <main className="min-h-screen bg-lime-300">
         <div className="max-w-6xl mx-auto px-4 py-8">
-          <div className="mb-8">
+          {/* Header Section */}
+          <header className="mb-8">
             <div className="flex items-center justify-between mb-4">
               <div>
-                <h1 className="text-4xl md:text-5xl font-black mb-2">
-                  {new Date().getHours() < 12 ? 'GOOD MORNING!' : 
-                   new Date().getHours() < 17 ? 'GOOD AFTERNOON!' : 'GOOD EVENING!'}
+                <h1 className="text-3xl md:text-4xl font-black mb-2">
+                  Welcome back, {user.full_name}
                 </h1>
-                <p className="font-bold text-xl">{user.full_name.toUpperCase()}</p>
+                <p className="font-bold text-lg text-gray-700">
+                  {new Date().getHours() < 12 ? 'Good morning' : 
+                   new Date().getHours() < 17 ? 'Good afternoon' : 'Good evening'}
+                </p>
               </div>
               {profile?.profile_image_url && (
                 <Image
                   src={profile.profile_image_url}
-                  alt={user.full_name}
+                  alt={`${user.full_name}'s profile picture`}
                   width={80}
                   height={80}
                   className="w-16 h-16 md:w-20 md:h-20 border-4 border-black object-cover shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
@@ -111,105 +113,91 @@ export default function DashboardPage() {
               )}
             </div>
             
-            {/* Quick Tips for new users */}
+            {/* Profile completion notice */}
             {!profile?.is_published && (
-              <div className="bg-gradient-to-r from-yellow-300 to-orange-300 border-4 border-black p-4 mb-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
-                <div className="flex items-start gap-3">
-                  <div className="text-2xl">🚀</div>
-                  <div>
-                    <h3 className="font-black text-lg mb-2">COMPLETE YOUR PROFILE TO GET DISCOVERED!</h3>
-                    <p className="font-bold text-sm mb-3">Your profile is in draft mode. Publish it to start connecting with musicians!</p>
-                    <Link href="/dashboard/profile" className="inline-block px-3 py-1 bg-black text-white border-2 border-black font-black text-sm hover:bg-white hover:text-black transition-colors">
-                      COMPLETE PROFILE →
-                    </Link>
-                  </div>
-                </div>
+              <div className="bg-gradient-to-r from-yellow-300 to-orange-300 border-4 border-black p-4 mb-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]" role="alert">
+                <h2 className="font-black text-lg mb-2">Complete Your Profile</h2>
+                <p className="font-bold text-sm mb-3">Your profile is in draft mode. Publish it to start connecting with musicians.</p>
+                <Link 
+                  href="/dashboard/profile" 
+                  className="inline-block px-4 py-2 bg-black text-white border-2 border-black font-black text-sm hover:bg-white hover:text-black transition-colors focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2"
+                  aria-label="Complete your profile to get discovered by other musicians"
+                >
+                  Complete Profile
+                </Link>
               </div>
             )}
             
             {user.email === 'dsully15@gmail.com' && (
-              <Link href="/admin" className="inline-block mt-4 px-4 py-2 bg-red-500 border-4 border-black font-black text-white hover:bg-red-600 transition-colors shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
-                ADMIN PANEL →
+              <Link 
+                href="/admin" 
+                className="inline-block mt-4 px-4 py-2 bg-red-500 border-4 border-black font-black text-white hover:bg-red-600 transition-colors shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
+              >
+                Admin Panel
               </Link>
             )}
-          </div>
+          </header>
 
           {/* Quick Stats */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-            <Link href="/dashboard/profile" className="block">
-              <div className="bg-white border-4 border-black p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all cursor-pointer">
-                <div className="flex items-center gap-2 mb-1">
-                  <span className="text-lg">{profile?.is_published ? '🟢' : '🟡'}</span>
-                  <p className="font-black text-sm">STATUS</p>
+          <section className="mb-8">
+            <h2 className="text-2xl font-black mb-4">Your Overview</h2>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div className="bg-white border-4 border-black p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+                <h3 className="font-black text-sm mb-2">Profile Status</h3>
+                <div className="flex items-center gap-2">
+                  <span className={`w-3 h-3 rounded-full ${profile?.is_published ? 'bg-green-500' : 'bg-yellow-500'}`} aria-hidden="true"></span>
+                  <p className={`text-lg font-black ${profile?.is_published ? 'text-green-600' : 'text-yellow-600'}`}>
+                    {profile?.is_published ? 'Live' : 'Draft'}
+                  </p>
                 </div>
-                <p className={`text-2xl font-black ${profile?.is_published ? 'text-green-500' : 'text-yellow-500'}`}>
-                  {profile?.is_published ? 'LIVE' : 'DRAFT'}
-                </p>
-                {!profile?.is_published && (
-                  <p className="text-xs font-bold text-gray-600 mt-1">Click to publish</p>
-                )}
               </div>
-            </Link>
 
-            <Link href="/dashboard/saved" className="block">
-              <div className="bg-white border-4 border-black p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all cursor-pointer">
-                <div className="flex items-center gap-2 mb-1">
-                  <span className="text-lg">❤️</span>
-                  <p className="font-black text-sm">SAVED</p>
+              <Link href="/dashboard/saved" className="block group" aria-label={`View ${savedCount} saved musicians`}>
+                <div className="bg-white border-4 border-black p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] group-hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all h-full">
+                  <h3 className="font-black text-sm mb-2">Saved Musicians</h3>
+                  <p className="text-2xl font-black text-cyan-600">{savedCount}</p>
                 </div>
-                <p className="text-2xl font-black text-cyan-500">{savedCount}</p>
-                <p className="text-xs font-bold text-gray-600 mt-1">
-                  {savedCount === 0 ? 'Find musicians' : 'View collection'}
-                </p>
-              </div>
-            </Link>
+              </Link>
 
-            <Link href="/dashboard/messages" className="block">
-              <div className="bg-white border-4 border-black p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all cursor-pointer relative">
-                <div className="flex items-center gap-2 mb-1">
-                  <span className="text-lg">💬</span>
-                  <p className="font-black text-sm">MESSAGES</p>
+              <Link href="/dashboard/messages" className="block group relative" aria-label={`View messages${messageCount > 0 ? `, ${messageCount} unread` : ''}`}>
+                <div className="bg-white border-4 border-black p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] group-hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all h-full">
+                  <h3 className="font-black text-sm mb-2">Messages</h3>
+                  <p className="text-2xl font-black text-purple-600">{messageCount}</p>
                   {messageCount > 0 && (
-                    <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-black px-2 py-1 border-2 border-black">
+                    <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-black px-2 py-1 border-2 border-black min-w-6 text-center" aria-label={`${messageCount} unread messages`}>
                       {messageCount}
                     </span>
                   )}
                 </div>
-                <p className="text-2xl font-black text-yellow-500">{messageCount}</p>
+              </Link>
+
+              <div className="bg-white border-4 border-black p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+                <h3 className="font-black text-sm mb-2">Your Instrument</h3>
+                <p className="text-lg font-black text-pink-600">
+                  {profile?.main_instrument || 'Not set'}
+                </p>
                 <p className="text-xs font-bold text-gray-600 mt-1">
-                  {messageCount === 0 ? 'No new messages' : `${messageCount} unread`}
+                  {profile?.experience_level || 'Set your level'}
                 </p>
               </div>
-            </Link>
-
-            <div className="bg-white border-4 border-black p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all">
-              <div className="flex items-center gap-2 mb-1">
-                <span className="text-lg">🎵</span>
-                <p className="font-black text-sm">YOUR VIBE</p>
-              </div>
-              <p className="text-lg font-black text-purple-500">
-                {profile?.main_instrument?.toUpperCase() || 'MUSICIAN'}
-              </p>
-              <p className="text-xs font-bold text-gray-600 mt-1">
-                {profile?.experience_level || 'Set your level'}
-              </p>
             </div>
-          </div>
+          </section>
 
           {/* Recent Musicians */}
           {recentMusicians.length > 0 && (
-            <div className="mb-8">
+            <section className="mb-8">
               <div className="flex items-center justify-between mb-4">
                 <div>
-                  <h2 className="text-2xl font-black flex items-center gap-2">
-                    ✨ FRESH TALENT
-                  </h2>
+                  <h2 className="text-2xl font-black">Recent Musicians</h2>
                   <p className="font-bold text-sm text-gray-700">
-                    {recentMusicians.length} newest musicians just joined!
+                    {recentMusicians.length} musicians recently joined
                   </p>
                 </div>
-                <Link href="/search" className="px-3 py-1 bg-black text-white border-2 border-black font-black text-sm hover:bg-white hover:text-black transition-colors">
-                  DISCOVER MORE →
+                <Link 
+                  href="/search" 
+                  className="px-4 py-2 bg-black text-white border-2 border-black font-black text-sm hover:bg-white hover:text-black transition-colors focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2"
+                >
+                  Browse All
                 </Link>
               </div>
               
@@ -316,148 +304,100 @@ export default function DashboardPage() {
                   </Link>
                 ))}
               </div>
-            </div>
+            </section>
           )}
 
-          {/* Quick Actions Bar */}
-          <div className="bg-white border-4 border-black p-4 mb-8 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
-            <h3 className="font-black text-lg mb-3 flex items-center gap-2">
-              ⚡ QUICK ACTIONS
-            </h3>
-            <div className="flex flex-wrap gap-2">
-              <Link href="/search" className="px-3 py-1 bg-black text-white border-2 border-black font-black text-xs hover:bg-cyan-400 hover:text-black transition-colors">
-                🔍 FIND MUSICIANS
-              </Link>
-              <Link href="/dashboard/profile" className="px-3 py-1 bg-pink-400 text-black border-2 border-black font-black text-xs hover:bg-pink-500 transition-colors">
-                ✏️ EDIT PROFILE
-              </Link>
-              <Link href="/dashboard/messages" className="px-3 py-1 bg-cyan-300 text-black border-2 border-black font-black text-xs hover:bg-cyan-400 transition-colors">
-                💬 MESSAGES {messageCount > 0 && `(${messageCount})`}
-              </Link>
-              {profile?.is_published && (
-                <Link href={`/profile/${user.username}`} className="px-3 py-1 bg-lime-300 text-black border-2 border-black font-black text-xs hover:bg-lime-400 transition-colors">
-                  👀 VIEW YOUR PROFILE
-                </Link>
-              )}
-            </div>
-          </div>
-
           {/* Main Actions */}
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {/* Browse Musicians */}
-            <Link href="/search" className="block">
-              <div className="bg-black text-white border-4 border-black p-6 shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] hover:shadow-[8px_8px_0px_0px_rgba(255,255,255,1)] transition-all">
-                <h2 className="text-2xl font-black mb-4 text-yellow-300 flex items-center gap-2">
-                  🎸 BROWSE MUSICIANS
-                </h2>
-                <p className="font-bold mb-4">
-                  Connect with local talent. Find your perfect bandmate or collaborator!
-                </p>
-                <div className="bg-white text-black px-4 py-2 font-black text-center hover:bg-yellow-300 border-2 border-white transition-colors">
-                  START SEARCHING →
+          <section className="mb-8">
+            <h2 className="text-2xl font-black mb-4">Quick Actions</h2>
+            <div className="grid md:grid-cols-2 gap-6">
+              {/* Browse Musicians */}
+              <Link href="/search" className="block group" aria-label="Browse and discover musicians in your area">
+                <div className="bg-black text-white border-4 border-black p-6 shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] group-hover:shadow-[8px_8px_0px_0px_rgba(255,255,255,1)] transition-all h-full">
+                  <h3 className="text-2xl font-black mb-4 text-yellow-300">Browse Musicians</h3>
+                  <p className="font-bold mb-4">Connect with local talent and find your perfect collaborator.</p>
+                  <div className="bg-white text-black px-4 py-2 font-black text-center group-hover:bg-yellow-300 border-2 border-white transition-colors">
+                    Start Browsing
+                  </div>
                 </div>
-              </div>
-            </Link>
+              </Link>
 
-            {/* Profile Card */}
-            <Link href="/dashboard/profile" className="block">
-              <div className="bg-pink-400 border-4 border-black p-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] transition-all">
-                <h2 className="text-2xl font-black mb-4 flex items-center gap-2">
-                  ✨ {profile?.is_published ? 'UPDATE PROFILE' : 'COMPLETE PROFILE'}
-                </h2>
-                <p className="font-bold mb-4">
-                  {profile?.is_published 
-                    ? 'Keep your profile fresh and up-to-date!'
-                    : 'Finish setting up to start connecting with musicians!'
-                  }
-                </p>
-                <div className="bg-black text-white px-4 py-2 font-black text-center hover:bg-white hover:text-black border-2 border-black transition-colors">
-                  {profile?.is_published ? 'UPDATE →' : 'COMPLETE →'}
+              {/* Profile Management */}
+              <Link href="/dashboard/profile" className="block group" aria-label={profile?.is_published ? "Update your profile" : "Complete your profile setup"}>
+                <div className="bg-pink-400 border-4 border-black p-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] group-hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] transition-all h-full">
+                  <h3 className="text-2xl font-black mb-4">
+                    {profile?.is_published ? 'Update Profile' : 'Complete Profile'}
+                  </h3>
+                  <p className="font-bold mb-4">
+                    {profile?.is_published 
+                      ? 'Keep your profile fresh and up-to-date.'
+                      : 'Finish setting up to start connecting with musicians.'
+                    }
+                  </p>
+                  <div className="bg-black text-white px-4 py-2 font-black text-center group-hover:bg-white group-hover:text-black border-2 border-black transition-colors">
+                    {profile?.is_published ? 'Update' : 'Complete'}
+                  </div>
                 </div>
-              </div>
-            </Link>
+              </Link>
+            </div>
+          </section>
 
-            {/* Messages Card */}
-            <Link href="/dashboard/messages" className="block">
-              <div className="bg-cyan-300 border-4 border-black p-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] transition-all">
-                <div className="flex items-center justify-between mb-4">
-                  <h2 className="text-2xl font-black">MESSAGES</h2>
+          {/* Secondary Actions */}
+          <section>
+            <h2 className="text-2xl font-black mb-4">Your Activity</h2>
+            <div className="grid md:grid-cols-3 gap-4">
+              <Link href="/dashboard/messages" className="block group" aria-label={`View messages${messageCount > 0 ? `, ${messageCount} unread` : ''}`}>
+                <div className="bg-cyan-300 border-4 border-black p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] group-hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all h-full relative">
+                  <h3 className="text-lg font-black mb-2">Messages</h3>
+                  <p className="font-bold text-sm mb-3">Chat with other musicians</p>
                   {messageCount > 0 && (
-                    <span className="px-2 py-1 bg-red-500 text-white font-black text-xs">
+                    <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-black px-2 py-1 border-2 border-black min-w-6 text-center">
                       {messageCount}
                     </span>
                   )}
-                </div>
-                <p className="font-bold mb-4">
-                  Chat with other musicians.
-                </p>
-                <div className="bg-black text-white px-4 py-2 font-black text-center hover:bg-white hover:text-black border-2 border-black transition-colors">
-                  VIEW →
-                </div>
-              </div>
-            </Link>
-
-            {/* Saved Musicians Card */}
-            <Link href="/dashboard/saved" className="block">
-              <div className="bg-yellow-300 border-4 border-black p-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] transition-all">
-                <h2 className="text-2xl font-black mb-4">SAVED</h2>
-                <p className="font-bold mb-4">
-                  Musicians you&apos;ve bookmarked.
-                </p>
-                <div className="bg-black text-white px-4 py-2 font-black text-center hover:bg-white hover:text-black border-2 border-black transition-colors">
-                  VIEW ({savedCount}) →
-                </div>
-              </div>
-            </Link>
-
-            {/* Settings Card */}
-            <Link href="/dashboard/profile" className="block">
-              <div className="bg-white border-4 border-black p-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] transition-all">
-                <h2 className="text-2xl font-black mb-4">SETTINGS</h2>
-                <p className="font-bold mb-4">
-                  Account and privacy settings.
-                </p>
-                <div className="bg-black text-white px-4 py-2 font-black text-center hover:bg-white hover:text-black border-2 border-black transition-colors">
-                  MANAGE →
-                </div>
-              </div>
-            </Link>
-
-            {/* View Public Profile */}
-            {user && (
-              <Link href={`/profile/${user.username}`} className="block">
-                <div className="bg-lime-400 border-4 border-black p-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] transition-all">
-                  <h2 className="text-2xl font-black mb-4">YOUR PROFILE</h2>
-                  <p className="font-bold mb-4">
-                    See your public profile.
-                  </p>
-                  <div className="bg-black text-white px-4 py-2 font-black text-center hover:bg-white hover:text-black border-2 border-black transition-colors">
-                    VIEW →
-                  </div>
+                  <div className="text-sm font-black">View Messages</div>
                 </div>
               </Link>
-            )}
-          </div>
+
+              <Link href="/dashboard/saved" className="block group" aria-label={`View ${savedCount} saved musicians`}>
+                <div className="bg-yellow-300 border-4 border-black p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] group-hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all h-full">
+                  <h3 className="text-lg font-black mb-2">Saved</h3>
+                  <p className="font-bold text-sm mb-3">Musicians you&apos;ve bookmarked</p>
+                  <div className="text-sm font-black">View Collection ({savedCount})</div>
+                </div>
+              </Link>
+
+              {profile?.is_published && (
+                <Link href={`/profile/${user.username}`} className="block group" aria-label="View your public profile as others see it">
+                  <div className="bg-lime-400 border-4 border-black p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] group-hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all h-full">
+                    <h3 className="text-lg font-black mb-2">Your Profile</h3>
+                    <p className="font-bold text-sm mb-3">See your public profile</p>
+                    <div className="text-sm font-black">View Profile</div>
+                  </div>
+                </Link>
+              )}
+            </div>
+          </section>
           
-          {/* Pro Tips for published users */}
+          {/* Helpful tip for published users with no saved musicians */}
           {profile?.is_published && savedCount === 0 && (
             <div className="mt-8">
-              <div className="bg-gradient-to-r from-blue-300 to-purple-300 border-4 border-black p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
-                <div className="flex items-start gap-3">
-                  <div className="text-2xl">💡</div>
-                  <div>
-                    <h3 className="font-black text-lg mb-2">GET STARTED CONNECTING!</h3>
-                    <p className="font-bold text-sm mb-3">Your profile is live! Start browsing musicians and save the ones you&apos;d like to collaborate with.</p>
-                    <Link href="/search" className="inline-block px-3 py-1 bg-black text-white border-2 border-black font-black text-sm hover:bg-white hover:text-black transition-colors">
-                      BROWSE MUSICIANS →
-                    </Link>
-                  </div>
-                </div>
+              <div className="bg-gradient-to-r from-blue-300 to-purple-300 border-4 border-black p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]" role="complementary">
+                <h3 className="font-black text-lg mb-2">Get Started Connecting</h3>
+                <p className="font-bold text-sm mb-3">
+                  Your profile is live! Start browsing musicians and save the ones you&apos;d like to collaborate with.
+                </p>
+                <Link 
+                  href="/search" 
+                  className="inline-block px-4 py-2 bg-black text-white border-2 border-black font-black text-sm hover:bg-white hover:text-black transition-colors focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2"
+                >
+                  Browse Musicians
+                </Link>
               </div>
             </div>
           )}
         </div>
-      </div>
+      </main>
     </>
   )
 }
