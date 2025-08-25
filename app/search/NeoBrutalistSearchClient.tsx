@@ -5,10 +5,9 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
-import { matchesLocationSearch } from '@/lib/zipcode-utils'
 import Navigation from '@/components/layout/Navigation'
 import SearchProfileCard from '@/components/SearchProfileCard'
-import { Search, Filter, MapPin, X } from 'lucide-react'
+import { Search, Filter, X } from 'lucide-react'
 import { instruments, genres, seekingOptions, experienceLevels, availabilityOptions } from '@/lib/utils'
 
 export default function NeoBrutalistSearchClient() {
@@ -278,42 +277,6 @@ export default function NeoBrutalistSearchClient() {
     fetchProfiles()
   }
 
-  const findMyLocation = async () => {
-    setIsGettingLocation(true)
-    try {
-      if (!navigator.geolocation) {
-        alert('Geolocation is not supported by this browser')
-        return
-      }
-
-      const position = await new Promise<GeolocationPosition>((resolve, reject) => {
-        navigator.geolocation.getCurrentPosition(resolve, reject, {
-          enableHighAccuracy: true,
-          timeout: 10000,
-          maximumAge: 300000
-        })
-      })
-
-      // Convert coordinates to zip code using reverse geocoding
-      const response = await fetch(
-        `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${position.coords.latitude}&longitude=${position.coords.longitude}&localityLanguage=en`
-      )
-      const data = await response.json()
-      
-      if (data.postcode) {
-        setLocation(data.postcode)
-      } else if (data.city && data.principalSubdivision) {
-        setLocation(`${data.city}, ${data.principalSubdivision}`)
-      } else {
-        alert('Could not determine your location. Please enter manually.')
-      }
-    } catch (error) {
-      console.error('Error getting location:', error)
-      alert('Could not access your location. Please enter manually.')
-    } finally {
-      setIsGettingLocation(false)
-    }
-  }
 
 
   return (
@@ -424,41 +387,6 @@ export default function NeoBrutalistSearchClient() {
                 {/* Modal Content */}
                 <div className="flex-1 p-4 md:p-6 space-y-4 md:space-y-6 overflow-y-auto">
                   
-                  {/* Location */}
-                  <div>
-                    <label className="block font-black mb-2 text-lg">LOCATION</label>
-                    <div className="space-y-3">
-                      <input
-                        type="text"
-                        placeholder="ZIP CODE, CITY, OR CITY, STATE"
-                        value={location}
-                        onChange={(e) => setLocation(e.target.value)}
-                        className="w-full px-4 py-3 border-4 border-black font-bold focus:outline-none focus:bg-yellow-100"
-                      />
-                      <div className="flex gap-2">
-                        <select 
-                          value={radius} 
-                          onChange={(e) => setRadius(Number(e.target.value))}
-                          className="flex-1 px-4 py-3 border-4 border-black font-bold bg-white focus:outline-none focus:bg-yellow-100"
-                        >
-                          <option value={5}>5 MILES</option>
-                          <option value={10}>10 MILES</option>
-                          <option value={25}>25 MILES</option>
-                          <option value={50}>50 MILES</option>
-                        </select>
-                        <button
-                          type="button"
-                          onClick={findMyLocation}
-                          disabled={isGettingLocation}
-                          className="px-2 sm:px-4 py-3 bg-cyan-400 border-4 border-black font-black hover:bg-cyan-500 transition-colors flex items-center gap-1 sm:gap-2 disabled:opacity-50 whitespace-nowrap"
-                        >
-                          <MapPin className="w-4 h-4 sm:w-5 sm:h-5" />
-                          <span className="hidden sm:inline">{isGettingLocation ? 'FINDING...' : 'MY LOCATION'}</span>
-                          <span className="sm:hidden text-xs">{isGettingLocation ? '...' : '📍'}</span>
-                        </button>
-                      </div>
-                    </div>
-                  </div>
 
                   {/* Instrument */}
                   <div>
