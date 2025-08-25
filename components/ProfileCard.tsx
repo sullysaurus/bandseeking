@@ -124,6 +124,20 @@ export default function ProfileCard({ profile }: ProfileCardProps) {
               {profile.main_instrument?.toUpperCase() || 'MUSICIAN'}
             </span>
             
+            {/* First Secondary Instrument */}
+            {profile.secondary_instruments && profile.secondary_instruments.length > 0 && (
+              <span className="px-2 py-1 bg-purple-300 border-2 border-black font-black text-xs">
+                {profile.secondary_instruments[0].toUpperCase()}
+              </span>
+            )}
+            
+            {/* Additional Instruments Count */}
+            {profile.secondary_instruments && profile.secondary_instruments.length > 1 && (
+              <span className="px-2 py-1 bg-gray-300 border-2 border-black font-black text-xs">
+                +{profile.secondary_instruments.length - 1} MORE
+              </span>
+            )}
+            
             {/* Experience Level Tag */}
             {profile.experience_level && (
               <span className={`px-2 py-1 border-2 border-black font-black text-xs ${
@@ -146,6 +160,28 @@ export default function ProfileCard({ profile }: ProfileCardProps) {
           <span className="px-2 py-1 bg-cyan-300 border-2 border-black font-black text-xs">
             📍 {formatLocationDisplay(user.zip_code)}
           </span>
+        </div>
+      )}
+
+      {/* Secondary Instruments Section */}
+      {profile.secondary_instruments && profile.secondary_instruments.length > 0 && (
+        <div className="mb-4">
+          <p className="font-black text-sm mb-2">ALSO PLAYS:</p>
+          <div className="flex flex-wrap gap-1">
+            {profile.secondary_instruments.slice(0, 3).map((instrument: string, index: number) => (
+              <span
+                key={index}
+                className="px-2 py-1 bg-purple-200 border-2 border-black font-black text-xs"
+              >
+                {instrument.toUpperCase()}
+              </span>
+            ))}
+            {profile.secondary_instruments.length > 3 && (
+              <span className="px-2 py-1 bg-gray-200 border-2 border-black font-black text-xs">
+                +{profile.secondary_instruments.length - 3} MORE
+              </span>
+            )}
+          </div>
         </div>
       )}
 

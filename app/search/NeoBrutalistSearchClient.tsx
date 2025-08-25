@@ -32,8 +32,9 @@ export default function NeoBrutalistSearchClient() {
   const [isGettingLocation, setIsGettingLocation] = useState(false)
 
   useEffect(() => {
-    fetchProfiles()
-    getCurrentUser()
+    getCurrentUser().then(() => {
+      fetchProfiles()
+    })
   }, [])
 
   // Auto-filter when search criteria change (debounced)
@@ -49,17 +50,32 @@ export default function NeoBrutalistSearchClient() {
 
   const fetchProfiles = async () => {
     try {
-      const { data, error } = await supabase
+      let query = supabase
         .from('profiles')
         .select(`
           *,
           user:users(*)
         `)
         .eq('is_published', true)
-        .order('created_at', { ascending: false })
+      
+      // Exclude current user's own profile
+      if (currentUser) {
+        query = query.neq('user_id', currentUser.id)
+      }
+      
+      const { data, error } = await query.order('created_at', { ascending: false })
 
       if (error) throw error
-      setProfiles(data || [])
+      
+      let filteredData = data || []
+      
+      // Filter out connected profiles (people who have messaged or saved each other)
+      if (currentUser) {
+        const connectedUserIds = await getConnectedUserIds(currentUser.id)
+        filteredData = filteredData.filter(profile => !connectedUserIds.has(profile.user_id))
+      }
+      
+      setProfiles(filteredData)
     } catch (error) {
       console.error('Error fetching profiles:', error)
     } finally {
@@ -67,7 +83,46 @@ export default function NeoBrutalistSearchClient() {
     }
   }
 
-  const getCurrentUser = async () => {
+  const getConnectedUserIds = async (userId: string): Promise<Set<string>> => {
+    const connectedIds = new Set<string>()
+    
+    try {
+      // Get users who have messaged each other (bidirectional)
+      const { data: sentMessages } = await supabase
+        .from('messages')
+        .select('receiver_id')
+        .eq('sender_id', userId)
+      
+      const { data: receivedMessages } = await supabase
+        .from('messages')
+        .select('sender_id')
+        .eq('receiver_id', userId)
+      
+      // Get users who have saved each other (bidirectional)
+      const { data: savedByUser } = await supabase
+        .from('saved_profiles')
+        .select('saved_user_id')
+        .eq('user_id', userId)
+      
+      const { data: savedUser } = await supabase
+        .from('saved_profiles')
+        .select('user_id')
+        .eq('saved_user_id', userId)
+      
+      // Add all connected user IDs
+      sentMessages?.forEach(msg => connectedIds.add(msg.receiver_id))
+      receivedMessages?.forEach(msg => connectedIds.add(msg.sender_id))
+      savedByUser?.forEach(save => connectedIds.add(save.saved_user_id))
+      savedUser?.forEach(save => connectedIds.add(save.user_id))
+      
+    } catch (error) {
+      console.error('Error fetching connected users:', error)
+    }
+    
+    return connectedIds
+  }
+
+  const getCurrentUser = async (): Promise<void> => {
     const { data: { user: authUser } } = await supabase.auth.getUser()
     setCurrentUser(authUser)
     
@@ -135,9 +190,14 @@ export default function NeoBrutalistSearchClient() {
           user:users(*)
         `)
         .eq('is_published', true)
+      
+      // Exclude current user's own profile
+      if (currentUser) {
+        query = query.neq('user_id', currentUser.id)
+      }
 
       if (instrument) {
-        query = query.ilike('main_instrument', `%${instrument}%`)
+        query = query.or(`main_instrument.ilike.%${instrument}%,secondary_instruments.cs.{"${instrument}"}`)
       }
 
       if (experience) {
@@ -149,6 +209,12 @@ export default function NeoBrutalistSearchClient() {
       if (error) throw error
       
       let filteredData = data || []
+      
+      // Filter out connected profiles (people who have messaged or saved each other)
+      if (currentUser) {
+        const connectedUserIds = await getConnectedUserIds(currentUser.id)
+        filteredData = filteredData.filter(profile => !connectedUserIds.has(profile.user_id))
+      }
       
       // Filter by location if provided (supports zip code, city, or city/state)
       if (location.trim()) {

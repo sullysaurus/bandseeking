@@ -29,12 +29,16 @@ export async function generateMetadata({
     .single()
 
   const instrument = profileData?.main_instrument || 'Musician'
+  const secondaryInstruments = profileData?.secondary_instruments || []
+  const allInstruments = secondaryInstruments.length > 0 
+    ? `${instrument}${secondaryInstruments.length > 0 ? ` (also ${secondaryInstruments.join(', ')})` : ''}`
+    : instrument
   const genres = profileData?.genres?.join(', ') || 'Various genres'
   const seeking = profileData?.seeking?.join(', ') || 'music collaborations'
 
   return {
     title: `${userData.full_name} - ${instrument} | BandSeeking`,
-    description: `Connect with ${userData.full_name}, a ${profileData?.experience_level || 'talented'} ${instrument} player interested in ${genres}. Looking for ${seeking}.`,
+    description: `Connect with ${userData.full_name}, a ${profileData?.experience_level || 'talented'} ${allInstruments} player interested in ${genres}. Looking for ${seeking}.`,
     openGraph: {
       title: `${userData.full_name} - ${instrument} on BandSeeking`,
       description: `${profileData?.bio || `Connect with ${userData.full_name} for music collaborations`}`,

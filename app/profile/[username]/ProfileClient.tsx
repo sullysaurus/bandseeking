@@ -138,8 +138,16 @@ export default function ProfileClient() {
       <div className="min-h-screen bg-cyan-300">
         <div className="max-w-6xl mx-auto px-4 py-8">
           <div className="grid lg:grid-cols-3 gap-6">
-            {/* Left Column - Profile Info */}
-            <div className="lg:col-span-1">
+            {/* Bio - Mobile Order 1, Desktop in Right Column */}
+            {profile.bio && (
+              <div className="lg:hidden order-1 bg-white border-4 border-black p-6 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
+                <h2 className="text-2xl font-black mb-4">ABOUT</h2>
+                <p className="font-bold text-gray-700 whitespace-pre-wrap leading-relaxed">{profile.bio}</p>
+              </div>
+            )}
+
+            {/* Left Column - Profile Info - Mobile Order 2 */}
+            <div className="lg:col-span-1 order-2 lg:order-1">
               <div className="sticky top-24">
                 <div className="bg-white border-4 border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
                   <div className="aspect-square relative bg-gray-100 border-b-4 border-black">
@@ -232,8 +240,8 @@ export default function ProfileClient() {
                       )}
                     </div>
                     
-                    {/* Additional Info */}
-                    <div className="space-y-2 pt-3">
+                    {/* Activity Status & Location */}
+                    <div className="pt-3 space-y-2">
                       {user.last_active && (() => {
                         const activeStatus = getLastActiveStatus(user.last_active)
                         return (
@@ -248,25 +256,68 @@ export default function ProfileClient() {
                           </div>
                         )
                       })()}
-                      {profile.availability && (
-                        <div className="font-bold text-sm">
-                          AVAILABILITY: {Array.isArray(profile.availability) 
-                            ? profile.availability.map((a: string) => a.toUpperCase()).join(', ')
-                            : profile.availability.toUpperCase()}
+                      {user.city && user.state && (
+                        <div className="font-bold text-sm text-gray-600">
+                          {user.city.toUpperCase()}, {user.state.toUpperCase()}
                         </div>
                       )}
-                      {profile.has_transportation && (
-                        <div className="font-bold text-sm text-green-600">
-                          HAS TRANSPORTATION
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              {/* Collaboration Details */}
+              <div className="bg-white border-4 border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] mt-6">
+                <div className="p-6">
+                  <h2 className="text-xl font-black mb-4">COLLABORATION</h2>
+                  <div className="space-y-3">
+                    {profile.availability && (
+                      <div>
+                        <span className="font-black text-xs text-gray-800">AVAILABILITY:</span>
+                        <div className="flex flex-wrap gap-1 mt-1">
+                          {Array.isArray(profile.availability) 
+                            ? profile.availability.map((time: string, index: number) => (
+                                <span key={index} className="px-2 py-1 bg-green-300 border-2 border-black font-black text-xs">
+                                  {time.toUpperCase()}
+                                </span>
+                              ))
+                            : (
+                                <span className="px-2 py-1 bg-green-300 border-2 border-black font-black text-xs">
+                                  {profile.availability.toUpperCase()}
+                                </span>
+                              )
+                          }
                         </div>
-                      )}
-                      {profile.has_own_equipment && (
-                        <div className="font-bold text-sm text-blue-600">
-                          HAS OWN EQUIPMENT
-                        </div>
-                      )}
-                      <div className="font-bold text-sm">
-                        WILL TRAVEL: {profile.willing_to_travel_miles} MILES
+                      </div>
+                    )}
+                    
+                    <div>
+                      <span className="font-black text-xs text-gray-800">TRAVEL RANGE:</span>
+                      <div className="mt-1">
+                        <span className="px-2 py-1 bg-cyan-300 border-2 border-black font-black text-xs">
+                          UP TO {profile.willing_to_travel_miles} MILES
+                        </span>
+                      </div>
+                    </div>
+                    
+                    <div>
+                      <span className="font-black text-xs text-gray-800">LOGISTICS:</span>
+                      <div className="flex flex-wrap gap-1 mt-1">
+                        {profile.has_transportation && (
+                          <span className="px-2 py-1 bg-blue-300 border-2 border-black font-black text-xs">
+                            HAS TRANSPORTATION
+                          </span>
+                        )}
+                        {profile.has_own_equipment && (
+                          <span className="px-2 py-1 bg-purple-300 border-2 border-black font-black text-xs">
+                            HAS EQUIPMENT
+                          </span>
+                        )}
+                        {!profile.has_transportation && !profile.has_own_equipment && (
+                          <span className="px-2 py-1 bg-gray-300 border-2 border-black font-black text-xs">
+                            NEEDS ARRANGEMENTS
+                          </span>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -275,15 +326,33 @@ export default function ProfileClient() {
             </div>
           </div>
 
-          {/* Right Column - Details */}
-          <div className="lg:col-span-2 space-y-6">
-            {/* Bio */}
+          {/* Right Column - Details - Mobile Order 3 */}
+          <div className="lg:col-span-2 space-y-6 order-3 lg:order-2">
+            {/* Bio - Desktop Only */}
             {profile.bio && (
-              <div className="bg-white border-4 border-black p-6 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
+              <div className="hidden lg:block bg-white border-4 border-black p-6 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
                 <h2 className="text-2xl font-black mb-4">ABOUT</h2>
                 <p className="font-bold text-gray-700 whitespace-pre-wrap leading-relaxed">{profile.bio}</p>
               </div>
             )}
+
+            {/* All Instruments */}
+            <div className="bg-white border-4 border-black p-6 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
+              <h2 className="text-2xl font-black mb-4">INSTRUMENTS</h2>
+              <div className="flex flex-wrap gap-2">
+                <span className="px-4 py-2 bg-pink-400 border-2 border-black font-black text-sm">
+                  {profile.main_instrument?.toUpperCase() || 'MUSICIAN'} (PRIMARY)
+                </span>
+                {profile.secondary_instruments && profile.secondary_instruments.map((instrument: string, index: number) => (
+                  <span
+                    key={index}
+                    className="px-4 py-2 bg-purple-300 border-2 border-black font-black text-sm"
+                  >
+                    {instrument.toUpperCase()}
+                  </span>
+                ))}
+              </div>
+            </div>
 
             {/* Looking For */}
             {profile.seeking && profile.seeking.length > 0 && (
@@ -412,30 +481,6 @@ export default function ProfileClient() {
               </div>
             )}
 
-            {/* Secondary Instruments */}
-            {profile.secondary_instruments && profile.secondary_instruments.length > 0 && (
-              <div className="bg-white border-4 border-black p-6 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
-                <h2 className="text-2xl font-black mb-4">ALSO PLAYS</h2>
-                <div className="flex flex-wrap gap-2">
-                  {profile.secondary_instruments.map((instrument: string, index: number) => (
-                    <span
-                      key={index}
-                      className="px-4 py-2 bg-lime-300 border-2 border-black font-black text-sm"
-                    >
-                      {instrument.toUpperCase()}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Travel Distance */}
-            <div className="bg-white border-4 border-black p-6 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
-              <h2 className="text-2xl font-black mb-4">TRAVEL RANGE</h2>
-              <p className="font-bold text-gray-700">
-                WILLING TO TRAVEL UP TO {profile.willing_to_travel_miles} MILES
-              </p>
-            </div>
           </div>
         </div>
         </div>

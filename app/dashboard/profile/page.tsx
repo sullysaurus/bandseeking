@@ -26,7 +26,7 @@ export default function EditProfilePage() {
     seeking: [] as string[],
     genres: [] as string[],
     influences: '',
-    availability: '',
+    availability: [] as string[],
     hasTransportation: false,
     hasOwnEquipment: false,
     willingToTravelMiles: 25,
@@ -88,7 +88,7 @@ export default function EditProfilePage() {
           seeking: profileData.seeking || [],
           genres: profileData.genres || [],
           influences: profileData.influences || '',
-          availability: profileData.availability || '',
+          availability: profileData.availability || [],
           hasTransportation: profileData.has_transportation || false,
           hasOwnEquipment: profileData.has_own_equipment || false,
           willingToTravelMiles: profileData.willing_to_travel_miles || 25,
@@ -314,6 +314,39 @@ export default function EditProfilePage() {
               </div>
             </div>
 
+            {/* Secondary Instruments */}
+            <div className="mt-4">
+              <label className="block font-black mb-2">SECONDARY INSTRUMENTS</label>
+              <p className="text-sm font-bold text-gray-600 mb-3">Select additional instruments you can play</p>
+              <div className="grid md:grid-cols-3 gap-2">
+                {instruments
+                  .filter(instrument => instrument !== formData.mainInstrument)
+                  .map((instrument) => (
+                  <label key={instrument} className="flex items-center p-2 border-2 border-black bg-white hover:bg-cyan-100 cursor-pointer font-bold transition-colors">
+                    <input
+                      type="checkbox"
+                      className="mr-2 w-4 h-4"
+                      checked={formData.secondaryInstruments.includes(instrument)}
+                      onChange={(e) => {
+                        if (e.target.checked) {
+                          setFormData({ 
+                            ...formData, 
+                            secondaryInstruments: [...formData.secondaryInstruments, instrument] 
+                          })
+                        } else {
+                          setFormData({ 
+                            ...formData, 
+                            secondaryInstruments: formData.secondaryInstruments.filter(i => i !== instrument) 
+                          })
+                        }
+                      }}
+                    />
+                    <span className="text-sm">{instrument.toUpperCase()}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+
             <div className="mt-4">
               <label className="block font-black mb-2">INFLUENCES</label>
               <textarea
@@ -380,18 +413,32 @@ export default function EditProfilePage() {
             <div className="space-y-4">
               <div>
                 <label className="block font-black mb-2">AVAILABILITY</label>
-                <select
-                  className="w-full px-4 py-3 border-4 border-black font-bold bg-white focus:outline-none focus:bg-yellow-100"
-                  value={formData.availability}
-                  onChange={(e) => setFormData({ ...formData, availability: e.target.value })}
-                >
-                  <option value="">SELECT AVAILABILITY</option>
+                <p className="text-sm font-bold text-gray-600 mb-3">Select when you&apos;re available to rehearse and perform</p>
+                <div className="grid md:grid-cols-2 gap-2">
                   {availabilityOptions.map((option) => (
-                    <option key={option.value} value={option.value}>
-                      {option.label.toUpperCase()}
-                    </option>
+                    <label key={option.value} className="flex items-center p-3 border-2 border-black bg-white hover:bg-lime-100 cursor-pointer font-bold transition-colors">
+                      <input
+                        type="checkbox"
+                        className="mr-3 w-4 h-4"
+                        checked={formData.availability.includes(option.value)}
+                        onChange={(e) => {
+                          if (e.target.checked) {
+                            setFormData({ 
+                              ...formData, 
+                              availability: [...formData.availability, option.value] 
+                            })
+                          } else {
+                            setFormData({ 
+                              ...formData, 
+                              availability: formData.availability.filter(a => a !== option.value) 
+                            })
+                          }
+                        }}
+                      />
+                      <span>{option.label.toUpperCase()}</span>
+                    </label>
                   ))}
-                </select>
+                </div>
               </div>
               
               <div className="space-y-3">

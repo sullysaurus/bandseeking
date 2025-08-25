@@ -187,136 +187,76 @@ export default function HomeClient({ initialProfiles }: HomeClientProps) {
             </div>
             
             {recentMusicians.length > 0 ? (
-              <>
-                {/* Mobile: Horizontal Scroll */}
-                <div className="md:hidden overflow-x-auto pb-2 mb-4">
-                  <div className="flex gap-3 w-max">
-                    {recentMusicians.map((musician) => (
-                      <div key={musician.id} className="w-48 flex-shrink-0">
-                        <div className="bg-white border-2 border-black p-3 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all">
-                          <div className="flex items-center gap-2 mb-2">
-                            {musician.profile_image_url ? (
-                              <Image
-                                src={musician.profile_image_url}
-                                alt={musician.user.full_name}
-                                width={40}
-                                height={40}
-                                className="w-10 h-10 border-2 border-black object-cover"
-                              />
-                            ) : (
-                              <div className="w-10 h-10 border-2 border-black bg-gradient-to-br from-pink-400 to-purple-500 flex items-center justify-center">
-                                <div className="text-xs font-black text-white">
-                                  {musician.user.full_name.charAt(0).toUpperCase()}
-                                </div>
-                              </div>
-                            )}
-                            <div className="flex-1 min-w-0">
-                              <p className="font-black text-sm truncate">{musician.user.full_name.toUpperCase()}</p>
-                              <p className="text-xs text-gray-600 font-bold truncate">@{musician.user.username}</p>
-                              {musician.user.city && musician.user.state && (
-                                <p className="text-xs text-gray-500 font-bold truncate">
-                                  {musician.user.city.toUpperCase()}, {musician.user.state.toUpperCase()}
-                                </p>
-                              )}
-                              <div className={`text-xs font-bold ${
-                                getActiveStatus(musician.user.last_active).status === 'online' ? 'text-green-600' :
-                                getActiveStatus(musician.user.last_active).status === 'recent' ? 'text-yellow-600' :
-                                getActiveStatus(musician.user.last_active).status === 'hours' ? 'text-orange-600' :
-                                getActiveStatus(musician.user.last_active).status === 'days' ? 'text-red-600' :
-                                'text-gray-500'
-                              }`}>
-                                {getActiveStatus(musician.user.last_active).text}
-                              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
+                {recentMusicians.slice(0, 4).map((musician) => (
+                  <div key={musician.id} className="bg-white border-4 border-black p-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] transition-all">
+                    
+                    {/* Header with Photo and Name */}
+                    <div className="flex items-start gap-4 mb-4">
+                      {/* Profile Photo */}
+                      <div className="flex-shrink-0">
+                        {musician.profile_image_url ? (
+                          <Image
+                            src={musician.profile_image_url}
+                            alt={musician.user.full_name}
+                            width={80}
+                            height={80}
+                            className="w-20 h-20 border-4 border-black object-cover"
+                          />
+                        ) : (
+                          <div className="w-20 h-20 border-4 border-black bg-gradient-to-br from-pink-400 to-purple-500 flex items-center justify-center">
+                            <div className="text-2xl font-black text-white">
+                              {musician.user.full_name.charAt(0).toUpperCase()}
                             </div>
                           </div>
-                          <div className="mb-3">
-                            <div className="flex flex-wrap gap-1 items-center">
-                              <span className="inline-block px-2 py-0.5 bg-pink-400 border border-black font-black text-xs">
-                                {musician.main_instrument?.toUpperCase() || 'MUSICIAN'}
-                              </span>
-                              {musician.experience_level && (
-                                <span className={`inline-block px-1.5 py-0.5 border border-black font-black text-xs ${
-                                  musician.experience_level === 'beginner' ? 'bg-green-300' :
-                                  musician.experience_level === 'intermediate' ? 'bg-yellow-300' :
-                                  musician.experience_level === 'advanced' ? 'bg-orange-400' :
-                                  musician.experience_level === 'professional' ? 'bg-red-400 text-white' :
-                                  'bg-gray-300'
-                                }`}>
-                                  {musician.experience_level === 'beginner' ? 'BEG' :
-                                   musician.experience_level === 'intermediate' ? 'INT' :
-                                   musician.experience_level === 'advanced' ? 'ADV' :
-                                   musician.experience_level === 'professional' ? 'PRO' :
-                                   'N/A'}
-                                </span>
-                              )}
-                            </div>
-                          </div>
-                          <div className="flex gap-1">
-                            <button
-                              onClick={() => router.push('/auth/register')}
-                              className="flex-1 px-2 py-1 bg-black text-white border border-black font-black text-xs hover:bg-cyan-400 hover:text-black transition-colors"
-                            >
-                              VIEW
-                            </button>
-                            <button
-                              onClick={() => router.push('/auth/register')}
-                              className="flex-1 px-2 py-1 bg-yellow-300 border border-black font-black text-xs hover:bg-yellow-400 transition-colors"
-                            >
-                              MESSAGE
-                            </button>
-                          </div>
-                        </div>
+                        )}
                       </div>
-                    ))}
-                  </div>
-                </div>
 
-                {/* Desktop: Grid */}
-                <div className="hidden md:grid grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
-                  {recentMusicians.map((musician) => (
-                    <div key={musician.id} className="block">
-                      <div className="bg-white border-2 border-black p-4 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all">
-                        <div className="flex items-center gap-3 mb-3">
-                          {musician.profile_image_url ? (
-                            <Image
-                              src={musician.profile_image_url}
-                              alt={musician.user.full_name}
-                              width={48}
-                              height={48}
-                              className="w-12 h-12 border-2 border-black object-cover"
-                            />
-                          ) : (
-                            <div className="w-12 h-12 border-2 border-black bg-gradient-to-br from-pink-400 to-purple-500 flex items-center justify-center">
-                              <div className="text-sm font-black text-white">
-                                {musician.user.full_name.charAt(0).toUpperCase()}
-                              </div>
-                            </div>
-                          )}
-                          <div className="flex-1 min-w-0">
-                            <p className="font-black text-sm truncate">{musician.user.full_name.toUpperCase()}</p>
-                            <p className="text-xs text-gray-600 font-bold truncate">@{musician.user.username}</p>
-                            {musician.user.city && musician.user.state && (
-                              <p className="text-xs text-gray-500 font-bold truncate">
-                                {musician.user.city.toUpperCase()}, {musician.user.state.toUpperCase()}
-                              </p>
-                            )}
-                            <div className={`text-xs font-bold ${
-                              getActiveStatus(musician.user.last_active).status === 'online' ? 'text-green-600' :
-                              getActiveStatus(musician.user.last_active).status === 'recent' ? 'text-yellow-600' :
-                              getActiveStatus(musician.user.last_active).status === 'hours' ? 'text-orange-600' :
-                              getActiveStatus(musician.user.last_active).status === 'days' ? 'text-red-600' :
-                              'text-gray-500'
-                            }`}>
-                              {getActiveStatus(musician.user.last_active).text}
-                            </div>
-                          </div>
-                        </div>
-                        <div className="flex flex-wrap gap-1 mb-3">
-                          <span className="px-2 py-1 bg-pink-400 border border-black font-black text-xs">
+                      {/* Name and Basic Info */}
+                      <div className="flex-1 min-w-0">
+                        <h3 className="font-black text-xl mb-2 leading-tight">{musician.user.full_name.toUpperCase()}</h3>
+                        <p className="font-bold text-sm text-gray-600 mb-2">@{musician.user.username}</p>
+                        
+                        {/* Primary Tags Row */}
+                        <div className="flex flex-wrap gap-2">
+                          {/* Last Active Status */}
+                          {(() => {
+                            const activeStatus = getActiveStatus(musician.user.last_active)
+                            return (
+                              <span className={`px-2 py-1 border-2 border-black font-black text-xs ${
+                                activeStatus.status === 'online' ? 'bg-green-400' :
+                                activeStatus.status === 'recent' ? 'bg-yellow-400' :
+                                activeStatus.status === 'hours' ? 'bg-orange-400' :
+                                activeStatus.status === 'days' ? 'bg-red-400' :
+                                'bg-gray-400'
+                              }`}>
+                                {activeStatus.text}
+                              </span>
+                            )
+                          })()}
+                          
+                          {/* Instrument Tag */}
+                          <span className="px-2 py-1 bg-pink-400 border-2 border-black font-black text-xs">
                             {musician.main_instrument?.toUpperCase() || 'MUSICIAN'}
                           </span>
+                          
+                          {/* First Secondary Instrument */}
+                          {musician.secondary_instruments && musician.secondary_instruments.length > 0 && (
+                            <span className="px-2 py-1 bg-purple-300 border-2 border-black font-black text-xs">
+                              {musician.secondary_instruments[0].toUpperCase()}
+                            </span>
+                          )}
+                          
+                          {/* Additional Instruments Count */}
+                          {musician.secondary_instruments && musician.secondary_instruments.length > 1 && (
+                            <span className="px-2 py-1 bg-gray-300 border-2 border-black font-black text-xs">
+                              +{musician.secondary_instruments.length - 1} MORE
+                            </span>
+                          )}
+                          
+                          {/* Experience Level Tag */}
                           {musician.experience_level && (
-                            <span className={`px-2 py-1 border border-black font-black text-xs ${
+                            <span className={`px-2 py-1 border-2 border-black font-black text-xs ${
                               musician.experience_level === 'beginner' ? 'bg-green-300' :
                               musician.experience_level === 'intermediate' ? 'bg-yellow-300' :
                               musician.experience_level === 'advanced' ? 'bg-orange-400' :
@@ -327,25 +267,95 @@ export default function HomeClient({ initialProfiles }: HomeClientProps) {
                             </span>
                           )}
                         </div>
-                        <div className="flex gap-2">
-                          <button
-                            onClick={() => router.push('/auth/register')}
-                            className="flex-1 px-3 py-2 bg-black text-white border-2 border-black font-black text-sm hover:bg-cyan-400 hover:text-black transition-colors"
-                          >
-                            VIEW →
-                          </button>
-                          <button
-                            onClick={() => router.push('/auth/register')}
-                            className="flex-1 px-3 py-2 bg-yellow-300 border-2 border-black font-black text-sm hover:bg-yellow-400 transition-colors"
-                          >
-                            MESSAGE →
-                          </button>
-                        </div>
                       </div>
                     </div>
-                  ))}
-                </div>
-              </>
+
+                    {/* Location */}
+                    {musician.user.zip_code && (
+                      <div className="mb-4">
+                        <span className="px-2 py-1 bg-cyan-300 border-2 border-black font-black text-xs">
+                          📍 {musician.user.city?.toUpperCase()}, {musician.user.state?.toUpperCase()}
+                        </span>
+                      </div>
+                    )}
+
+                    {/* Bio - Key selling point */}
+                    {musician.bio && (
+                      <div className="mb-4 p-3 bg-gray-50 border-2 border-black">
+                        <p className="font-bold text-sm line-clamp-3">
+                          &quot;{musician.bio}&quot;
+                        </p>
+                      </div>
+                    )}
+
+                    {/* Seeking Section */}
+                    {musician.seeking && musician.seeking.length > 0 && (
+                      <div className="mb-4">
+                        <p className="font-black text-sm mb-2">LOOKING FOR:</p>
+                        <div className="flex flex-wrap gap-1">
+                          {musician.seeking.slice(0, 4).map((item: string, index: number) => (
+                            <span
+                              key={index}
+                              className="px-2 py-1 bg-purple-300 border-2 border-black font-black text-xs"
+                            >
+                              {item.toUpperCase()}
+                            </span>
+                          ))}
+                          {musician.seeking.length > 4 && (
+                            <span className="px-2 py-1 bg-gray-200 border-2 border-black font-black text-xs">
+                              +{musician.seeking.length - 4} MORE
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Genres - Secondary info */}
+                    {musician.genres && musician.genres.length > 0 && (
+                      <div className="mb-4">
+                        <p className="font-black text-sm mb-2">GENRES:</p>
+                        <div className="flex flex-wrap gap-1">
+                          {musician.genres.slice(0, 4).map((genre: string, index: number) => (
+                            <span
+                              key={index}
+                              className="px-2 py-1 bg-blue-300 border-2 border-black font-black text-xs"
+                            >
+                              {genre.toUpperCase()}
+                            </span>
+                          ))}
+                          {musician.genres.length > 4 && (
+                            <span className="px-2 py-1 bg-gray-200 border-2 border-black font-black text-xs">
+                              +{musician.genres.length - 4} MORE
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Action Buttons */}
+                    <div className="flex gap-2 pt-2 border-t-2 border-black">
+                      <button 
+                        onClick={() => router.push('/auth/register')}
+                        className="flex-1 px-3 py-1 bg-black text-white border-2 border-black font-black text-sm text-center hover:bg-cyan-400 hover:text-black transition-colors"
+                      >
+                        VIEW →
+                      </button>
+                      <button 
+                        onClick={() => router.push('/auth/register')}
+                        className="flex-1 px-3 py-1 bg-yellow-300 border-2 border-black font-black text-sm text-center hover:bg-yellow-400 transition-colors"
+                      >
+                        MESSAGE →
+                      </button>
+                      <button 
+                        onClick={() => router.push('/auth/register')}
+                        className="px-3 py-1 border-2 border-black font-black text-sm transition-colors bg-white hover:bg-lime-300"
+                      >
+                        ♡
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
             ) : (
               /* No musicians fallback */
               <div className="text-center p-8 bg-white border-2 border-black">
@@ -368,70 +378,6 @@ export default function HomeClient({ initialProfiles }: HomeClientProps) {
             )}
           </div>
 
-          {/* Coming Soon Section */}
-          <div className="mb-8">
-            <div className="text-center mb-6">
-              <h2 className="text-2xl md:text-3xl font-black mb-2">WHAT&apos;S NEXT</h2>
-              <p className="font-bold text-lg">Amazing new features coming soon to supercharge your music career!</p>
-            </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
-              <div className="bg-white border-4 border-black p-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all opacity-75">
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="w-12 h-12 bg-purple-400 border-2 border-black flex items-center justify-center">
-                    <span className="text-2xl font-black">🎵</span>
-                  </div>
-                  <div>
-                    <h3 className="text-xl font-black">CREATE & MANAGE BANDS</h3>
-                    <span className="px-2 py-1 bg-orange-400 border border-black font-black text-xs">COMING SOON</span>
-                  </div>
-                </div>
-                <p className="font-bold text-gray-700">
-                  Form official bands, manage members, share files, and coordinate rehearsals all in one place.
-                </p>
-              </div>
-
-              <div className="bg-white border-4 border-black p-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all opacity-75">
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="w-12 h-12 bg-green-400 border-2 border-black flex items-center justify-center">
-                    <span className="text-2xl font-black">🏟️</span>
-                  </div>
-                  <div>
-                    <h3 className="text-xl font-black">VENUE DATABASE</h3>
-                    <span className="px-2 py-1 bg-orange-400 border border-black font-black text-xs">COMING SOON</span>
-                  </div>
-                </div>
-                <p className="font-bold text-gray-700">
-                  Discover local venues, check availability, and book gigs directly through the platform.
-                </p>
-              </div>
-
-              <div className="bg-white border-4 border-black p-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all opacity-75">
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="w-12 h-12 bg-yellow-400 border-2 border-black flex items-center justify-center">
-                    <span className="text-2xl font-black">💼</span>
-                  </div>
-                  <div>
-                    <h3 className="text-xl font-black">GIG OPPORTUNITIES</h3>
-                    <span className="px-2 py-1 bg-orange-400 border border-black font-black text-xs">COMING SOON</span>
-                  </div>
-                </div>
-                <p className="font-bold text-gray-700">
-                  Find paying gigs, session work, and performance opportunities posted by venues and artists.
-                </p>
-              </div>
-            </div>
-
-            <div className="text-center mt-6 p-4 bg-gray-100 border-2 border-black">
-              <p className="font-black text-sm mb-2">WANT TO BE NOTIFIED WHEN THESE LAUNCH?</p>
-              <button 
-                onClick={() => router.push('/auth/register')}
-                className="px-6 py-2 bg-black text-white border-2 border-black font-black text-sm hover:bg-gray-800 transition-colors shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
-              >
-                JOIN THE WAITLIST →
-              </button>
-            </div>
-          </div>
 
           {/* Quick Links */}
           <div className="bg-black text-white border-4 border-black p-6 md:p-8 shadow-[4px_4px_0px_0px_rgba(255,255,255,1)]">
