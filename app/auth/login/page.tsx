@@ -4,6 +4,13 @@ import LoginClient from './LoginClient'
 export const metadata: Metadata = {
   title: 'Sign In to BandSeeking',
   description: 'Sign in to your BandSeeking account to connect with musicians and manage your music collaborations.',
+  robots: {
+    index: false,
+    follow: true,
+  },
+  alternates: {
+    canonical: '/auth/login',
+  },
 }
 
 export default function LoginPage() {

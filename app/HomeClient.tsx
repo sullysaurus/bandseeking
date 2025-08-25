@@ -75,8 +75,53 @@ export default function HomeClient({ initialProfiles }: HomeClientProps) {
   }
 
   return (
-    <div className="min-h-screen bg-yellow-300">
-      {/* Header */}
+    <>
+      {/* Structured Data */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "WebSite",
+            "name": "BandSeeking",
+            "url": "https://www.bandseeking.com",
+            "description": "Find and connect with musicians in your area for bands, collaborations, and music projects",
+            "potentialAction": {
+              "@type": "SearchAction",
+              "target": "https://www.bandseeking.com/search?q={search_term_string}",
+              "query-input": "required name=search_term_string"
+            },
+            "sameAs": [
+              "https://instagram.com/bandseeking"
+            ]
+          })
+        }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Organization",
+            "name": "BandSeeking",
+            "url": "https://www.bandseeking.com",
+            "logo": "https://www.bandseeking.com/logo.png",
+            "description": "A platform connecting musicians for bands, collaborations, and music projects",
+            "foundingDate": "2025",
+            "sameAs": [
+              "https://instagram.com/bandseeking"
+            ],
+            "contactPoint": {
+              "@type": "ContactPoint",
+              "contactType": "customer service",
+              "url": "https://instagram.com/bandseeking"
+            }
+          })
+        }}
+      />
+      
+      <div className="min-h-screen bg-yellow-300">
+        {/* Header */}
       <header className="border-b-8 border-black bg-white p-4 md:p-6">
         <div className="max-w-6xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-4">
           <h1 className="text-3xl md:text-4xl font-black tracking-tight">BANDSEEKING</h1>
@@ -432,6 +477,7 @@ export default function HomeClient({ initialProfiles }: HomeClientProps) {
           </div>
         </div>
       </section>
-    </div>
+      </div>
+    </>
   )
 }

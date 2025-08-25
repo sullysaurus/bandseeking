@@ -20,7 +20,14 @@ export const metadata: Metadata = {
     default: 'BandSeeking - Connect with Musicians',
   },
   description: 'Find and connect with musicians in your area for bands, collaborations, and music projects',
+  keywords: 'musicians, band members, find musicians, music collaboration, band seeking, connect with musicians',
+  authors: [{ name: 'BandSeeking Team' }],
+  creator: 'BandSeeking',
+  publisher: 'BandSeeking',
   metadataBase: new URL('https://www.bandseeking.com'),
+  alternates: {
+    canonical: '/',
+  },
   manifest: '/manifest.json',
   robots: {
     index: true,
@@ -34,7 +41,21 @@ export const metadata: Metadata = {
     },
   },
   verification: {
-    google: 'verification-token',
+    google: 'your-google-verification-code-here',
+  },
+  openGraph: {
+    type: 'website',
+    locale: 'en_US',
+    url: 'https://www.bandseeking.com',
+    siteName: 'BandSeeking',
+    title: 'BandSeeking - Connect with Musicians',
+    description: 'Find and connect with musicians in your area for bands, collaborations, and music projects',
+    images: ['/opengraph-image'],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    site: '@bandseeking',
+    creator: '@bandseeking',
   },
 }
 
