@@ -27,7 +27,6 @@ export default function ChatPage() {
   const router = useRouter()
   const params = useParams()
   const receiverId = params.userId as string
-  const messagesEndRef = useRef<HTMLDivElement>(null)
   const channelRef = useRef<any>(null)
   
   const [messages, setMessages] = useState<Message[]>([])
@@ -39,19 +38,11 @@ export default function ChatPage() {
   const [sending, setSending] = useState(false)
   const [isOnline, setIsOnline] = useState(true)
   const [connectionStatus, setConnectionStatus] = useState<'connecting' | 'connected' | 'disconnected'>('connecting')
-  const [shouldScrollSmooth, setShouldScrollSmooth] = useState(false)
 
   useEffect(() => {
     checkAuth()
   }, [receiverId])
 
-  useEffect(() => {
-    if (messages.length > 0) {
-      scrollToBottom(shouldScrollSmooth)
-      // Reset smooth scroll flag
-      setShouldScrollSmooth(false)
-    }
-  }, [messages, shouldScrollSmooth])
 
   // Online/offline detection
   useEffect(() => {
@@ -81,9 +72,6 @@ export default function ChatPage() {
     }
   }, [currentUser, receiverId])
 
-  const scrollToBottom = (smooth = false) => {
-    messagesEndRef.current?.scrollIntoView({ behavior: smooth ? 'smooth' : 'auto' })
-  }
 
   const checkAuth = async () => {
     const { data: { user } } = await supabase.auth.getUser()
@@ -203,8 +191,6 @@ export default function ChatPage() {
       if (prev.some(msg => msg.id === newMessage.id)) {
         return prev
       }
-      // Enable smooth scrolling for real-time messages
-      setShouldScrollSmooth(true)
       return [...prev, newMessage]
     })
 
@@ -293,8 +279,6 @@ export default function ChatPage() {
       return newStatuses
     })
     
-    // Enable smooth scrolling for user's own messages
-    setShouldScrollSmooth(true)
     setNewMessage('')
     setSending(true)
 
@@ -467,7 +451,6 @@ export default function ChatPage() {
                 )
               })
             )}
-            <div ref={messagesEndRef} />
           </div>
 
           {/* Message Input */}
