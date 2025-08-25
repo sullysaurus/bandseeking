@@ -18,10 +18,10 @@ export const metadata: Metadata = {
     url: 'https://www.bandseeking.com',
     images: [
       {
-        url: '/opengraph-image',
+        url: '/logo.png',
         width: 1200,
-        height: 630,
-        alt: 'BandSeeking - Connect with Musicians',
+        height: 1200,
+        alt: 'BandSeeking Logo',
       }
     ],
     siteName: 'BandSeeking',
@@ -31,7 +31,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'BandSeeking - Connect with Musicians',
     description: 'Find and connect with musicians in your area for bands, collaborations, and music projects.',
-    images: ['/opengraph-image'],
+    images: ['/logo.png'],
     creator: '@bandseeking',
     site: '@bandseeking',
   }

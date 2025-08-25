@@ -41,7 +41,7 @@ export const metadata: Metadata = {
     },
   },
   verification: {
-    google: 'your-google-verification-code-here',
+    google: 'X6fxCkBJkNoHSNESefhZYNtahOnpsI4cqHRYMRlzpGA',
   },
   openGraph: {
     type: 'website',
@@ -50,12 +50,18 @@ export const metadata: Metadata = {
     siteName: 'BandSeeking',
     title: 'BandSeeking - Connect with Musicians',
     description: 'Find and connect with musicians in your area for bands, collaborations, and music projects',
-    images: ['/opengraph-image'],
+    images: [{
+      url: '/logo.png',
+      width: 1200,
+      height: 1200,
+      alt: 'BandSeeking Logo',
+    }],
   },
   twitter: {
     card: 'summary_large_image',
     site: '@bandseeking',
     creator: '@bandseeking',
+    images: ['/logo.png'],
   },
 }
 
