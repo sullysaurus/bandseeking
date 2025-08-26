@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { supabase } from '@/lib/supabase'
+import { trackRegistration } from '@/components/FacebookPixel'
 import Navigation from '@/components/layout/Navigation'
 import GoogleAuthButton from '@/components/auth/GoogleAuthButton'
 import { z } from 'zod'
@@ -49,6 +50,9 @@ export default function RegisterClient() {
       if (authError) throw authError
 
       if (authData.user) {
+        // Track successful registration
+        trackRegistration('email')
+        
         // Check if email confirmation is required
         if (authData.user.email_confirmed_at) {
           // Email is auto-confirmed, sign them in automatically

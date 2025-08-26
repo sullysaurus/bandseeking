@@ -3,6 +3,7 @@ import { Inter } from 'next/font/google'
 import { SpeedInsights } from "@vercel/speed-insights/next"
 import { Analytics } from "@vercel/analytics/next"
 import GoogleAnalytics from './GoogleAnalytics'
+import FacebookPixel from '@/components/FacebookPixel'
 import Footer from '@/components/layout/Footer'
 import './globals.css'
 
@@ -84,6 +85,7 @@ export default function RootLayout({
       </head>
       <body className={inter.className}>
         <GoogleAnalytics />
+        <FacebookPixel pixelId={process.env.NEXT_PUBLIC_FACEBOOK_PIXEL_ID || ''} />
         <div className="min-h-screen bg-white flex flex-col">
           <main className="flex-grow">
             {children}

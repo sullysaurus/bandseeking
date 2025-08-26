@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { supabase } from '@/lib/supabase'
+import { trackVenueSearch } from '@/components/FacebookPixel'
 import Navigation from '@/components/layout/Navigation'
 import VenueCard from '@/components/VenueCard'
 import ReportVenueModal from '@/components/ReportVenueModal'
@@ -114,6 +115,9 @@ export default function VenuesClient() {
     try {
       setLoading(true)
       
+      // Track venue search for Facebook Pixel
+      trackVenueSearch(searchText.trim())
+      
       // Reset to page 1 when starting a new search
       if (page === 1) {
         setCurrentPage(1)
@@ -193,7 +197,7 @@ export default function VenuesClient() {
         {/* Header */}
         <div className="mb-4 sm:mb-8">
           <h1 className="text-2xl sm:text-4xl font-bold text-gray-900 mb-2 sm:mb-4">
-            Music Venues Database
+            Music Venue Database
           </h1>
           <p className="text-base sm:text-lg text-gray-600 mb-3 sm:mb-4">
             Discover venues for booking your next show

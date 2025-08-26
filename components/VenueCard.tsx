@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { MapPin, Globe, Mail, Users, Music, Coffee, Beer, Flag, Heart } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
+import { trackSave } from '@/components/FacebookPixel'
 import type { Database } from '@/lib/database.types'
 
 type Venue = Database['public']['Tables']['venues']['Row']
@@ -93,6 +94,9 @@ export default function VenueCard({ venue, onReport }: VenueCardProps) {
           user_id: currentUser.id,
           saved_venue_id: venue.id
         })
+      
+      // Track save action for Facebook Pixel
+      trackSave('venue')
     }
     setIsSaved(!isSaved)
   }

@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
 import { getLastActiveStatus } from '@/lib/auth-helpers'
 import { formatLocationDisplay } from '@/lib/zipcode-utils'
+import { trackSave, trackContact } from '@/components/FacebookPixel'
 
 interface ProfileCardProps {
   profile: any
@@ -57,6 +58,9 @@ export default function ProfileCard({ profile }: ProfileCardProps) {
           user_id: currentUser.id,
           saved_user_id: profile.user_id
         })
+      
+      // Track save action for Facebook Pixel
+      trackSave('musician')
     }
     setIsSaved(!isSaved)
   }
@@ -66,6 +70,10 @@ export default function ProfileCard({ profile }: ProfileCardProps) {
       router.push('/auth/login')
       return
     }
+    
+    // Track contact action for Facebook Pixel
+    trackContact('message')
+    
     router.push(`/dashboard/messages/${profile.user_id}`)
   }
 

@@ -22,6 +22,7 @@
     "next": "^15.5.0",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
+    "react-facebook-pixel": "^1.0.4",
     "react-hook-form": "^7.53.0",
     "react-markdown": "^10.1.0",
     "reading-time": "^1.5.0",

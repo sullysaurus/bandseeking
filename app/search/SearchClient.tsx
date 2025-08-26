@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { supabase } from '@/lib/supabase'
+import { trackSearch } from '@/components/FacebookPixel'
 import Navigation from '@/components/layout/Navigation'
 import ProfileCard from '@/components/ProfileCard'
 import Button from '@/components/ui/Button'
@@ -63,6 +64,9 @@ export default function SearchClient() {
 
     // Search query
     if (searchQuery) {
+      // Track search event for Facebook Pixel
+      trackSearch(searchQuery)
+      
       filtered = filtered.filter(profile => {
         const searchLower = searchQuery.toLowerCase()
         return (
@@ -215,6 +219,20 @@ export default function SearchClient() {
           <div className="mb-6">
             <h1 className="text-4xl font-bold mb-2 text-black">Find Musicians</h1>
             <p className="text-gray-600 text-lg">Discover talented musicians ready to collaborate</p>
+          </div>
+
+          {/* Main Search Input */}
+          <div className="mb-6">
+            <div className="relative">
+              <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+              <input
+                type="text"
+                placeholder="Search by name, username, bio, or influences..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-lg"
+              />
+            </div>
           </div>
 
         {/* Compact Search Controls */}

@@ -6,6 +6,7 @@ import { supabase } from '@/lib/supabase'
 import { ensureUserRecord, getUserProfile } from '@/lib/auth-helpers'
 import { instruments, genres, seekingOptions, experienceLevels, availabilityOptions } from '@/lib/utils'
 import { isValidYouTubeUrl, normalizeYouTubeUrl, getYouTubeEmbedUrl } from '@/lib/youtube-utils'
+import { trackProfileComplete } from '@/components/FacebookPixel'
 import Image from 'next/image'
 import Button from '@/components/ui/Button'
 import Input from '@/components/ui/Input'
@@ -268,6 +269,9 @@ export default function OnboardingPage() {
       }
 
       console.log('Profile completion flag updated')
+      
+      // Track profile completion for Facebook Pixel
+      trackProfileComplete()
       
       // Redirect to their profile page to see the complete profile
       router.push(`/profile/${formData.username}`)
