@@ -13,6 +13,7 @@ export default function DashboardPage() {
   const [user, setUser] = useState<any>(null)
   const [profile, setProfile] = useState<any>(null)
   const [savedCount, setSavedCount] = useState(0)
+  const [savedVenuesCount, setSavedVenuesCount] = useState(0)
   const [messageCount, setMessageCount] = useState(0)
   const [recentMusicians, setRecentMusicians] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
@@ -40,6 +41,13 @@ export default function DashboardPage() {
         .eq('user_id', userData.id)
 
       setSavedCount(savedProfilesCount || 0)
+
+      const { count: savedVenuesCountData } = await supabase
+        .from('saved_venues')
+        .select('*', { count: 'exact', head: true })
+        .eq('user_id', userData.id)
+
+      setSavedVenuesCount(savedVenuesCountData || 0)
 
       const { count: unreadCount } = await supabase
         .from('messages')
@@ -141,7 +149,7 @@ export default function DashboardPage() {
           {/* Quick Stats */}
           <section className="mb-8">
             <h2 className="text-2xl font-black mb-4">Your Overview</h2>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
               <div className="bg-white border-4 border-black p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
                 <h3 className="font-black text-sm mb-2">Profile Status</h3>
                 <div className="flex items-center gap-2">
@@ -156,6 +164,13 @@ export default function DashboardPage() {
                 <div className="bg-white border-4 border-black p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] group-hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all h-full">
                   <h3 className="font-black text-sm mb-2">Saved Musicians</h3>
                   <p className="text-2xl font-black text-cyan-600">{savedCount}</p>
+                </div>
+              </Link>
+
+              <Link href="/dashboard/saved-venues" className="block group" aria-label={`View ${savedVenuesCount} saved venues`}>
+                <div className="bg-white border-4 border-black p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] group-hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all h-full">
+                  <h3 className="font-black text-sm mb-2">Saved Venues</h3>
+                  <p className="text-2xl font-black text-orange-600">{savedVenuesCount}</p>
                 </div>
               </Link>
 
@@ -345,7 +360,7 @@ export default function DashboardPage() {
           {/* Secondary Actions */}
           <section>
             <h2 className="text-2xl font-black mb-4">Your Activity</h2>
-            <div className="grid md:grid-cols-3 gap-4">
+            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
               <Link href="/dashboard/messages" className="block group" aria-label={`View messages${messageCount > 0 ? `, ${messageCount} unread` : ''}`}>
                 <div className="bg-cyan-300 border-4 border-black p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] group-hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all h-full relative">
                   <h3 className="text-lg font-black mb-2">Messages</h3>
@@ -361,9 +376,17 @@ export default function DashboardPage() {
 
               <Link href="/dashboard/saved" className="block group" aria-label={`View ${savedCount} saved musicians`}>
                 <div className="bg-yellow-300 border-4 border-black p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] group-hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all h-full">
-                  <h3 className="text-lg font-black mb-2">Saved</h3>
+                  <h3 className="text-lg font-black mb-2">Saved Musicians</h3>
                   <p className="font-bold text-sm mb-3">Musicians you&apos;ve bookmarked</p>
                   <div className="text-sm font-black">View Collection ({savedCount})</div>
+                </div>
+              </Link>
+
+              <Link href="/dashboard/saved-venues" className="block group" aria-label={`View ${savedVenuesCount} saved venues`}>
+                <div className="bg-orange-300 border-4 border-black p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] group-hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all h-full">
+                  <h3 className="text-lg font-black mb-2">Saved Venues</h3>
+                  <p className="font-bold text-sm mb-3">Venues you&apos;ve bookmarked</p>
+                  <div className="text-sm font-black">View Collection ({savedVenuesCount})</div>
                 </div>
               </Link>
 

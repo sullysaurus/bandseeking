@@ -3,9 +3,8 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
-import Navigation from '@/components/layout/Navigation'
 import Button from '@/components/ui/Button'
-import { Users, Shield, BarChart3, Settings, AlertTriangle, Database } from 'lucide-react'
+import { Users, Shield, BarChart3, Settings, AlertTriangle, Database, MapPin, Flag } from 'lucide-react'
 import Link from 'next/link'
 
 export default function AdminDashboard() {
@@ -16,7 +15,8 @@ export default function AdminDashboard() {
     totalUsers: 0,
     totalProfiles: 0,
     publishedProfiles: 0,
-    totalMessages: 0
+    totalMessages: 0,
+    totalVenues: 0
   })
 
   useEffect(() => {
@@ -71,11 +71,17 @@ export default function AdminDashboard() {
         .from('messages')
         .select('*', { count: 'exact', head: true })
 
+      // Get total venues
+      const { count: totalVenues } = await supabase
+        .from('venues')
+        .select('*', { count: 'exact', head: true })
+
       setStats({
         totalUsers: totalUsers || 0,
         totalProfiles: totalProfiles || 0,
         publishedProfiles: publishedProfiles || 0,
-        totalMessages: totalMessages || 0
+        totalMessages: totalMessages || 0,
+        totalVenues: totalVenues || 0
       })
     } catch (error) {
       console.error('Error fetching stats:', error)
@@ -84,23 +90,19 @@ export default function AdminDashboard() {
 
   if (loading) {
     return (
-      <>
-        <Navigation />
-        <div className="min-h-screen bg-purple-400 flex items-center justify-center">
-          <div className="bg-white border-8 border-black p-8 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
-            <div className="text-center">
-              <div className="w-12 h-12 border-4 border-black border-t-transparent animate-spin mx-auto mb-4"></div>
-              <p className="font-black text-xl">CHECKING ADMIN ACCESS...</p>
-            </div>
+      <div className="min-h-screen bg-purple-400 flex items-center justify-center">
+        <div className="bg-white border-8 border-black p-8 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
+          <div className="text-center">
+            <div className="w-12 h-12 border-4 border-black border-t-transparent animate-spin mx-auto mb-4"></div>
+            <p className="font-black text-xl">CHECKING ADMIN ACCESS...</p>
           </div>
         </div>
-      </>
+      </div>
     )
   }
 
   return (
     <>
-      <Navigation />
       <div className="min-h-screen bg-purple-400">
         <div className="max-w-7xl mx-auto px-4 py-8">
           {/* Header */}
@@ -148,13 +150,15 @@ export default function AdminDashboard() {
               </div>
             </div>
 
-            <div className="bg-white rounded-xl border border-gray-200 p-6">
+            <div className="bg-white border-4 border-black p-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-gray-600">Total Messages</p>
-                  <p className="text-3xl font-bold text-black">{stats.totalMessages}</p>
+                  <p className="font-black text-sm mb-1">TOTAL VENUES</p>
+                  <p className="text-4xl font-black text-purple-600">{stats.totalVenues}</p>
                 </div>
-                <Settings className="w-8 h-8 text-orange-600" />
+                <div className="bg-purple-300 border-2 border-black p-2">
+                  <MapPin className="w-8 h-8 text-black" />
+                </div>
               </div>
             </div>
           </div>
@@ -171,6 +175,20 @@ export default function AdminDashboard() {
                 <p className="text-gray-600 mb-4">View, edit, and delete user accounts</p>
                 <Button variant="secondary" className="w-full">
                   Manage Users
+                </Button>
+              </div>
+            </Link>
+
+            {/* Venue Management */}
+            <Link href="/admin/venues" className="block">
+              <div className="bg-white rounded-xl border border-gray-200 p-6 hover:border-purple-500/50 hover:shadow-lg transition-all duration-300 group">
+                <div className="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center mb-4 group-hover:bg-purple-200 transition-colors">
+                  <MapPin className="w-6 h-6 text-purple-600" />
+                </div>
+                <h3 className="text-xl font-semibold text-black mb-2">Venue Management</h3>
+                <p className="text-gray-600 mb-4">Add, edit, and delete venue listings</p>
+                <Button variant="secondary" className="w-full">
+                  Manage Venues
                 </Button>
               </div>
             </Link>
@@ -217,17 +235,33 @@ export default function AdminDashboard() {
               </div>
             </Link>
 
-            {/* System Settings */}
-            <div className="bg-white rounded-xl border border-gray-200 p-6 hover:border-gray-500/50 hover:shadow-lg transition-all duration-300 group">
-              <div className="w-12 h-12 bg-gray-100 rounded-xl flex items-center justify-center mb-4 group-hover:bg-gray-200 transition-colors">
-                <Shield className="w-6 h-6 text-gray-600" />
+            {/* Venue Reports */}
+            <Link href="/admin/reports" className="block">
+              <div className="bg-white rounded-xl border border-gray-200 p-6 hover:border-red-500/50 hover:shadow-lg transition-all duration-300 group">
+                <div className="w-12 h-12 bg-red-100 rounded-xl flex items-center justify-center mb-4 group-hover:bg-red-200 transition-colors">
+                  <Flag className="w-6 h-6 text-red-600" />
+                </div>
+                <h3 className="text-xl font-semibold text-black mb-2">Venue Reports</h3>
+                <p className="text-gray-600 mb-4">Review user-submitted venue reports</p>
+                <Button variant="secondary" className="w-full">
+                  View Reports
+                </Button>
               </div>
-              <h3 className="text-xl font-semibold text-black mb-2">System Settings</h3>
-              <p className="text-gray-600 mb-4">Configure application settings</p>
-              <Button variant="secondary" className="w-full">
-                Settings
-              </Button>
-            </div>
+            </Link>
+
+            {/* System Settings */}
+            <Link href="/admin/settings" className="block">
+              <div className="bg-white rounded-xl border border-gray-200 p-6 hover:border-gray-500/50 hover:shadow-lg transition-all duration-300 group">
+                <div className="w-12 h-12 bg-gray-100 rounded-xl flex items-center justify-center mb-4 group-hover:bg-gray-200 transition-colors">
+                  <Settings className="w-6 h-6 text-gray-600" />
+                </div>
+                <h3 className="text-xl font-semibold text-black mb-2">System Settings</h3>
+                <p className="text-gray-600 mb-4">Configure application settings</p>
+                <Button variant="secondary" className="w-full">
+                  Settings
+                </Button>
+              </div>
+            </Link>
 
             {/* Emergency Actions */}
             <div className="bg-white rounded-xl border border-red-200 p-6 hover:border-red-500/50 hover:shadow-lg transition-all duration-300 group">

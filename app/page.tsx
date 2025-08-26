@@ -1,6 +1,6 @@
 import { Metadata } from 'next'
 import { Suspense } from 'react'
-import { getRecentProfiles } from '@/lib/server-functions'
+import { getRecentProfiles, getRandomVenues } from '@/lib/server-functions'
 import HomeClient from './HomeClient'
 import LoadingCards from '@/components/LoadingCards'
 
@@ -41,8 +41,11 @@ export const metadata: Metadata = {
 export const dynamic = 'force-dynamic'
 
 export default async function HomePage() {
-  // Fetch profiles server-side
-  const profiles = await getRecentProfiles(6)
+  // Fetch profiles and venues server-side
+  const [profiles, venues] = await Promise.all([
+    getRecentProfiles(6),
+    getRandomVenues(4)
+  ])
   
-  return <HomeClient initialProfiles={profiles} />
+  return <HomeClient initialProfiles={profiles} initialVenues={venues} />
 }

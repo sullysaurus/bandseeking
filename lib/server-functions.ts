@@ -84,3 +84,25 @@ export async function getAllPublishedProfiles() {
     return []
   }
 }
+
+export async function getRandomVenues(limit = 4) {
+  try {
+    console.log('Fetching random venues with limit:', limit)
+    const { data, error } = await supabaseServer
+      .from('venues')
+      .select('*')
+      .limit(limit)
+      .order('created_at', { ascending: false })
+
+    if (error) {
+      console.error('Error fetching venues:', error)
+      return []
+    }
+
+    console.log('Found venues:', data?.length || 0)
+    return data || []
+  } catch (error) {
+    console.error('Error in getRandomVenues:', error)
+    return []
+  }
+}

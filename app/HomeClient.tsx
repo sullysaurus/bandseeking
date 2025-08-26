@@ -29,12 +29,14 @@ const getActiveStatus = (lastActive: string | null) => {
 
 interface HomeClientProps {
   initialProfiles: any[]
+  initialVenues: any[]
 }
 
-export default function HomeClient({ initialProfiles }: HomeClientProps) {
+export default function HomeClient({ initialProfiles, initialVenues }: HomeClientProps) {
   const router = useRouter()
   const [loading, setLoading] = useState(true)
   const [recentMusicians, setRecentMusicians] = useState<any[]>(initialProfiles || [])
+  const [featuredVenues, setFeaturedVenues] = useState<any[]>(initialVenues || [])
 
   useEffect(() => {
     checkAuthStatus()
@@ -191,95 +193,81 @@ export default function HomeClient({ initialProfiles }: HomeClientProps) {
                 {recentMusicians.slice(0, 4).map((musician) => (
                   <div key={musician.id} className="bg-white border-4 border-black p-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] transition-all">
                     
-                    {/* Header with Photo and Name */}
-                    <div className="flex items-start gap-4 mb-4">
-                      {/* Profile Photo */}
-                      <div className="flex-shrink-0">
-                        {musician.profile_image_url ? (
-                          <Image
-                            src={musician.profile_image_url}
-                            alt={musician.user.full_name}
-                            width={80}
-                            height={80}
-                            className="w-20 h-20 border-4 border-black object-cover"
-                          />
-                        ) : (
-                          <div className="w-20 h-20 border-4 border-black bg-gradient-to-br from-pink-400 to-purple-500 flex items-center justify-center">
-                            <div className="text-2xl font-black text-white">
-                              {musician.user.full_name.charAt(0).toUpperCase()}
+                    {/* Musician Header */}
+                    <div className="mb-4">
+                      <div className="flex items-start gap-4 mb-3">
+                        {/* Profile Photo */}
+                        <div className="flex-shrink-0">
+                          {musician.profile_image_url ? (
+                            <Image
+                              src={musician.profile_image_url}
+                              alt={musician.user.full_name}
+                              width={64}
+                              height={64}
+                              className="w-16 h-16 border-4 border-black object-cover"
+                            />
+                          ) : (
+                            <div className="w-16 h-16 border-4 border-black bg-gradient-to-br from-pink-400 to-purple-500 flex items-center justify-center">
+                              <div className="text-xl font-black text-white">
+                                {musician.user.full_name.charAt(0).toUpperCase()}
+                              </div>
                             </div>
-                          </div>
-                        )}
-                      </div>
-
-                      {/* Name and Basic Info */}
-                      <div className="flex-1 min-w-0">
-                        <h3 className="font-black text-xl mb-2 leading-tight">{musician.user.full_name.toUpperCase()}</h3>
-                        <p className="font-bold text-sm text-gray-600 mb-2">@{musician.user.username}</p>
-                        
-                        {/* Primary Tags Row */}
-                        <div className="flex flex-wrap gap-2">
-                          {/* Last Active Status */}
-                          {(() => {
-                            const activeStatus = getActiveStatus(musician.user.last_active)
-                            return (
-                              <span className={`px-2 py-1 border-2 border-black font-black text-xs ${
-                                activeStatus.status === 'online' ? 'bg-green-400' :
-                                activeStatus.status === 'recent' ? 'bg-yellow-400' :
-                                activeStatus.status === 'hours' ? 'bg-orange-400' :
-                                activeStatus.status === 'days' ? 'bg-red-400' :
-                                'bg-gray-400'
-                              }`}>
-                                {activeStatus.text}
-                              </span>
-                            )
-                          })()}
-                          
-                          {/* Instrument Tag */}
-                          <span className="px-2 py-1 bg-pink-400 border-2 border-black font-black text-xs">
-                            {musician.main_instrument?.toUpperCase() || 'MUSICIAN'}
-                          </span>
-                          
-                          {/* First Secondary Instrument */}
-                          {musician.secondary_instruments && musician.secondary_instruments.length > 0 && (
-                            <span className="px-2 py-1 bg-purple-300 border-2 border-black font-black text-xs">
-                              {musician.secondary_instruments[0].toUpperCase()}
-                            </span>
-                          )}
-                          
-                          {/* Additional Instruments Count */}
-                          {musician.secondary_instruments && musician.secondary_instruments.length > 1 && (
-                            <span className="px-2 py-1 bg-gray-300 border-2 border-black font-black text-xs">
-                              +{musician.secondary_instruments.length - 1} MORE
-                            </span>
-                          )}
-                          
-                          {/* Experience Level Tag */}
-                          {musician.experience_level && (
-                            <span className={`px-2 py-1 border-2 border-black font-black text-xs ${
-                              musician.experience_level === 'beginner' ? 'bg-green-300' :
-                              musician.experience_level === 'intermediate' ? 'bg-yellow-300' :
-                              musician.experience_level === 'advanced' ? 'bg-orange-400' :
-                              musician.experience_level === 'professional' ? 'bg-red-400 text-white' :
-                              'bg-gray-300'
-                            }`}>
-                              {musician.experience_level.toUpperCase()}
-                            </span>
                           )}
                         </div>
+
+                        {/* Name and Username */}
+                        <div className="flex-1 min-w-0">
+                          <h3 className="font-black text-xl mb-1 leading-tight">{musician.user.full_name.toUpperCase()}</h3>
+                          <p className="font-bold text-sm text-gray-600">@{musician.user.username}</p>
+                        </div>
+                      </div>
+
+                      {/* Key Tags Row */}
+                      <div className="flex flex-wrap gap-2">
+                        {/* Last Active Status */}
+                        {(() => {
+                          const activeStatus = getActiveStatus(musician.user.last_active)
+                          return (
+                            <span className={`px-2 py-1 border-2 border-black font-black text-xs ${
+                              activeStatus.status === 'online' ? 'bg-green-400' :
+                              activeStatus.status === 'recent' ? 'bg-yellow-400' :
+                              activeStatus.status === 'hours' ? 'bg-orange-400' :
+                              activeStatus.status === 'days' ? 'bg-red-400' :
+                              'bg-gray-400'
+                            }`}>
+                              {activeStatus.text}
+                            </span>
+                          )
+                        })()}
+                        
+                        {/* Primary Instrument */}
+                        <span className="px-2 py-1 bg-pink-400 border-2 border-black font-black text-xs">
+                          {musician.main_instrument?.toUpperCase() || 'MUSICIAN'}
+                        </span>
+                        
+                        {/* Experience Level */}
+                        {musician.experience_level && (
+                          <span className={`px-2 py-1 border-2 border-black font-black text-xs ${
+                            musician.experience_level === 'beginner' ? 'bg-green-300' :
+                            musician.experience_level === 'intermediate' ? 'bg-yellow-300' :
+                            musician.experience_level === 'advanced' ? 'bg-orange-400' :
+                            musician.experience_level === 'professional' ? 'bg-red-400 text-white' :
+                            'bg-gray-300'
+                          }`}>
+                            {musician.experience_level.toUpperCase()}
+                          </span>
+                        )}
+
+                        {/* Location */}
+                        {musician.user.city && (
+                          <span className="px-2 py-1 bg-cyan-300 border-2 border-black font-black text-xs">
+                            📍 {musician.user.city?.toUpperCase()}, {musician.user.state?.toUpperCase()}
+                          </span>
+                        )}
                       </div>
                     </div>
 
-                    {/* Location */}
-                    {musician.user.zip_code && (
-                      <div className="mb-4">
-                        <span className="px-2 py-1 bg-cyan-300 border-2 border-black font-black text-xs">
-                          📍 {musician.user.city?.toUpperCase()}, {musician.user.state?.toUpperCase()}
-                        </span>
-                      </div>
-                    )}
-
-                    {/* Bio - Key selling point */}
+                    {/* Bio in highlighted box */}
                     {musician.bio && (
                       <div className="mb-4 p-3 bg-gray-50 border-2 border-black">
                         <p className="font-bold text-sm line-clamp-3">
@@ -288,44 +276,44 @@ export default function HomeClient({ initialProfiles }: HomeClientProps) {
                       </div>
                     )}
 
-                    {/* Seeking Section */}
-                    {musician.seeking && musician.seeking.length > 0 && (
+                    {/* Instruments Section */}
+                    {musician.secondary_instruments && musician.secondary_instruments.length > 0 && (
                       <div className="mb-4">
-                        <p className="font-black text-sm mb-2">LOOKING FOR:</p>
+                        <p className="font-black text-sm mb-2">ALSO PLAYS:</p>
                         <div className="flex flex-wrap gap-1">
-                          {musician.seeking.slice(0, 4).map((item: string, index: number) => (
+                          {musician.secondary_instruments.slice(0, 3).map((instrument: string, index: number) => (
                             <span
                               key={index}
                               className="px-2 py-1 bg-purple-300 border-2 border-black font-black text-xs"
                             >
-                              {item.toUpperCase()}
+                              {instrument.toUpperCase()}
                             </span>
                           ))}
-                          {musician.seeking.length > 4 && (
+                          {musician.secondary_instruments.length > 3 && (
                             <span className="px-2 py-1 bg-gray-200 border-2 border-black font-black text-xs">
-                              +{musician.seeking.length - 4} MORE
+                              +{musician.secondary_instruments.length - 3} MORE
                             </span>
                           )}
                         </div>
                       </div>
                     )}
 
-                    {/* Genres - Secondary info */}
-                    {musician.genres && musician.genres.length > 0 && (
+                    {/* Looking For */}
+                    {musician.seeking && musician.seeking.length > 0 && (
                       <div className="mb-4">
-                        <p className="font-black text-sm mb-2">GENRES:</p>
+                        <p className="font-black text-sm mb-2">LOOKING FOR:</p>
                         <div className="flex flex-wrap gap-1">
-                          {musician.genres.slice(0, 4).map((genre: string, index: number) => (
+                          {musician.seeking.slice(0, 3).map((item: string, index: number) => (
                             <span
                               key={index}
-                              className="px-2 py-1 bg-blue-300 border-2 border-black font-black text-xs"
+                              className="px-2 py-1 bg-lime-300 border-2 border-black font-black text-xs"
                             >
-                              {genre.toUpperCase()}
+                              {item.toUpperCase()}
                             </span>
                           ))}
-                          {musician.genres.length > 4 && (
+                          {musician.seeking.length > 3 && (
                             <span className="px-2 py-1 bg-gray-200 border-2 border-black font-black text-xs">
-                              +{musician.genres.length - 4} MORE
+                              +{musician.seeking.length - 3} MORE
                             </span>
                           )}
                         </div>
@@ -378,6 +366,125 @@ export default function HomeClient({ initialProfiles }: HomeClientProps) {
             )}
           </div>
 
+          {/* Featured Venues */}
+          <div className="mb-8">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-2xl md:text-3xl font-black">FEATURED VENUES</h2>
+              <Link href="/venues" className="px-4 py-2 bg-cyan-300 border-2 border-black font-black text-sm hover:bg-cyan-400 transition-colors shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+                VIEW ALL VENUES →
+              </Link>
+            </div>
+            
+            {featuredVenues.length > 0 ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
+                {featuredVenues.slice(0, 4).map((venue) => (
+                  <div key={venue.id} className="bg-white border-4 border-black p-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] transition-all">
+                    
+                    {/* Venue Header */}
+                    <div className="mb-4">
+                      <h3 className="font-black text-xl mb-2 leading-tight">{venue.name.toUpperCase()}</h3>
+                      <div className="flex flex-wrap gap-2 mb-2">
+                        {/* Venue Type Badge */}
+                        <span className={`px-2 py-1 border-2 border-black font-black text-xs ${
+                          venue.venue_type === 'music_venue' ? 'bg-purple-400' :
+                          venue.venue_type === 'brewery' ? 'bg-orange-400' :
+                          venue.venue_type === 'coffee_shop' ? 'bg-amber-400' :
+                          venue.venue_type === 'restaurant' ? 'bg-red-400' :
+                          venue.venue_type === 'bar' ? 'bg-blue-400' :
+                          venue.venue_type === 'event_space' ? 'bg-pink-400' :
+                          venue.venue_type === 'amphitheater' ? 'bg-green-400' :
+                          venue.venue_type === 'theater' ? 'bg-indigo-400' :
+                          'bg-gray-400'
+                        }`}>
+                          {venue.venue_type?.replace('_', ' ').toUpperCase()}
+                        </span>
+                        
+                        {/* Location */}
+                        <span className="px-2 py-1 bg-cyan-300 border-2 border-black font-black text-xs">
+                          📍 {venue.city?.toUpperCase()}, {venue.state?.toUpperCase()}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Address */}
+                    <div className="mb-4 p-3 bg-gray-50 border-2 border-black">
+                      <p className="font-bold text-sm">
+                        {venue.address}
+                      </p>
+                    </div>
+
+                    {/* Capacity */}
+                    {venue.capacity && (
+                      <div className="mb-4">
+                        <p className="font-black text-sm mb-2">CAPACITY:</p>
+                        <span className="px-2 py-1 bg-green-300 border-2 border-black font-black text-xs">
+                          {venue.capacity} PEOPLE
+                        </span>
+                      </div>
+                    )}
+
+                    {/* Genres */}
+                    {venue.genres && venue.genres.length > 0 && (
+                      <div className="mb-4">
+                        <p className="font-black text-sm mb-2">GENRES:</p>
+                        <div className="flex flex-wrap gap-1">
+                          {venue.genres.slice(0, 3).map((genre: string, index: number) => (
+                            <span
+                              key={index}
+                              className="px-2 py-1 bg-blue-300 border-2 border-black font-black text-xs"
+                            >
+                              {genre.toUpperCase()}
+                            </span>
+                          ))}
+                          {venue.genres.length > 3 && (
+                            <span className="px-2 py-1 bg-gray-200 border-2 border-black font-black text-xs">
+                              +{venue.genres.length - 3} MORE
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Action Buttons */}
+                    <div className="flex gap-2 pt-2 border-t-2 border-black">
+                      <Link href="/venues" className="flex-1 px-3 py-1 bg-black text-white border-2 border-black font-black text-sm text-center hover:bg-cyan-400 hover:text-black transition-colors">
+                        VIEW DETAILS →
+                      </Link>
+                      {venue.website && (
+                        <a 
+                          href={venue.website}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex-1 px-3 py-1 bg-yellow-300 border-2 border-black font-black text-sm text-center hover:bg-yellow-400 transition-colors"
+                        >
+                          WEBSITE →
+                        </a>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              /* No venues fallback */
+              <div className="text-center p-8 bg-white border-2 border-black">
+                <h3 className="text-xl font-black mb-2">NO VENUES YET</h3>
+                <p className="font-bold text-gray-600 mb-4">We&apos;re working on adding local venues!</p>
+                <Link href="/venues" className="inline-block px-6 py-2 bg-cyan-300 border-2 border-black font-black text-sm hover:bg-cyan-400 transition-colors shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+                  EXPLORE VENUES →
+                </Link>
+              </div>
+            )}
+
+            {/* Call to Action */}
+            {featuredVenues.length > 0 && (
+              <div className="text-center p-4 bg-cyan-100 border-2 border-black">
+                <p className="font-black text-sm mb-2">DISCOVER MORE PLACES TO PLAY?</p>
+                <Link href="/venues" className="inline-block px-6 py-2 bg-cyan-300 border-2 border-black font-black text-sm hover:bg-cyan-400 transition-colors shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+                  BROWSE ALL VENUES →
+                </Link>
+              </div>
+            )}
+          </div>
 
           {/* Quick Links */}
           <div className="bg-black text-white border-4 border-black p-6 md:p-8 shadow-[4px_4px_0px_0px_rgba(255,255,255,1)]">

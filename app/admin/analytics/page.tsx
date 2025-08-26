@@ -3,7 +3,6 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
-import Navigation from '@/components/layout/Navigation'
 import { BarChart3, ArrowLeft, Users, Database, MessageSquare, TrendingUp } from 'lucide-react'
 import Link from 'next/link'
 
@@ -144,7 +143,6 @@ export default function AdminAnalyticsPage() {
   if (loading) {
     return (
       <>
-        <Navigation />
         <div className="min-h-screen bg-gray-50 flex items-center justify-center">
           <div className="text-center">
             <div className="w-8 h-8 border-2 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
@@ -158,7 +156,6 @@ export default function AdminAnalyticsPage() {
   if (!analytics) {
     return (
       <>
-        <Navigation />
         <div className="min-h-screen bg-gray-50 flex items-center justify-center">
           <div className="text-center">
             <p className="text-gray-600">Failed to load analytics data</p>
@@ -170,7 +167,6 @@ export default function AdminAnalyticsPage() {
 
   return (
     <>
-      <Navigation />
       <div className="min-h-screen bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 py-8">
           {/* Header */}

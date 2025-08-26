@@ -3,7 +3,6 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
-import Navigation from '@/components/layout/Navigation'
 import Button from '@/components/ui/Button'
 import Input from '@/components/ui/Input'
 import { MessageSquare, Search, Trash2, AlertTriangle, ArrowLeft, Clock } from 'lucide-react'
@@ -142,7 +141,6 @@ export default function AdminMessagesPage() {
   if (loading) {
     return (
       <>
-        <Navigation />
         <div className="min-h-screen bg-gray-50 flex items-center justify-center">
           <div className="text-center">
             <div className="w-8 h-8 border-2 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
@@ -155,7 +153,6 @@ export default function AdminMessagesPage() {
 
   return (
     <>
-      <Navigation />
       <div className="min-h-screen bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 py-8">
           {/* Header */}
