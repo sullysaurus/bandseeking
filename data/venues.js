@@ -1,4 +1,4 @@
-// // Raleigh-Durham Area Music Venues Database
+// // Music Venue Database
 // // This file contains all venue data for easy management and updates
 
 // export const venues = [
@@ -444,7 +444,7 @@
 //   return true
 // }
 
-// Raleigh-Durham Area Music Venues Database
+// Raleigh-Durham Area Music Venue Database
 // This file contains all venue data for easy management and updates
 // Complete database with 100 venues
 
