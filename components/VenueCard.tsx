@@ -130,9 +130,15 @@ export default function VenueCard({ venue, onReport }: VenueCardProps) {
             </button>
             {onReport && (
               <button
-                onClick={() => onReport(venue.id, venue.name)}
+                onClick={() => {
+                  if (!currentUser) {
+                    router.push('/auth/login')
+                    return
+                  }
+                  onReport(venue.id, venue.name)
+                }}
                 className="p-1 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded transition-colors"
-                title="Report inaccurate information"
+                title={currentUser ? "Report inaccurate information" : "Sign in to report inaccurate information"}
               >
                 <Flag className="w-4 h-4" />
               </button>

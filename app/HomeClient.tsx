@@ -29,14 +29,12 @@ const getActiveStatus = (lastActive: string | null) => {
 
 interface HomeClientProps {
   initialProfiles: any[]
-  initialVenues: any[]
 }
 
-export default function HomeClient({ initialProfiles, initialVenues }: HomeClientProps) {
+export default function HomeClient({ initialProfiles }: HomeClientProps) {
   const router = useRouter()
   const [loading, setLoading] = useState(true)
   const [recentMusicians, setRecentMusicians] = useState<any[]>(initialProfiles || [])
-  const [featuredVenues, setFeaturedVenues] = useState<any[]>(initialVenues || [])
 
   useEffect(() => {
     checkAuthStatus()
@@ -366,130 +364,11 @@ export default function HomeClient({ initialProfiles, initialVenues }: HomeClien
             )}
           </div>
 
-          {/* Featured Venues */}
-          <div className="mb-8">
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-2xl md:text-3xl font-black">FEATURED VENUES</h2>
-              <Link href="/venues" className="px-4 py-2 bg-cyan-300 border-2 border-black font-black text-sm hover:bg-cyan-400 transition-colors shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
-                VIEW ALL VENUES →
-              </Link>
-            </div>
-            
-            {featuredVenues.length > 0 ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
-                {featuredVenues.slice(0, 4).map((venue) => (
-                  <div key={venue.id} className="bg-white border-4 border-black p-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] transition-all">
-                    
-                    {/* Venue Header */}
-                    <div className="mb-4">
-                      <h3 className="font-black text-xl mb-2 leading-tight">{venue.name.toUpperCase()}</h3>
-                      <div className="flex flex-wrap gap-2 mb-2">
-                        {/* Venue Type Badge */}
-                        <span className={`px-2 py-1 border-2 border-black font-black text-xs ${
-                          venue.venue_type === 'music_venue' ? 'bg-purple-400' :
-                          venue.venue_type === 'brewery' ? 'bg-orange-400' :
-                          venue.venue_type === 'coffee_shop' ? 'bg-amber-400' :
-                          venue.venue_type === 'restaurant' ? 'bg-red-400' :
-                          venue.venue_type === 'bar' ? 'bg-blue-400' :
-                          venue.venue_type === 'event_space' ? 'bg-pink-400' :
-                          venue.venue_type === 'amphitheater' ? 'bg-green-400' :
-                          venue.venue_type === 'theater' ? 'bg-indigo-400' :
-                          'bg-gray-400'
-                        }`}>
-                          {venue.venue_type?.replace('_', ' ').toUpperCase()}
-                        </span>
-                        
-                        {/* Location */}
-                        <span className="px-2 py-1 bg-cyan-300 border-2 border-black font-black text-xs">
-                          📍 {venue.city?.toUpperCase()}, {venue.state?.toUpperCase()}
-                        </span>
-                      </div>
-                    </div>
-
-                    {/* Address */}
-                    <div className="mb-4 p-3 bg-gray-50 border-2 border-black">
-                      <p className="font-bold text-sm">
-                        {venue.address}
-                      </p>
-                    </div>
-
-                    {/* Capacity */}
-                    {venue.capacity && (
-                      <div className="mb-4">
-                        <p className="font-black text-sm mb-2">CAPACITY:</p>
-                        <span className="px-2 py-1 bg-green-300 border-2 border-black font-black text-xs">
-                          {venue.capacity} PEOPLE
-                        </span>
-                      </div>
-                    )}
-
-                    {/* Genres */}
-                    {venue.genres && venue.genres.length > 0 && (
-                      <div className="mb-4">
-                        <p className="font-black text-sm mb-2">GENRES:</p>
-                        <div className="flex flex-wrap gap-1">
-                          {venue.genres.slice(0, 3).map((genre: string, index: number) => (
-                            <span
-                              key={index}
-                              className="px-2 py-1 bg-blue-300 border-2 border-black font-black text-xs"
-                            >
-                              {genre.toUpperCase()}
-                            </span>
-                          ))}
-                          {venue.genres.length > 3 && (
-                            <span className="px-2 py-1 bg-gray-200 border-2 border-black font-black text-xs">
-                              +{venue.genres.length - 3} MORE
-                            </span>
-                          )}
-                        </div>
-                      </div>
-                    )}
-
-                    {/* Action Buttons */}
-                    <div className="flex gap-2 pt-2 border-t-2 border-black">
-                      <Link href="/venues" className="flex-1 px-3 py-1 bg-black text-white border-2 border-black font-black text-sm text-center hover:bg-cyan-400 hover:text-black transition-colors">
-                        VIEW DETAILS →
-                      </Link>
-                      {venue.website && (
-                        <a 
-                          href={venue.website}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="flex-1 px-3 py-1 bg-yellow-300 border-2 border-black font-black text-sm text-center hover:bg-yellow-400 transition-colors"
-                        >
-                          WEBSITE →
-                        </a>
-                      )}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              /* No venues fallback */
-              <div className="text-center p-8 bg-white border-2 border-black">
-                <h3 className="text-xl font-black mb-2">NO VENUES YET</h3>
-                <p className="font-bold text-gray-600 mb-4">We&apos;re working on adding local venues!</p>
-                <Link href="/venues" className="inline-block px-6 py-2 bg-cyan-300 border-2 border-black font-black text-sm hover:bg-cyan-400 transition-colors shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
-                  EXPLORE VENUES →
-                </Link>
-              </div>
-            )}
-
-            {/* Call to Action */}
-            {featuredVenues.length > 0 && (
-              <div className="text-center p-4 bg-cyan-100 border-2 border-black">
-                <p className="font-black text-sm mb-2">DISCOVER MORE PLACES TO PLAY?</p>
-                <Link href="/venues" className="inline-block px-6 py-2 bg-cyan-300 border-2 border-black font-black text-sm hover:bg-cyan-400 transition-colors shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
-                  BROWSE ALL VENUES →
-                </Link>
-              </div>
-            )}
-          </div>
 
           {/* Quick Links */}
           <div className="bg-black text-white border-4 border-black p-6 md:p-8 shadow-[4px_4px_0px_0px_rgba(255,255,255,1)]">
             <h3 className="text-2xl md:text-3xl font-black mb-6 text-yellow-300">QUICK LINKS</h3>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
               <button 
                 onClick={() => router.push('/auth/register')}
                 className="block p-3 bg-white text-black border-2 border-white font-black hover:bg-yellow-300 transition-colors w-full text-left"
@@ -509,6 +388,12 @@ export default function HomeClient({ initialProfiles, initialVenues }: HomeClien
                 → FIND BASSISTS
               </button>
               <button 
+                onClick={() => router.push('/venues')}
+                className="block p-3 bg-orange-400 text-black border-2 border-white font-black hover:bg-orange-500 transition-colors w-full text-left"
+              >
+                → FIND VENUES
+              </button>
+              <button 
                 onClick={() => router.push('/auth/register')}
                 className="block p-3 bg-white text-black border-2 border-white font-black hover:bg-yellow-300 transition-colors w-full text-left"
               >
@@ -525,6 +410,12 @@ export default function HomeClient({ initialProfiles, initialVenues }: HomeClien
                 className="block p-3 bg-pink-400 text-black border-2 border-white font-black hover:bg-pink-500 transition-colors w-full text-left"
               >
                 → VIEW ALL
+              </button>
+              <button 
+                onClick={() => router.push('/auth/register')}
+                className="block p-3 bg-cyan-400 text-black border-2 border-white font-black hover:bg-cyan-500 transition-colors w-full text-left"
+              >
+                → JOIN NOW
               </button>
             </div>
           </div>
