@@ -37,6 +37,12 @@ export default function Footer() {
               <Link href="/search" className="block font-bold text-gray-300 hover:text-white transition-colors">
                 Browse Musicians
               </Link>
+              <Link href="/venues" className="block font-bold text-gray-300 hover:text-white transition-colors">
+                Browse Venues
+              </Link>
+              <Link href="/blog" className="block font-bold text-gray-300 hover:text-white transition-colors">
+                Blog
+              </Link>
               <Link href="/auth/register" className="block font-bold text-gray-300 hover:text-white transition-colors">
                 Join BandSeeking
               </Link>

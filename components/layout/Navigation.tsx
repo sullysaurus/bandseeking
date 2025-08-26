@@ -93,15 +93,12 @@ export default function Navigation() {
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center gap-2">
             <Link href="/search" className="px-3 py-1 bg-pink-400 border-2 border-black font-black text-sm hover:bg-pink-500 transition-colors shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
-              BROWSE MUSICIANS
+              MUSICIANS
             </Link>
             <Link href="/venues" className="px-3 py-1 bg-orange-400 border-2 border-black font-black text-sm hover:bg-orange-500 transition-colors shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
               VENUES
             </Link>
-            <Link href="/blog" className="px-3 py-1 bg-purple-400 border-2 border-black font-black text-sm hover:bg-purple-500 transition-colors shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
-              BLOG
-            </Link>
-            
+         
             {isLoading ? (
               <span className="px-3 py-1 font-black text-sm">LOADING...</span>
             ) : user ? (
@@ -160,13 +157,6 @@ export default function Navigation() {
               onClick={() => setIsMenuOpen(false)}
             >
               VENUES
-            </Link>
-            <Link
-              href="/blog"
-              className="block px-4 py-2 bg-purple-400 border-2 border-black font-black hover:bg-purple-500 transition-colors"
-              onClick={() => setIsMenuOpen(false)}
-            >
-              BLOG
             </Link>
 
             {isLoading ? (
