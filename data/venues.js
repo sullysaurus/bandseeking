@@ -1,453 +1,3 @@
-// // Music Venue Database
-// // This file contains all venue data for easy management and updates
-
-// export const venues = [
-//   // Major Music Venues
-//   {
-//     name: 'The Ritz',
-//     address: '2820 Industrial Dr',
-//     city: 'Raleigh',
-//     state: 'NC',
-//     zip_code: '27609',
-//     capacity: 1400,
-//     venue_type: 'music_venue',
-//     website: 'https://www.theritzraleigh.com',
-//     social_platform: 'Instagram',
-//     social_handle: '@theritzraleigh',
-//     contact_email: 'TheRitzRaleigh@LiveNation.com',
-//     description: 'Premier mid-size venue hosting national touring acts and emerging artists. Features a spacious main floor and balcony with excellent sound system.',
-//     genres: ['Rock', 'Indie', 'Alternative', 'Electronic']
-//   },
-//   {
-//     name: 'The Pour House Music Hall & Record Shop',
-//     address: '224 S Blount St',
-//     city: 'Raleigh',
-//     state: 'NC',
-//     zip_code: '27601',
-//     capacity: 550,
-//     venue_type: 'music_venue',
-//     website: 'https://www.thepourhousemusichall.com',
-//     social_platform: 'Instagram',
-//     social_handle: '@pourhousemusichall',
-//     contact_email: 'booking@thepourhousemusichall.com',
-//     description: 'Record shop by day, intimate music venue by night featuring indie, rock, and alternative acts. Known for supporting local and touring bands.',
-//     genres: ['Indie', 'Rock', 'Alternative', 'Punk']
-//   },
-//   {
-//     name: 'Motorco Music Hall',
-//     address: '723 Rigsbee Avenue',
-//     city: 'Durham',
-//     state: 'NC',
-//     zip_code: '27701',
-//     capacity: 450,
-//     venue_type: 'music_venue',
-//     website: 'https://motorcomusic.com',
-//     social_platform: 'Instagram',
-//     social_handle: '@motorcomusic',
-//     contact_email: 'showinfo@motorcomusic.com',
-//     description: 'Durham\'s premier independent music venue in a restored automotive dealership. Books diverse genres from indie rock to electronic and soul.',
-//     genres: ['Indie Rock', 'Electronic', 'Soul', 'Alternative']
-//   },
-//   {
-//     name: 'Lincoln Theatre',
-//     address: '126 E Cabarrus St',
-//     city: 'Raleigh',
-//     state: 'NC',
-//     zip_code: '27601',
-//     capacity: 500,
-//     venue_type: 'music_venue',
-//     website: 'https://www.lincolntheatre.com',
-//     social_platform: 'Instagram',
-//     social_handle: '@lincolntheatreraleigh',
-//     contact_email: 'booking@lincolntheatre.com',
-//     description: 'Historic venue featuring live music, comedy, and special events. Intimate atmosphere perfect for indie and alternative acts.',
-//     genres: ['Indie', 'Alternative', 'Comedy', 'Folk']
-//   },
-//   {
-//     name: 'Kings',
-//     address: '14 W Martin St',
-//     city: 'Raleigh',
-//     state: 'NC',
-//     zip_code: '27601',
-//     capacity: 300,
-//     venue_type: 'bar',
-//     website: 'https://www.kingsraleigh.com',
-//     social_platform: 'Instagram',
-//     social_handle: '@kingsraleigh',
-//     contact_email: 'music@kingsraleigh.com',
-//     description: 'Downtown venue with bowling, arcade games, and live music stage. Books indie bands, DJs, and hosts regular music nights.',
-//     genres: ['Indie', 'Electronic', 'DJ Sets']
-//   },
-//   {
-//     name: 'Red Hat Amphitheater',
-//     address: '500 S McDowell St',
-//     city: 'Raleigh',
-//     state: 'NC',
-//     zip_code: '27601',
-//     capacity: 5990,
-//     venue_type: 'amphitheater',
-//     website: 'https://www.redhatamphitheater.com',
-//     social_platform: 'Instagram',
-//     social_handle: '@redhatamp',
-//     contact_email: 'info@redhatamphitheater.com',
-//     description: 'Outdoor amphitheater in downtown Raleigh hosting major touring acts. Summer concert series features established and emerging artists.',
-//     genres: ['Rock', 'Pop', 'Country', 'Alternative']
-//   },
-//   {
-//     name: 'Cat\'s Cradle',
-//     address: '300 E Main St',
-//     city: 'Carrboro',
-//     state: 'NC',
-//     zip_code: '27510',
-//     capacity: 750,
-//     venue_type: 'music_venue',
-//     website: 'https://catscradle.com',
-//     social_platform: 'Instagram',
-//     social_handle: '@catscradlenc',
-//     contact_email: 'booking@catscradle.com',
-//     description: 'Legendary indie venue in Carrboro known for breaking emerging artists. Books alternative, indie rock, folk, and experimental acts.',
-//     genres: ['Alternative', 'Indie Rock', 'Folk', 'Experimental']
-//   },
-//   {
-//     name: 'The Pinhook',
-//     address: '117 W Main St',
-//     city: 'Durham',
-//     state: 'NC',
-//     zip_code: '27701',
-//     capacity: 150,
-//     venue_type: 'music_venue',
-//     website: 'https://www.thepinhook.com',
-//     social_platform: 'Instagram',
-//     social_handle: '@thepinhook',
-//     contact_email: 'booking@thepinhook.com',
-//     description: 'Intimate Durham venue supporting DIY music and arts. Books punk, indie, experimental, and LGBTQ+ focused events.',
-//     genres: ['Punk', 'Indie', 'Experimental', 'DIY']
-//   },
-//   {
-//     name: 'Fletcher Opera Theater',
-//     address: '2 E South St',
-//     city: 'Raleigh',
-//     state: 'NC',
-//     zip_code: '27601',
-//     capacity: 1700,
-//     venue_type: 'theater',
-//     website: 'https://www.dukeenergycenterraleigh.com',
-//     social_platform: 'Instagram',
-//     social_handle: '@dukeenergycenter',
-//     contact_email: 'rentals@dukeenergycenterraleigh.com',
-//     description: 'Part of Duke Energy Center, hosts larger touring acts and special concerts. Beautiful acoustics ideal for singer-songwriters.',
-//     genres: ['Singer-Songwriter', 'Classical', 'Folk', 'World Music']
-//   },
-//   {
-//     name: 'The Carolina Theatre',
-//     address: '309 W Morgan St',
-//     city: 'Durham',
-//     state: 'NC',
-//     zip_code: '27701',
-//     capacity: 1048,
-//     venue_type: 'theater',
-//     website: 'https://www.carolinatheatre.org',
-//     social_platform: 'Instagram',
-//     social_handle: '@carolinatheatre',
-//     contact_email: 'programs@carolinatheatre.org',
-//     description: 'Historic 1926 theater hosting films and live performances. Books folk, indie, world music, and acoustic performances.',
-//     genres: ['Folk', 'Indie', 'World Music', 'Acoustic']
-//   },
-//   {
-//     name: 'Slim\'s Downtown',
-//     address: '227 S Wilmington St',
-//     city: 'Raleigh',
-//     state: 'NC',
-//     zip_code: '27601',
-//     capacity: 200,
-//     venue_type: 'bar',
-//     website: 'https://www.slimsraleigh.com',
-//     social_platform: 'Instagram',
-//     social_handle: '@slimsdowntown',
-//     contact_email: 'booking@slimsraleigh.com',
-//     description: 'Dive bar atmosphere with regular live music featuring punk, metal, and indie rock. Supportive of local bands and touring acts.',
-//     genres: ['Punk', 'Metal', 'Indie Rock']
-//   },
-
-//   // Breweries & Taprooms
-//   {
-//     name: 'Bond Brothers Beer Company',
-//     address: '202 East Cedar Street',
-//     city: 'Cary',
-//     state: 'NC',
-//     zip_code: '27511',
-//     capacity: 250,
-//     venue_type: 'brewery',
-//     website: 'https://bondbrothersbeer.com',
-//     social_platform: 'Instagram',
-//     social_handle: '@bondbrothersbeer',
-//     contact_email: 'info@bondbrothersbeer.com',
-//     description: 'Popular Cary brewery with regular live music events. Features local singer-songwriters and indie bands on weekends.',
-//     genres: ['Singer-Songwriter', 'Indie', 'Acoustic']
-//   },
-//   {
-//     name: 'Trophy Brewing on Maywood',
-//     address: '656 Maywood Ave',
-//     city: 'Raleigh',
-//     state: 'NC',
-//     zip_code: '27603',
-//     capacity: 150,
-//     venue_type: 'brewery',
-//     website: 'https://trophybrewing.com',
-//     social_platform: 'Instagram',
-//     social_handle: '@trophybrewing',
-//     contact_email: 'music@trophybrewing.com',
-//     description: 'Pizza and beer spot with regular live music. Features indie rock, folk, and alternative acts in intimate setting.',
-//     genres: ['Indie Rock', 'Folk', 'Alternative']
-//   },
-//   {
-//     name: 'Raleigh Brewing Company',
-//     address: '3709 Neil St',
-//     city: 'Raleigh',
-//     state: 'NC',
-//     zip_code: '27607',
-//     capacity: 200,
-//     venue_type: 'brewery',
-//     website: 'https://raleighbrewingcompany.com',
-//     social_platform: 'Instagram',
-//     social_handle: '@raleighbrewing',
-//     contact_email: 'events@raleighbrewingcompany.com',
-//     description: 'Local brewery with spacious taproom hosting weekend music. Books singer-songwriters and local bands.',
-//     genres: ['Singer-Songwriter', 'Local', 'Rock']
-//   },
-//   {
-//     name: 'Ponysaurus Brewing Co.',
-//     address: '219 Hood St',
-//     city: 'Durham',
-//     state: 'NC',
-//     zip_code: '27701',
-//     capacity: 300,
-//     venue_type: 'brewery',
-//     website: 'https://ponysaurusbrewing.com',
-//     social_platform: 'Instagram',
-//     social_handle: '@ponysaurusbrewing',
-//     contact_email: 'events@ponysaurusbrewing.com',
-//     description: 'Durham brewery with large outdoor space perfect for live music. Regular concerts featuring indie, folk, and alternative acts.',
-//     genres: ['Indie', 'Folk', 'Alternative']
-//   },
-//   {
-//     name: 'Fullsteam Brewery',
-//     address: '726 Rigsbee Ave',
-//     city: 'Durham',
-//     state: 'NC',
-//     zip_code: '27701',
-//     capacity: 200,
-//     venue_type: 'brewery',
-//     website: 'https://fullsteam.ag',
-//     social_platform: 'Instagram',
-//     social_handle: '@fullsteambrewery',
-//     contact_email: 'events@fullsteam.ag',
-//     description: 'Southern-inspired brewery with regular live music and community events. Books diverse acts from bluegrass to indie rock.',
-//     genres: ['Bluegrass', 'Indie Rock', 'Americana']
-//   },
-//   {
-//     name: 'Hi-Wire Brewing',
-//     address: '800 Taylor St',
-//     city: 'Durham',
-//     state: 'NC',
-//     zip_code: '27701',
-//     capacity: 250,
-//     venue_type: 'brewery',
-//     website: 'https://hiwirebrewing.com',
-//     social_platform: 'Instagram',
-//     social_handle: '@hiwirebrewing',
-//     contact_email: 'durham@hiwirebrewing.com',
-//     description: 'Spacious Durham location with regular live music on weekends. Features local and touring indie bands.',
-//     genres: ['Indie', 'Rock', 'Alternative']
-//   },
-
-//   // Coffee Shops & Cafes
-//   {
-//     name: 'Sola Coffee Cafe',
-//     address: '7705 Lead Mine Rd',
-//     city: 'Raleigh',
-//     state: 'NC',
-//     zip_code: '27615',
-//     capacity: 75,
-//     venue_type: 'coffee_shop',
-//     website: 'https://www.solacoffee.com',
-//     social_platform: 'Instagram',
-//     social_handle: '@solacoffeecafe',
-//     contact_email: 'events@solacoffee.com',
-//     description: 'All-day café with regular music events and open mic nights. Showcases local singer-songwriters and acoustic acts.',
-//     genres: ['Singer-Songwriter', 'Acoustic', 'Open Mic']
-//   },
-//   {
-//     name: 'Morning Times',
-//     address: '10 E Hargett St',
-//     city: 'Raleigh',
-//     state: 'NC',
-//     zip_code: '27601',
-//     capacity: 100,
-//     venue_type: 'coffee_shop',
-//     website: 'https://www.morningtimes-raleigh.com',
-//     social_platform: 'Instagram',
-//     social_handle: '@morningtimesraleigh',
-//     contact_email: 'info@morningtimes-raleigh.com',
-//     description: 'Coffee shop by day, bar by night with occasional live music. Features jazz, acoustic, and indie performances.',
-//     genres: ['Jazz', 'Acoustic', 'Indie']
-//   },
-//   {
-//     name: 'Cup A Joe',
-//     address: '3100 Hillsborough St',
-//     city: 'Raleigh',
-//     state: 'NC',
-//     zip_code: '27607',
-//     capacity: 75,
-//     venue_type: 'coffee_shop',
-//     website: 'https://cupajoe.com',
-//     social_platform: 'Instagram',
-//     social_handle: '@cupajoecoffee',
-//     contact_email: 'hillsborough@cupajoe.com',
-//     description: 'Local coffee chain location near NC State with regular open mics. Popular spot for student musicians.',
-//     genres: ['Open Mic', 'Acoustic', 'Student']
-//   },
-//   {
-//     name: 'Cocoa Cinnamon',
-//     address: '420 W Geer St',
-//     city: 'Durham',
-//     state: 'NC',
-//     zip_code: '27701',
-//     capacity: 50,
-//     venue_type: 'coffee_shop',
-//     website: 'https://littlewaves.coffee',
-//     social_platform: 'Instagram',
-//     social_handle: '@cocoacinnamon',
-//     contact_email: 'info@littlewaves.coffee',
-//     description: 'Durham coffee shop with occasional intimate performances. Specializes in acoustic and experimental music events.',
-//     genres: ['Acoustic', 'Experimental', 'Ambient']
-//   },
-
-//   // Smaller Venues & Bars
-//   {
-//     name: 'Hibernian Irish Pub',
-//     address: '311 Glenwood Ave',
-//     city: 'Raleigh',
-//     state: 'NC',
-//     zip_code: '27603',
-//     capacity: 150,
-//     venue_type: 'bar',
-//     website: 'https://www.hibernianpub.com',
-//     social_platform: 'Instagram',
-//     social_handle: '@hibernianraleigh',
-//     contact_email: 'glenwood@hibernianpub.com',
-//     description: 'Irish pub with regular live music seven nights a week. Books traditional Irish, rock, and indie acts.',
-//     genres: ['Irish', 'Rock', 'Indie', 'Celtic']
-//   },
-//   {
-//     name: 'Neptune\'s Parlour',
-//     address: '5533 Western Blvd #102',
-//     city: 'Raleigh',
-//     state: 'NC',
-//     zip_code: '27606',
-//     capacity: 125,
-//     venue_type: 'bar',
-//     website: 'https://www.neptunesparlour.com',
-//     social_platform: 'Instagram',
-//     social_handle: '@neptunesparlour',
-//     contact_email: 'booking@neptunesparlour.com',
-//     description: 'Cocktail bar with regular live music and open mic nights. Features jazz, indie, and experimental acts.',
-//     genres: ['Jazz', 'Indie', 'Experimental', 'Open Mic']
-//   },
-//   {
-//     name: 'The Maywood',
-//     address: '518 W Jones St',
-//     city: 'Raleigh',
-//     state: 'NC',
-//     zip_code: '27603',
-//     capacity: 100,
-//     venue_type: 'restaurant',
-//     website: 'https://www.themaywoodraleigh.com',
-//     social_platform: 'Instagram',
-//     social_handle: '@themaywoodraleigh',
-//     contact_email: 'info@themaywoodraleigh.com',
-//     description: 'Neighborhood bar with weekend live music on the patio. Books acoustic acts and small indie bands.',
-//     genres: ['Acoustic', 'Indie', 'Patio Shows']
-//   },
-//   {
-//     name: 'Whiskey Kitchen',
-//     address: '201 W Martin St',
-//     city: 'Raleigh',
-//     state: 'NC',
-//     zip_code: '27601',
-//     capacity: 175,
-//     venue_type: 'restaurant',
-//     website: 'https://whiskey-kitchen.com',
-//     social_platform: 'Instagram',
-//     social_handle: '@whiskeykitchen',
-//     contact_email: 'raleigh@whiskey-kitchen.com',
-//     description: 'Southern restaurant and bar with occasional live music. Features acoustic performances and small bands.',
-//     genres: ['Acoustic', 'Southern Rock', 'Blues']
-//   },
-//   {
-//     name: 'Foundation',
-//     address: '213 Fayetteville St',
-//     city: 'Raleigh',
-//     state: 'NC',
-//     zip_code: '27601',
-//     capacity: 200,
-//     venue_type: 'bar',
-//     website: 'https://foundationnc.com',
-//     social_platform: 'Instagram',
-//     social_handle: '@foundationnc',
-//     contact_email: 'info@foundationnc.com',
-//     description: 'Underground bar and event space with diverse music programming. Books electronic, indie, and alternative acts.',
-//     genres: ['Electronic', 'Indie', 'Alternative', 'DJ']
-//   },
-//   {
-//     name: 'The Blue Note Grill',
-//     address: '709 Washington St',
-//     city: 'Durham',
-//     state: 'NC',
-//     zip_code: '27701',
-//     capacity: 150,
-//     venue_type: 'music_venue',
-//     website: 'https://www.thebluenote.live',
-//     social_platform: 'Instagram',
-//     social_handle: '@thebluenotedurham',
-//     contact_email: 'booking@thebluenote.live',
-//     description: 'Jazz-focused venue also booking blues, soul, and indie acts. Intimate listening room atmosphere.',
-//     genres: ['Jazz', 'Blues', 'Soul', 'Indie']
-//   }
-// ]
-
-// // Venue type options for validation
-// export const venueTypes = [
-//   'music_venue',
-//   'brewery', 
-//   'coffee_shop',
-//   'restaurant',
-//   'bar',
-//   'event_space',
-//   'amphitheater',
-//   'theater'
-// ]
-
-// // Helper function to validate venue data
-// export function validateVenue(venue) {
-//   const required = ['name', 'address', 'city', 'venue_type']
-//   const missing = required.filter(field => !venue[field])
-  
-//   if (missing.length > 0) {
-//     throw new Error(`Missing required fields: ${missing.join(', ')}`)
-//   }
-  
-//   if (!venueTypes.includes(venue.venue_type)) {
-//     throw new Error(`Invalid venue_type: ${venue.venue_type}. Must be one of: ${venueTypes.join(', ')}`)
-//   }
-  
-//   return true
-// }
-
-// Raleigh-Durham Area Music Venue Database
-// This file contains all venue data for easy management and updates
-// Complete database with 100 venues
-
 export const venues = [
   // Major Music Venues
   {
@@ -674,6 +224,81 @@ export const venues = [
     contact_email: 'booking@wakeforestlisteningroom.com',
     description: 'Intimate listening room featuring acoustic performances and singer-songwriters.',
     genres: ['Acoustic', 'Singer-Songwriter', 'Folk']
+  },
+  {
+    name: 'Rubies on Five Points',
+    address: '347B W Main St',
+    city: 'Durham',
+    state: 'NC',
+    zip_code: '27701',
+    capacity: 90,
+    venue_type: 'bar',
+    website: 'https://rubiesnc.com',
+    social_platform: 'Instagram',
+    social_handle: '@rubiesonfivepoints',
+    contact_email: 'info@rubiesnc.com',
+    description: 'Live music venue and bar upstairs from Remedy Room. Features live music and DJs most nights with dive bar atmosphere.',
+    genres: ['Live Music', 'DJ', 'Dance', 'Local']
+  },
+  {
+    name: 'Arcana Bar and Lounge',
+    address: '331 W Main St, Ste 002',
+    city: 'Durham',
+    state: 'NC',
+    zip_code: '27701',
+    capacity: 75,
+    venue_type: 'bar',
+    website: 'https://www.instagram.com/arcanadurham',
+    social_platform: 'Instagram',
+    social_handle: '@arcanadurham',
+    contact_email: 'info@arcanadurham.com',
+    description: 'Intimate basement bar with New Orleans-meets-Prague Art Nouveau style. Features live music, tarot readings, drag bingo, and LGBTQ+ events.',
+    genres: ['Jazz', 'Live Music', 'Experimental', 'LGBTQ+']
+  },
+  {
+    name: 'Magnolia Roots Music Lounge',
+    address: '219 S White St',
+    city: 'Wake Forest',
+    state: 'NC',
+    zip_code: '27587',
+    capacity: 70,
+    venue_type: 'music_venue',
+    website: 'https://www.facebook.com/Magnolia-Roots-Music-Lounge',
+    social_platform: 'Facebook',
+    social_handle: '@MagnoliaRootsMusicLounge',
+    contact_email: 'info@magnoliaroots.com',
+    description: 'Basement listening room below Sugar Magnolia Cafe. Hosts Wake Forest Listening Room series with touring singer-songwriters.',
+    genres: ['Singer-Songwriter', 'Folk', 'Acoustic', 'Americana']
+  },
+  {
+    name: 'Irregardless Cafe',
+    address: '901 W Morgan St',
+    city: 'Raleigh',
+    state: 'NC',
+    zip_code: '27603',
+    capacity: 140,
+    venue_type: 'restaurant',
+    website: 'https://irregardless.com',
+    social_platform: 'Instagram',
+    social_handle: '@irregardlesscafe',
+    contact_email: 'info@irregardless.com',
+    description: 'Farm-to-table restaurant with live music since 1975. Features jazz, blues, folk, and world music nightly with no cover charge.',
+    genres: ['Jazz', 'Blues', 'Folk', 'World Music', 'Singer-Songwriter']
+  },
+  {
+    name: 'Aviator Brewing Tap House & Kitchen',
+    address: '600 Broad St',
+    city: 'Fuquay-Varina',
+    state: 'NC',
+    zip_code: '27526',
+    capacity: 200,
+    venue_type: 'brewery',
+    website: 'https://aviatorbrew.com',
+    social_platform: 'Instagram',
+    social_handle: '@aviatorbrewing',
+    contact_email: 'events@aviatorbrew.com',
+    description: 'Aviation-themed brewery and restaurant with regular live music and open mic nights. Features local and regional acts.',
+    genres: ['Local', 'Country', 'Rock', 'Acoustic']
   },
 
   // Breweries & Taprooms
@@ -1282,16 +907,16 @@ export const venues = [
     genres: ['Cover', 'Rock', 'Country', 'Tribute']
   },
   {
-    name: 'Bhavana',
+    name: 'Brewery Bhavana',
     address: '218 S Blount St',
     city: 'Raleigh',
     state: 'NC',
     zip_code: '27601',
     capacity: 100,
     venue_type: 'restaurant',
-    website: 'https://bhavanabrewery.com',
+    website: 'https://brewerybhavana.com/',
     social_platform: 'Instagram',
-    social_handle: '@bhavana_raleigh',
+    social_handle: '@brewerybhavana',
     contact_email: 'events@bhavanabrewery.com',
     description: 'Upscale brewery and restaurant with occasional live music events. Features jazz and acoustic performances.',
     genres: ['Jazz', 'Acoustic', 'World Music']
@@ -1344,17 +969,17 @@ export const venues = [
 
   // Large Venues & Amphitheaters
   {
-    name: 'PNC Arena',
+    name: 'Lenovo Center',
     address: '1400 Edwards Mill Rd',
     city: 'Raleigh',
     state: 'NC',
     zip_code: '27607',
     capacity: 19500,
     venue_type: 'arena',
-    website: 'https://www.pncarena.com',
+    website: 'https://www.lenovocenter.com',
     social_platform: 'Instagram',
-    social_handle: '@pncarena',
-    contact_email: 'info@pncarena.com',
+    social_handle: '@lenovocenter',
+    contact_email: 'info@lenovocenter.com',
     description: 'Major arena hosting large touring acts, sports teams, and major concerts. Home to Carolina Hurricanes.',
     genres: ['Pop', 'Rock', 'Country', 'Hip-Hop']
   },
