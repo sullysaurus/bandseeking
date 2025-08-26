@@ -207,8 +207,7 @@ export default function VenuesClient() {
               </div>
               <div className="ml-3">
                 <p className="text-sm text-yellow-700 font-medium">
-                  <strong>Evolving Database:</strong> This venue list is continuously growing and improving. 
-                  If you notice any errors or outdated information, please click the flag icon on any listing to report it.
+                  <strong>Evolving Database:</strong> Click the flag icon on any listing to report innacuracies.
                 </p>
               </div>
             </div>
