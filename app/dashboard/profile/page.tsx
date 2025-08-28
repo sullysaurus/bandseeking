@@ -132,8 +132,9 @@ export default function EditProfilePage() {
       if (error) throw error
 
       // Redirect based on publish status
-      if (formData.isPublished && profile?.username) {
-        router.push(`/profile/${profile.username}`)
+      const redirectUsername = formData.username || profile?.username
+      if (formData.isPublished && redirectUsername) {
+        router.push(`/profile/${redirectUsername}`)
       } else {
         alert('Profile saved successfully!')
       }

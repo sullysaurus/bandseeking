@@ -153,31 +153,31 @@ export default function ProfileClient() {
           )}
 
           {/* Profile Header */}
-          <div className="bg-white border-4 border-black p-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] mb-6">
-            <div className="flex flex-col md:flex-row gap-6">
+          <div className="bg-white border-4 border-black p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] mb-4">
+            <div className="flex flex-col md:flex-row gap-4">
               
               {/* Profile Picture */}
               <div className="flex-shrink-0">
-                <div className="relative">
-                  <Image
-                    src={profile.profile_image_url || '/logo.png'}
-                    alt={profile.username}
-                    width={200}
-                    height={200}
-                    className="border-4 border-black object-cover w-48 h-48"
-                  />
-                </div>
+                <Image
+                  src={profile.profile_image_url || '/social.png'}
+                  alt={profile.username}
+                  width={120}
+                  height={120}
+                  className="border-4 border-black object-cover w-24 h-24 md:w-32 md:h-32"
+                />
               </div>
 
               {/* Profile Info */}
               <div className="flex-1">
-                <div className="mb-4">
-                  <h1 className="text-4xl font-black mb-2">@{profile.username}</h1>
-                  <p className="font-bold text-xl text-gray-600">@{profile.username}</p>
+                <div className="mb-2">
+                  <h1 className="text-2xl md:text-3xl font-black">@{profile.username}</h1>
+                  <p className="font-bold text-gray-600">
+                    {profile.zip_code ? formatLocationDisplay(profile.zip_code) : 'Planet Earth'}
+                  </p>
                 </div>
 
                 {/* Status Tags */}
-                <div className="flex flex-wrap gap-2 mb-4">
+                <div className="flex flex-wrap gap-2 mb-3">
                   {profile.last_active && (() => {
                     const activeStatus = getLastActiveStatus(profile.last_active)
                     return (
@@ -253,18 +253,18 @@ export default function ProfileClient() {
 
           {/* Bio Section */}
           {profile.bio && (
-            <div className="bg-white border-4 border-black p-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] mb-6">
-              <h2 className="text-2xl font-black mb-4">ABOUT</h2>
-              <p className="font-bold text-lg leading-relaxed">{profile.bio}</p>
+            <div className="bg-white border-4 border-black p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] mb-4">
+              <h2 className="text-xl font-black mb-2">ABOUT</h2>
+              <p className="font-bold leading-relaxed">{profile.bio}</p>
             </div>
           )}
 
           {/* Music Details Grid */}
-          <div className="grid md:grid-cols-2 gap-6 mb-6">
+          <div className="grid md:grid-cols-2 gap-4 mb-4">
             
             {/* Instruments */}
-            <div className="bg-white border-4 border-black p-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
-              <h2 className="text-2xl font-black mb-4">🎸 INSTRUMENTS</h2>
+            <div className="bg-white border-4 border-black p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+              <h2 className="text-xl font-black mb-3">🎸 INSTRUMENTS</h2>
               <div className="space-y-3">
                 <div>
                   <span className="font-black text-sm">PRIMARY:</span>
@@ -316,8 +316,8 @@ export default function ProfileClient() {
             const embedUrl = getYouTubeEmbedUrl(profile.social_links.youtube)
             if (!embedUrl) return null
             return (
-              <div className="bg-white border-4 border-black p-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] mb-6">
-                <h2 className="text-2xl font-black mb-4">🎬 FEATURED VIDEO</h2>
+              <div className="bg-white border-4 border-black p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] mb-4">
+                <h2 className="text-xl font-black mb-3">🎬 FEATURED VIDEO</h2>
                 <div className="relative" style={{ paddingBottom: '56.25%', height: 0 }}>
                   <iframe
                     src={embedUrl}
@@ -333,8 +333,8 @@ export default function ProfileClient() {
 
           {/* Social Links */}
           {profile.social_links && Object.values(profile.social_links).some(Boolean) && (
-            <div className="bg-white border-4 border-black p-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] mb-6">
-              <h2 className="text-2xl font-black mb-4">🔗 LISTEN & FOLLOW</h2>
+            <div className="bg-white border-4 border-black p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] mb-4">
+              <h2 className="text-xl font-black mb-3">🔗 LISTEN & FOLLOW</h2>
               <div className="flex flex-wrap gap-3">
                 {profile.social_links.youtube && (
                   <a
