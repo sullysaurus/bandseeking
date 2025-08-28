@@ -16,7 +16,7 @@ export function calculateProfileCompletion(profile: any): ProfileCompletion {
     'Custom Bio': profile.bio && profile.bio !== defaultBio,
     'Location': profile.zip_code && profile.zip_code !== defaultZipCode,
     'Social Links': profile.social_links && Object.values(profile.social_links).some(Boolean),
-    'Secondary Instruments': profile.secondary_instruments && profile.secondary_instruments.length > 0,
+    'Secondary Instrument': !!profile.secondary_instrument,
     'Custom Username': profile.username && !profile.username.match(/^(guitarist|drummer|vocalist|bassist|keyboardist|producer|songwriter)_\d+$/)
   }
   

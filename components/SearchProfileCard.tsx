@@ -111,27 +111,33 @@ export default function SearchProfileCard({
         </p>
       </div>
 
-      {/* Instruments Section */}
-      {profile.secondary_instruments && profile.secondary_instruments.length > 0 && (
-        <div className="mb-4">
-          <p className="font-black text-sm mb-2">ALSO PLAYS:</p>
-          <div className="flex flex-wrap gap-1">
-            {profile.secondary_instruments.slice(0, 3).map((instrument: string, index: number) => (
-              <span
-                key={index}
-                className="px-2 py-1 bg-purple-300 border-2 border-black font-black text-xs"
-              >
-                {instrument.toUpperCase()}
-              </span>
-            ))}
-            {profile.secondary_instruments.length > 3 && (
-              <span className="px-2 py-1 bg-gray-200 border-2 border-black font-black text-xs">
-                +{profile.secondary_instruments.length - 3} MORE
-              </span>
-            )}
-          </div>
-        </div>
-      )}
+      {/* Additional Info */}
+      <div className="mb-4 flex flex-wrap gap-1">
+        {profile.secondary_instrument && (
+          <span className="px-2 py-1 bg-purple-300 border-2 border-black font-black text-xs">
+            ALSO: {profile.secondary_instrument.toUpperCase()}
+          </span>
+        )}
+        {profile.experience_level && (
+          <span className={`px-2 py-1 border-2 border-black font-black text-xs ${
+            profile.experience_level === 'beginner' ? 'bg-green-300' :
+            profile.experience_level === 'intermediate' ? 'bg-yellow-300' :
+            profile.experience_level === 'advanced' ? 'bg-orange-400' :
+            profile.experience_level === 'professional' ? 'bg-red-400 text-white' :
+            'bg-gray-300'
+          }`}>
+            {profile.experience_level.toUpperCase()}
+          </span>
+        )}
+        {profile.genres && profile.genres.slice(0, 2).map((genre: string, index: number) => (
+          <span
+            key={index}
+            className="px-2 py-1 bg-cyan-200 border-2 border-black font-black text-xs"
+          >
+            {genre.toUpperCase()}
+          </span>
+        ))}
+      </div>
 
       {/* Looking For */}
       {profile.seeking && profile.seeking.length > 0 && (

@@ -6,7 +6,7 @@ import Link from 'next/link'
 import { supabase } from '@/lib/supabase'
 import Navigation from '@/components/layout/Navigation'
 import Image from 'next/image'
-import { instruments } from '@/lib/utils'
+import { instruments, genres, experienceLevels } from '@/lib/utils'
 import Input from '@/components/ui/Input'
 import Button from '@/components/ui/Button'
 import { calculateProfileCompletion, getProfileCompletionMessage, getRandomEncouragingMessage } from '@/lib/profile-utils'
@@ -24,7 +24,9 @@ export default function EditProfilePage() {
     bio: '',
     profileImageUrl: '',
     mainInstrument: '',
-    secondaryInstruments: [] as string[],
+    secondaryInstrument: '',
+    experienceLevel: '',
+    genres: [] as string[],
     zipCode: '',
     socialLinks: {
       youtube: '',
@@ -62,7 +64,9 @@ export default function EditProfilePage() {
         bio: profileData.bio || '',
         profileImageUrl: profileData.profile_image_url || '',
         mainInstrument: profileData.main_instrument || '',
-        secondaryInstruments: profileData.secondary_instruments || [],
+        secondaryInstrument: profileData.secondary_instrument || '',
+        experienceLevel: profileData.experience_level || '',
+        genres: profileData.genres || [],
         zipCode: profileData.zip_code || '',
         socialLinks: profileData.social_links || {
           youtube: '',
@@ -110,7 +114,9 @@ export default function EditProfilePage() {
           username: profile.username,
           bio: formData.bio,
           main_instrument: formData.mainInstrument,
-          secondary_instruments: formData.secondaryInstruments,
+          secondary_instrument: formData.secondaryInstrument,
+          experience_level: formData.experienceLevel,
+          genres: formData.genres,
           zip_code: formData.zipCode,
           social_links: formData.socialLinks,
           profile_image_url: profileImageUrl,
@@ -148,14 +154,6 @@ export default function EditProfilePage() {
     }
   }
 
-  const toggleSecondaryInstrument = (instrument: string) => {
-    setFormData(prev => ({
-      ...prev,
-      secondaryInstruments: prev.secondaryInstruments.includes(instrument)
-        ? prev.secondaryInstruments.filter(i => i !== instrument)
-        : [...prev.secondaryInstruments, instrument]
-    }))
-  }
 
   if (loading) {
     return (
@@ -286,7 +284,7 @@ export default function EditProfilePage() {
                     value={formData.bio}
                     onChange={(e) => setFormData({...formData, bio: e.target.value})}
                     placeholder="Tell other musicians about yourself - what you play, your style, influences, what you're looking for, experience level, etc. This is all searchable!"
-                    rows={6}
+                    rows={4}
                     className="w-full p-3 border-2 border-black focus:outline-none focus:bg-yellow-100 font-bold resize-none"
                   />
                   {formData.bio === 'Super cool person looking to collaborate. Shoot me a dm!' && (
@@ -294,36 +292,77 @@ export default function EditProfilePage() {
                   )}
                 </div>
 
-                <div>
-                  <label className="block font-black text-sm mb-2">MAIN INSTRUMENT</label>
-                  <select
-                    value={formData.mainInstrument}
-                    onChange={(e) => setFormData({...formData, mainInstrument: e.target.value})}
-                    className="w-full p-3 border-2 border-black focus:outline-none focus:bg-yellow-100 font-bold"
-                  >
-                    <option value="">Select your primary instrument</option>
-                    {instruments.map(instrument => (
-                      <option key={instrument} value={instrument}>{instrument}</option>
-                    ))}
-                  </select>
+                {/* Compact row for instruments and experience */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div>
+                    <label className="block font-black text-sm mb-2">MAIN INSTRUMENT</label>
+                    <select
+                      value={formData.mainInstrument}
+                      onChange={(e) => setFormData({...formData, mainInstrument: e.target.value})}
+                      className="w-full p-2 border-2 border-black focus:outline-none focus:bg-yellow-100 font-bold text-sm"
+                    >
+                      <option value="">Select</option>
+                      {instruments.map(instrument => (
+                        <option key={instrument} value={instrument}>{instrument}</option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block font-black text-sm mb-2">ALSO PLAYS</label>
+                    <select
+                      value={formData.secondaryInstrument}
+                      onChange={(e) => setFormData({...formData, secondaryInstrument: e.target.value})}
+                      className="w-full p-2 border-2 border-black focus:outline-none focus:bg-yellow-100 font-bold text-sm"
+                    >
+                      <option value="">None</option>
+                      {instruments.filter(i => i !== formData.mainInstrument).map(instrument => (
+                        <option key={instrument} value={instrument}>{instrument}</option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block font-black text-sm mb-2">EXPERIENCE</label>
+                    <select
+                      value={formData.experienceLevel}
+                      onChange={(e) => setFormData({...formData, experienceLevel: e.target.value})}
+                      className="w-full p-2 border-2 border-black focus:outline-none focus:bg-yellow-100 font-bold text-sm"
+                    >
+                      <option value="">Select</option>
+                      {experienceLevels.map(level => (
+                        <option key={level.value} value={level.value}>{level.label}</option>
+                      ))}
+                    </select>
+                  </div>
                 </div>
 
+                {/* Compact genres */}
                 <div>
-                  <label className="block font-black text-sm mb-2">SECONDARY INSTRUMENTS</label>
-                  <p className="text-xs font-bold text-gray-600 mb-2">Select any additional instruments you play</p>
-                  <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
-                    {instruments.filter(i => i !== formData.mainInstrument).map(instrument => (
-                      <label key={instrument} className="flex items-center">
+                  <label className="block font-black text-sm mb-2">GENRES (select up to 3)</label>
+                  <div className="grid grid-cols-3 md:grid-cols-4 gap-2 max-h-32 overflow-y-auto">
+                    {genres.slice(0, 12).map(genre => (
+                      <label key={genre} className="flex items-center text-xs">
                         <input
                           type="checkbox"
-                          checked={formData.secondaryInstruments.includes(instrument)}
-                          onChange={() => toggleSecondaryInstrument(instrument)}
-                          className="mr-2"
+                          checked={formData.genres.includes(genre)}
+                          onChange={(e) => {
+                            if (e.target.checked && formData.genres.length < 3) {
+                              setFormData({...formData, genres: [...formData.genres, genre]})
+                            } else if (!e.target.checked) {
+                              setFormData({...formData, genres: formData.genres.filter(g => g !== genre)})
+                            }
+                          }}
+                          disabled={!formData.genres.includes(genre) && formData.genres.length >= 3}
+                          className="mr-1 scale-75"
                         />
-                        <span className="font-bold text-sm">{instrument}</span>
+                        <span className="font-bold">{genre}</span>
                       </label>
                     ))}
                   </div>
+                  {formData.genres.length === 1 && formData.genres.includes('Rock') && (
+                    <p className="text-xs font-bold text-purple-600 mt-1">💡 Add 1-2 more genres to help people find you!</p>
+                  )}
                 </div>
               </div>
             </div>
