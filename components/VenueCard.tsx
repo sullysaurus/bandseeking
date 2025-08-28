@@ -241,7 +241,6 @@ export default function VenueCard({ venue, onReport, onSelect, isSelected = fals
             rel="noopener noreferrer"
             className="flex items-center text-sm text-blue-600 hover:text-blue-800 transition-colors"
           >
-            <span className="mr-2">@</span>
             <span className="truncate">{venue.social_handle} ({venue.social_platform})</span>
           </a>
         )}

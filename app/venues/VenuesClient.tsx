@@ -215,12 +215,12 @@ export default function VenuesClient() {
     }
   }
 
-  const generateEmailLink = () => {
+  const generateEmailLink = (client = 'default') => {
     const selectedVenueData = venues.filter(v => selectedVenues.has(v.id))
     const emails = selectedVenueData
       .filter(v => v.contact_email)
       .map(v => v.contact_email)
-      .join(';')
+      .join(',')
     
     const subject = encodeURIComponent('Booking Inquiry')
     const body = encodeURIComponent(`Hello,
@@ -233,7 +233,19 @@ Thank you for your time!
 
 Best regards,`)
 
-    return `mailto:${emails}?subject=${subject}&body=${body}`
+    // For BCC, we put all emails in BCC field and leave TO field empty
+    const bccEmails = emails
+    
+    switch (client) {
+      case 'gmail':
+        return `https://mail.google.com/mail/?view=cm&su=${subject}&body=${body}&bcc=${encodeURIComponent(bccEmails)}`
+      case 'outlook':
+        return `https://outlook.live.com/mail/0/deeplink/compose?subject=${subject}&body=${body}&bcc=${encodeURIComponent(bccEmails)}`
+      case 'yahoo':
+        return `https://compose.mail.yahoo.com/?subject=${subject}&body=${body}&bcc=${encodeURIComponent(bccEmails)}`
+      default:
+        return `mailto:?subject=${subject}&body=${body}&bcc=${bccEmails}`
+    }
   }
 
   return (
@@ -297,12 +309,43 @@ Best regards,`)
                 )}
               </div>
               {selectedVenues.size > 0 && (
-                <a
-                  href={generateEmailLink()}
-                  className="px-4 py-2 bg-blue-500 text-white border-2 border-black font-black text-sm hover:bg-blue-600 transition-colors shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] inline-block"
-                >
-                  EMAIL SELECTED ({selectedVenues.size})
-                </a>
+                <div className="relative group">
+                  <button className="px-4 py-2 bg-blue-500 text-white border-2 border-black font-black text-sm hover:bg-blue-600 transition-colors shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] flex items-center gap-2">
+                    EMAIL SELECTED ({selectedVenues.size}) ▼
+                  </button>
+                  <div className="absolute right-0 top-full mt-1 bg-white border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] min-w-48 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-10">
+                    <a
+                      href={generateEmailLink('default')}
+                      className="block px-4 py-2 font-bold text-sm text-gray-800 hover:bg-gray-100 border-b border-gray-200"
+                    >
+                      📧 Default Email Client
+                    </a>
+                    <a
+                      href={generateEmailLink('gmail')}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="block px-4 py-2 font-bold text-sm text-gray-800 hover:bg-gray-100 border-b border-gray-200"
+                    >
+                      📮 Gmail
+                    </a>
+                    <a
+                      href={generateEmailLink('outlook')}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="block px-4 py-2 font-bold text-sm text-gray-800 hover:bg-gray-100 border-b border-gray-200"
+                    >
+                      📨 Outlook
+                    </a>
+                    <a
+                      href={generateEmailLink('yahoo')}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="block px-4 py-2 font-bold text-sm text-gray-800 hover:bg-gray-100"
+                    >
+                      📬 Yahoo Mail
+                    </a>
+                  </div>
+                </div>
               )}
             </div>
           </div>

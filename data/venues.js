@@ -423,21 +423,6 @@ export const venues = [
     genres: ['Indie', 'Rock', 'Folk', 'Local']
   },
   {
-    name: 'Big Boss Brewing',
-    address: '1249 Wicker Dr',
-    city: 'Raleigh',
-    state: 'NC',
-    zip_code: '27604',
-    capacity: 150,
-    venue_type: 'brewery',
-    website: 'https://www.bigbossbrewing.com',
-    social_platform: 'Instagram',
-    social_handle: '@bigbossbrewing',
-    contact_email: 'info@bigbossbrewing.com',
-    description: 'Local brewery with outdoor beer garden hosting weekend music. Books rock, indie, and acoustic acts.',
-    genres: ['Rock', 'Indie', 'Acoustic']
-  },
-  {
     name: 'Lonerider Brewing Company',
     address: '8816 Gulf Ct',
     city: 'Raleigh',
