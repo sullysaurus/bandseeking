@@ -211,7 +211,7 @@ export default function HomeClient({ initialProfiles }: HomeClientProps) {
                           {musician.profile_image_url ? (
                             <Image
                               src={musician.profile_image_url}
-                              alt={musician.full_name}
+                              alt={musician.username}
                               width={64}
                               height={64}
                               className="w-16 h-16 border-4 border-black object-cover"
@@ -219,7 +219,7 @@ export default function HomeClient({ initialProfiles }: HomeClientProps) {
                           ) : (
                             <div className="w-16 h-16 border-4 border-black bg-gradient-to-br from-pink-400 to-purple-500 flex items-center justify-center">
                               <div className="text-xl font-black text-white">
-                                {(musician.full_name || 'Musician').charAt(0).toUpperCase()}
+                                {(musician.username || 'M').charAt(0).toUpperCase()}
                               </div>
                             </div>
                           )}
@@ -227,8 +227,7 @@ export default function HomeClient({ initialProfiles }: HomeClientProps) {
 
                         {/* Name and Username */}
                         <div className="flex-1 min-w-0">
-                          <h3 className="font-black text-xl mb-1 leading-tight">{(musician.full_name || 'Musician').toUpperCase()}</h3>
-                          <p className="font-bold text-sm text-gray-600">@{musician.username || 'user'}</p>
+                          <h3 className="font-black text-xl mb-1 leading-tight">@{musician.username}</h3>
                         </div>
                       </div>
 

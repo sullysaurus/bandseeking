@@ -67,10 +67,8 @@ export default function SearchClient() {
       filtered = filtered.filter(profile => {
         const searchLower = searchQuery.toLowerCase()
         return (
-          profile.full_name.toLowerCase().includes(searchLower) ||
           profile.username.toLowerCase().includes(searchLower) ||
-          profile.bio?.toLowerCase().includes(searchLower) ||
-          profile.influences?.toLowerCase().includes(searchLower)
+          profile.bio?.toLowerCase().includes(searchLower)
         )
       })
     }

@@ -87,7 +87,7 @@ export default function ProfileCard({ profile }: ProfileCardProps) {
           {profile.profile_image_url ? (
             <Image
               src={profile.profile_image_url}
-              alt={user.full_name}
+              alt={user.username}
               width={80}
               height={80}
               className="w-20 h-20 border-4 border-black object-cover"
@@ -98,7 +98,7 @@ export default function ProfileCard({ profile }: ProfileCardProps) {
           ) : (
             <div className="w-20 h-20 border-4 border-black bg-gradient-to-br from-pink-400 to-purple-500 flex items-center justify-center">
               <div className="text-2xl font-black text-white">
-                {user.full_name.charAt(0).toUpperCase()}
+                {user.username.charAt(0).toUpperCase()}
               </div>
             </div>
           )}
@@ -106,8 +106,7 @@ export default function ProfileCard({ profile }: ProfileCardProps) {
 
         {/* Name and Basic Info */}
         <div className="flex-1 min-w-0">
-          <h3 className="font-black text-xl mb-2 leading-tight">{user.full_name.toUpperCase()}</h3>
-          <p className="font-bold text-sm text-gray-600 mb-2">@{user.username}</p>
+          <h3 className="font-black text-xl mb-2 leading-tight">@{user.username}</h3>
           
           {/* Location and Last Active Row */}
           <div className="flex flex-wrap gap-2 mb-2">

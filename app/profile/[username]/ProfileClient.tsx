@@ -161,7 +161,7 @@ export default function ProfileClient() {
                 <div className="relative">
                   <Image
                     src={profile.profile_image_url || '/logo.png'}
-                    alt={profile.full_name}
+                    alt={profile.username}
                     width={200}
                     height={200}
                     className="border-4 border-black object-cover w-48 h-48"
@@ -172,7 +172,7 @@ export default function ProfileClient() {
               {/* Profile Info */}
               <div className="flex-1">
                 <div className="mb-4">
-                  <h1 className="text-4xl font-black mb-2">{profile.full_name.toUpperCase()}</h1>
+                  <h1 className="text-4xl font-black mb-2">@{profile.username}</h1>
                   <p className="font-bold text-xl text-gray-600">@{profile.username}</p>
                 </div>
 
