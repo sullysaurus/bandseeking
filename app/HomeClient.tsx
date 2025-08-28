@@ -219,7 +219,7 @@ export default function HomeClient({ initialProfiles }: HomeClientProps) {
                           ) : (
                             <div className="w-16 h-16 border-4 border-black bg-gradient-to-br from-pink-400 to-purple-500 flex items-center justify-center">
                               <div className="text-xl font-black text-white">
-                                {musician.full_name.charAt(0).toUpperCase()}
+                                {(musician.full_name || 'Musician').charAt(0).toUpperCase()}
                               </div>
                             </div>
                           )}
@@ -227,8 +227,8 @@ export default function HomeClient({ initialProfiles }: HomeClientProps) {
 
                         {/* Name and Username */}
                         <div className="flex-1 min-w-0">
-                          <h3 className="font-black text-xl mb-1 leading-tight">{musician.full_name.toUpperCase()}</h3>
-                          <p className="font-bold text-sm text-gray-600">@{musician.username}</p>
+                          <h3 className="font-black text-xl mb-1 leading-tight">{(musician.full_name || 'Musician').toUpperCase()}</h3>
+                          <p className="font-bold text-sm text-gray-600">@{musician.username || 'user'}</p>
                         </div>
                       </div>
 
@@ -269,9 +269,9 @@ export default function HomeClient({ initialProfiles }: HomeClientProps) {
                         )}
 
                         {/* Location */}
-                        {musician.city && (
+                        {(musician.city || musician.state) && (
                           <span className="px-2 py-1 bg-cyan-300 border-2 border-black font-black text-xs">
-                            📍 {musician.city?.toUpperCase()}, {musician.state?.toUpperCase()}
+                            📍 {(musician.city || '').toUpperCase()}{musician.city && musician.state ? ', ' : ''}{(musician.state || '').toUpperCase()}
                           </span>
                         )}
                       </div>
