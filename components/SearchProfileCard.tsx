@@ -47,7 +47,7 @@ export default function SearchProfileCard({
             ) : (
               <div className="w-16 h-16 border-4 border-black bg-gradient-to-br from-pink-400 to-purple-500 flex items-center justify-center">
                 <div className="text-xl font-black text-white">
-                  {profile.full_name.charAt(0).toUpperCase()}
+                  {(profile.full_name || 'M').charAt(0).toUpperCase()}
                 </div>
               </div>
             )}
@@ -55,7 +55,7 @@ export default function SearchProfileCard({
 
           {/* Name and Username */}
           <div className="flex-1 min-w-0">
-            <h3 className="font-black text-xl mb-1 leading-tight">{profile.full_name.toUpperCase()}</h3>
+            <h3 className="font-black text-xl mb-1 leading-tight">{(profile.full_name || 'Musician').toUpperCase()}</h3>
             <p className="font-bold text-sm text-gray-600">@{profile.username}</p>
           </div>
         </div>
