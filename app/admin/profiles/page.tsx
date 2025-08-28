@@ -265,7 +265,7 @@ export default function AdminProfilesPage() {
                     <div className="mb-3">
                       <p className="text-xs text-gray-500 mb-1">Genres:</p>
                       <div className="flex flex-wrap gap-1">
-                        {profile.genres.slice(0, 3).map((genre, index) => (
+                        {profile.genres.slice(0, 3).map((genre: string, index: number) => (
                           <span
                             key={index}
                             className="text-xs px-2 py-1 bg-purple-50 text-purple-700 rounded"

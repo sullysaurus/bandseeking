@@ -45,8 +45,20 @@ export default function HomeClient({ initialProfiles }: HomeClientProps) {
       // Check if user is already logged in
       const { data: { user } } = await supabase.auth.getUser()
       if (user) {
-        // Redirect to onboarding, let it decide what to do next
-        router.push('/onboarding')
+        // Get the user's profile to redirect to their profile page
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('username')
+          .eq('user_id', user.id)
+          .single()
+
+        if (profile?.username) {
+          // Redirect to their profile page
+          router.push(`/profile/${profile.username}`)
+        } else {
+          // Fallback to dashboard if no profile found
+          router.push('/dashboard')
+        }
         return
       }
     } catch (error) {

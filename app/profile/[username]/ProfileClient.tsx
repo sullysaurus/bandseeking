@@ -112,7 +112,7 @@ export default function ProfileClient() {
         <div className="min-h-screen bg-pink-300 flex items-center justify-center">
           <div className="bg-white border-4 border-black p-8 text-center shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
             <h1 className="text-2xl font-black mb-4">PROFILE NOT FOUND</h1>
-            <p className="font-bold mb-6">This musician doesn't exist or has been removed.</p>
+            <p className="font-bold mb-6">This musician doesn&apos;t exist or has been removed.</p>
             <Link href="/search" className="inline-block px-6 py-3 bg-black text-white border-4 border-black font-black hover:bg-yellow-300 hover:text-black transition-colors shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
               FIND MUSICIANS →
             </Link>

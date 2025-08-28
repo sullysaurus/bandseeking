@@ -95,7 +95,7 @@ export default function NeoBrutalistSearchClient() {
       // Add all connected user IDs
       sentMessages?.forEach(msg => connectedIds.add(msg.receiver_id))
       receivedMessages?.forEach(msg => connectedIds.add(msg.sender_id))
-      savedProfiles?.forEach(save => save.profile && connectedIds.add(save.profile.user_id))
+      savedProfiles?.forEach((save: any) => save.profile && connectedIds.add(save.profile.user_id))
       
     } catch (error) {
       console.error('Error fetching connected users:', error)
