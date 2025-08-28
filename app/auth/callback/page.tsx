@@ -25,7 +25,7 @@ export default function AuthCallbackPage() {
           }
           
           if (session) {
-            // Always redirect to profile edit page for new users to complete profile
+            // Direct to profile edit page for setup completion
             router.push('/dashboard/profile')
             return
           }
@@ -39,7 +39,7 @@ export default function AuthCallbackPage() {
           return
         }
 
-        // User has session, go to profile edit page to complete profile
+        // User has session, go directly to profile edit page
         router.push('/dashboard/profile')
       } catch (error) {
         console.error('Error in auth callback:', error)
