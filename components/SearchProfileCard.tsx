@@ -55,7 +55,7 @@ export default function SearchProfileCard({
 
           {/* Name and Username */}
           <div className="flex-1 min-w-0">
-            <h3 className="font-black text-xl mb-1 leading-tight">@{profile.username}</h3>
+            <h3 className="font-black text-xl mb-1 leading-tight">@{profile.username || 'musician'}</h3>
           </div>
         </div>
 
@@ -105,13 +105,11 @@ export default function SearchProfileCard({
       </div>
 
       {/* Bio in highlighted box */}
-      {profile.bio && (
-        <div className="mb-4 p-3 bg-gray-50 border-2 border-black">
-          <p className="font-bold text-sm line-clamp-3">
-            &quot;{profile.bio}&quot;
-          </p>
-        </div>
-      )}
+      <div className="mb-4 p-3 bg-gray-50 border-2 border-black">
+        <p className="font-bold text-sm line-clamp-3">
+          &quot;{profile.bio || `I'm an awesome musician${locationDisplay ? ` in ${locationDisplay}` : ''} looking to collab! Send me a DM.`}&quot;
+        </p>
+      </div>
 
       {/* Instruments Section */}
       {profile.secondary_instruments && profile.secondary_instruments.length > 0 && (
