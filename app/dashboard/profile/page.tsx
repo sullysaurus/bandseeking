@@ -9,6 +9,7 @@ import Image from 'next/image'
 import { instruments } from '@/lib/utils'
 import Input from '@/components/ui/Input'
 import Button from '@/components/ui/Button'
+import { calculateProfileCompletion, getProfileCompletionMessage, getRandomEncouragingMessage } from '@/lib/profile-utils'
 
 export default function EditProfilePage() {
   const router = useRouter()
@@ -106,6 +107,7 @@ export default function EditProfilePage() {
       const { error } = await supabase
         .from('profiles')
         .update({
+          username: profile.username,
           bio: formData.bio,
           main_instrument: formData.mainInstrument,
           secondary_instruments: formData.secondaryInstruments,
@@ -178,7 +180,31 @@ export default function EditProfilePage() {
         <div className="p-4 md:p-8 max-w-4xl mx-auto">
           <div className="bg-white border-4 border-black p-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] mb-6">
             <h1 className="text-3xl md:text-4xl font-black mb-2">EDIT PROFILE</h1>
-            <p className="font-bold text-gray-600">Tell other musicians about yourself</p>
+            <p className="font-bold text-gray-600 mb-4">Tell other musicians about yourself</p>
+            
+            {profile && (() => {
+              const completion = calculateProfileCompletion(profile)
+              return (
+                <div className="bg-lime-100 border-2 border-black p-4">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="font-black text-sm">PROFILE COMPLETION</span>
+                    <span className="font-black text-lg">{completion.percentage}%</span>
+                  </div>
+                  <div className="w-full bg-gray-300 border-2 border-black h-3 mb-2">
+                    <div 
+                      className="h-full bg-gradient-to-r from-pink-400 to-cyan-400 border-r-2 border-black transition-all"
+                      style={{ width: `${completion.percentage}%` }}
+                    ></div>
+                  </div>
+                  <p className="font-bold text-sm">{getProfileCompletionMessage(completion)}</p>
+                  {completion.isUsingDefaults && (
+                    <p className="font-bold text-xs text-purple-600 mt-1">
+                      💡 {getRandomEncouragingMessage()}
+                    </p>
+                  )}
+                </div>
+              )
+            })()}
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-6">
@@ -199,14 +225,17 @@ export default function EditProfilePage() {
                     <span className="text-2xl font-black text-gray-400">?</span>
                   </div>
                 )}
-                <div>
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={handleAvatarChange}
-                    className="mb-2"
-                  />
-                  <p className="text-sm font-bold text-gray-600">Upload a square image for best results</p>
+                <div className="flex-1">
+                  <label className="inline-block px-4 py-2 bg-yellow-300 border-2 border-black font-black text-sm cursor-pointer hover:bg-yellow-400 transition-colors">
+                    CHOOSE FILE
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleAvatarChange}
+                      className="hidden"
+                    />
+                  </label>
+                  <p className="text-sm font-bold text-gray-600 mt-2">Upload a square image for best results</p>
                 </div>
               </div>
             </div>
@@ -217,8 +246,18 @@ export default function EditProfilePage() {
               <div className="space-y-4">
                 <div>
                   <label className="block font-black text-sm mb-2">USERNAME</label>
-                  <Input value={profile?.username || ''} disabled className="bg-gray-100" />
-                  <p className="text-xs font-bold text-gray-500 mt-1">Username cannot be changed</p>
+                  <Input 
+                    value={profile?.username || ''} 
+                    onChange={(e) => {
+                      // Update the profile state directly since username is part of profile, not formData
+                      setProfile({...profile, username: e.target.value})
+                    }}
+                    placeholder="your-username"
+                  />
+                  <p className="text-xs font-bold text-gray-500 mt-1">This will be your public handle (@username)</p>
+                  {profile?.username?.match(/^(guitarist|drummer|vocalist|bassist|keyboardist|producer|songwriter)_\d+$/) && (
+                    <p className="text-xs font-bold text-purple-600 mt-1">💡 Make it unique! Try your real name or stage name</p>
+                  )}
                 </div>
                 
                 <div>
@@ -230,6 +269,9 @@ export default function EditProfilePage() {
                     placeholder="12345"
                     maxLength={5}
                   />
+                  {formData.zipCode === '27601' && (
+                    <p className="text-xs font-bold text-purple-600 mt-1">💡 Enter your actual ZIP code to connect with local musicians</p>
+                  )}
                 </div>
               </div>
             </div>
@@ -247,6 +289,9 @@ export default function EditProfilePage() {
                     rows={6}
                     className="w-full p-3 border-2 border-black focus:outline-none focus:bg-yellow-100 font-bold resize-none"
                   />
+                  {formData.bio === 'Super cool person looking to collaborate. Shoot me a dm!' && (
+                    <p className="text-xs font-bold text-purple-600 mt-1">💡 Tell your story! Mention your style, influences, what you're looking for, experience level, etc.</p>
+                  )}
                 </div>
 
                 <div>
@@ -353,6 +398,14 @@ export default function EditProfilePage() {
               <p className="text-sm font-bold text-gray-600 mt-2">
                 When published, other musicians can find and contact you through search.
               </p>
+              {profile && (() => {
+                const completion = calculateProfileCompletion(profile)
+                return completion.percentage < 80 && (
+                  <p className="text-xs font-bold text-purple-600 mt-2">
+                    💡 Complete profiles get 3x more messages! Consider customizing your defaults above.
+                  </p>
+                )
+              })()}
             </div>
 
             {/* Submit Button */}

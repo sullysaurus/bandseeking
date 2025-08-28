@@ -24,7 +24,7 @@ function VerifyContent() {
               <p className="font-bold text-sm md:text-base">
                 WE&apos;VE SENT A VERIFICATION LINK TO
               </p>
-              <p className="font-black text-base md:text-lg text-pink-600 mt-1">
+              <p className="font-black text-base md:text-lg text-pink-600 mt-1 break-all">
                 {email || 'YOUR EMAIL'}
               </p>
             </div>

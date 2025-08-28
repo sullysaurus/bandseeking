@@ -88,23 +88,23 @@ export default function RegisterClient() {
   return (
     <>
       <Navigation />
-      <div className="min-h-screen bg-pink-300 flex items-center justify-center px-4 py-8 md:py-12">
+      <div className="min-h-screen bg-pink-300 flex items-center justify-center px-4 py-4 md:py-12">
         <div className="w-full max-w-md">
-          <div className="bg-white border-4 md:border-8 border-black p-6 md:p-8 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] md:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
-            <div className="text-center mb-6 md:mb-8">
-              <h1 className="text-3xl md:text-4xl font-black mb-2">JOIN THE BAND!</h1>
-              <p className="font-bold text-base md:text-lg">NO PASSWORD REQUIRED</p>
+          <div className="bg-white border-4 md:border-8 border-black p-4 md:p-8 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] md:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
+            <div className="text-center mb-4 md:mb-8">
+              <h1 className="text-2xl md:text-4xl font-black mb-1 md:mb-2">JOIN THE BAND!</h1>
+              <p className="font-bold text-sm md:text-lg">NO PASSWORD REQUIRED</p>
             </div>
 
-            <form onSubmit={handleMagicLink} className="space-y-4">
+            <form onSubmit={handleMagicLink} className="space-y-3 md:space-y-4">
                 <div>
-                  <label className="block font-black mb-2 text-sm">EMAIL ADDRESS</label>
+                  <label className="block font-black mb-1 md:mb-2 text-sm">EMAIL ADDRESS</label>
                   <input
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="YOUR@EMAIL.COM"
-                    className="w-full px-4 py-3 border-4 border-black font-bold text-base placeholder:text-gray-400 focus:outline-none focus:bg-yellow-100 transition-colors"
+                    className="w-full px-3 md:px-4 py-2 md:py-3 border-4 border-black font-bold text-sm md:text-base placeholder:text-gray-400 focus:outline-none focus:bg-yellow-100 transition-colors"
                     required
                   />
                 </div>
@@ -118,23 +118,23 @@ export default function RegisterClient() {
                 <button
                   type="submit"
                   disabled={isLoading}
-                  className="w-full px-4 md:px-6 py-3 bg-black text-white border-4 border-black font-black text-base md:text-lg hover:bg-lime-400 hover:text-black transition-colors shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] disabled:opacity-50"
+                  className="w-full px-3 md:px-6 py-2 md:py-3 bg-black text-white border-4 border-black font-black text-sm md:text-lg hover:bg-lime-400 hover:text-black transition-colors shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] disabled:opacity-50"
                 >
-                  {isLoading ? 'SENDING MAGIC LINK...' : 'SEND MAGIC LINK →'}
+                  {isLoading ? 'SENDING...' : 'SEND MAGIC LINK →'}
                 </button>
               </form>
 
-              <p className="text-center font-bold text-sm text-gray-600 mt-6">
+              <p className="text-center font-bold text-xs md:text-sm text-gray-600 mt-3 md:mt-6">
                 WE&apos;LL EMAIL YOU A MAGIC LINK TO SIGN IN INSTANTLY
               </p>
 
-            <div className="mt-8 pt-6 border-t-4 border-black">
-              <p className="text-center font-bold">
+            <div className="mt-4 md:mt-8 pt-4 md:pt-6 border-t-4 border-black">
+              <p className="text-center font-bold text-sm md:text-base">
                 ALREADY A MEMBER?
               </p>
               <Link 
                 href="/auth/login" 
-                className="block mt-2 px-4 md:px-6 py-3 bg-yellow-300 border-4 border-black font-black text-center hover:bg-yellow-400 transition-colors shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
+                className="block mt-2 px-3 md:px-6 py-2 md:py-3 bg-yellow-300 border-4 border-black font-black text-sm md:text-base text-center hover:bg-yellow-400 transition-colors shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
               >
                 SIGN IN →
               </Link>
