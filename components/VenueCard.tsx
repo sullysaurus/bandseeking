@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { MapPin, Globe, Mail, Users, Music, Coffee, Beer, Flag, Heart } from 'lucide-react'
+import { MapPin, Globe, Mail, Users, Music, Coffee, Beer, Flag, Heart, Instagram } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
 import { trackSave } from '@/components/FacebookPixel'
 import type { Database } from '@/lib/database.types'
@@ -241,7 +241,8 @@ export default function VenueCard({ venue, onReport, onSelect, isSelected = fals
             rel="noopener noreferrer"
             className="flex items-center text-sm text-blue-600 hover:text-blue-800 transition-colors"
           >
-            <span className="truncate">{venue.social_handle} ({venue.social_platform})</span>
+            <Instagram className="w-4 h-4 mr-2" />
+            <span className="truncate">{venue.social_handle}</span>
           </a>
         )}
 
