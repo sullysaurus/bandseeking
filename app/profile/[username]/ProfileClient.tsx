@@ -311,6 +311,91 @@ export default function ProfileClient() {
             )}
           </div>
 
+          {/* YouTube Video */}
+          {profile.social_links?.youtube && (
+            <div className="bg-white border-4 border-black p-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] mb-6">
+              <h2 className="text-2xl font-black mb-4">🎬 FEATURED VIDEO</h2>
+              <div className="relative" style={{ paddingBottom: '56.25%', height: 0 }}>
+                <iframe
+                  src={getYouTubeEmbedUrl(profile.social_links.youtube)}
+                  title="YouTube video"
+                  className="absolute top-0 left-0 w-full h-full border-4 border-black"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                />
+              </div>
+            </div>
+          )}
+
+          {/* Social Links */}
+          {profile.social_links && Object.values(profile.social_links).some(Boolean) && (
+            <div className="bg-white border-4 border-black p-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] mb-6">
+              <h2 className="text-2xl font-black mb-4">🔗 LISTEN & FOLLOW</h2>
+              <div className="flex flex-wrap gap-3">
+                {profile.social_links.youtube && (
+                  <a
+                    href={profile.social_links.youtube}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="px-4 py-2 bg-red-500 text-white border-2 border-black font-black text-sm hover:bg-red-600 transition-colors"
+                  >
+                    YOUTUBE →
+                  </a>
+                )}
+                {profile.social_links.spotify && (
+                  <a
+                    href={profile.social_links.spotify}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="px-4 py-2 bg-green-500 text-white border-2 border-black font-black text-sm hover:bg-green-600 transition-colors"
+                  >
+                    SPOTIFY →
+                  </a>
+                )}
+                {profile.social_links.instagram && (
+                  <a
+                    href={profile.social_links.instagram}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="px-4 py-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white border-2 border-black font-black text-sm hover:from-purple-600 hover:to-pink-600 transition-colors"
+                  >
+                    INSTAGRAM →
+                  </a>
+                )}
+                {profile.social_links.soundcloud && (
+                  <a
+                    href={profile.social_links.soundcloud}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="px-4 py-2 bg-orange-500 text-white border-2 border-black font-black text-sm hover:bg-orange-600 transition-colors"
+                  >
+                    SOUNDCLOUD →
+                  </a>
+                )}
+                {profile.social_links.bandcamp && (
+                  <a
+                    href={profile.social_links.bandcamp}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="px-4 py-2 bg-cyan-500 text-white border-2 border-black font-black text-sm hover:bg-cyan-600 transition-colors"
+                  >
+                    BANDCAMP →
+                  </a>
+                )}
+                {profile.social_links.appleMusic && (
+                  <a
+                    href={profile.social_links.appleMusic}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="px-4 py-2 bg-gray-800 text-white border-2 border-black font-black text-sm hover:bg-gray-900 transition-colors"
+                  >
+                    APPLE MUSIC →
+                  </a>
+                )}
+              </div>
+            </div>
+          )}
+
           {/* Additional Details Grid */}
           <div className="grid md:grid-cols-2 gap-6">
             

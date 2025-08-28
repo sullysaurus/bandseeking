@@ -55,7 +55,10 @@ export default function SearchProfileCard({
 
           {/* Name and Username */}
           <div className="flex-1 min-w-0">
-            <h3 className="font-black text-xl mb-1 leading-tight">@{profile.username || 'musician'}</h3>
+            <h3 className="font-black text-xl leading-tight">@{profile.username || 'musician'}</h3>
+            <p className="font-bold text-sm text-gray-600">
+              {locationDisplay || 'Planet Earth'}
+            </p>
           </div>
         </div>
 
