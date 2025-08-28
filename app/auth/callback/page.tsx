@@ -11,7 +11,40 @@ export default function AuthCallbackPage() {
   useEffect(() => {
     const handleCallback = async () => {
       try {
-        // Get the current session
+        // Check if we have a code parameter (Magic Link)
+        const urlParams = new URLSearchParams(window.location.search)
+        const code = urlParams.get('code')
+        
+        if (code) {
+          // Exchange the code for a session (Magic Link)
+          const { data: { session }, error } = await supabase.auth.exchangeCodeForSession(code)
+          
+          if (error) {
+            console.error('Error exchanging code for session:', error)
+            router.push('/auth/login')
+            return
+          }
+          
+          if (session) {
+            // Get the user's profile to redirect to their profile page
+            const { data: profile } = await supabase
+              .from('profiles')
+              .select('username')
+              .eq('user_id', session.user.id)
+              .single()
+
+            if (profile?.username) {
+              // Redirect to their profile page
+              router.push(`/profile/${profile.username}`)
+            } else {
+              // Fallback to dashboard if no profile found
+              router.push('/dashboard')
+            }
+            return
+          }
+        }
+        
+        // Fallback: Check for existing session
         const { data: { session }, error } = await supabase.auth.getSession()
         
         if (error) {
