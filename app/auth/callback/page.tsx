@@ -25,8 +25,8 @@ export default function AuthCallbackPage() {
           }
           
           if (session) {
-            // Always redirect to dashboard for new users to complete profile
-            router.push('/dashboard')
+            // Always redirect to profile edit page for new users to complete profile
+            router.push('/dashboard/profile')
             return
           }
         }
@@ -39,8 +39,8 @@ export default function AuthCallbackPage() {
           return
         }
 
-        // User has session, go to dashboard
-        router.push('/dashboard')
+        // User has session, go to profile edit page to complete profile
+        router.push('/dashboard/profile')
       } catch (error) {
         console.error('Error in auth callback:', error)
         router.push('/auth/login')

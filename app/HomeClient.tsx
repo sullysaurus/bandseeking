@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
 import { supabase } from '@/lib/supabase'
+import { formatLocationDisplay } from '@/lib/zipcode-utils'
 
 // Helper function to format last active time
 const getActiveStatus = (lastActive: string | null) => {
@@ -228,6 +229,9 @@ export default function HomeClient({ initialProfiles }: HomeClientProps) {
                         {/* Name and Username */}
                         <div className="flex-1 min-w-0">
                           <h3 className="font-black text-xl mb-1 leading-tight">@{musician.username}</h3>
+                          <p className="font-bold text-sm text-gray-600 mb-2">
+                            {musician.zip_code ? formatLocationDisplay(musician.zip_code) : 'Planet Earth'}
+                          </p>
                         </div>
                       </div>
 
@@ -267,12 +271,6 @@ export default function HomeClient({ initialProfiles }: HomeClientProps) {
                           </span>
                         )}
 
-                        {/* Location */}
-                        {(musician.city || musician.state) && (
-                          <span className="px-2 py-1 bg-cyan-300 border-2 border-black font-black text-xs">
-                            📍 {(musician.city || '').toUpperCase()}{musician.city && musician.state ? ', ' : ''}{(musician.state || '').toUpperCase()}
-                          </span>
-                        )}
                       </div>
                     </div>
 

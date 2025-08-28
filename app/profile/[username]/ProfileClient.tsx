@@ -341,16 +341,6 @@ export default function ProfileClient() {
                     YOUTUBE →
                   </a>
                 )}
-                {profile.social_links.spotify && (
-                  <a
-                    href={profile.social_links.spotify}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="px-4 py-2 bg-green-500 text-white border-2 border-black font-black text-sm hover:bg-green-600 transition-colors"
-                  >
-                    SPOTIFY →
-                  </a>
-                )}
                 {profile.social_links.instagram && (
                   <a
                     href={profile.social_links.instagram}
@@ -361,16 +351,6 @@ export default function ProfileClient() {
                     INSTAGRAM →
                   </a>
                 )}
-                {profile.social_links.soundcloud && (
-                  <a
-                    href={profile.social_links.soundcloud}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="px-4 py-2 bg-orange-500 text-white border-2 border-black font-black text-sm hover:bg-orange-600 transition-colors"
-                  >
-                    SOUNDCLOUD →
-                  </a>
-                )}
                 {profile.social_links.bandcamp && (
                   <a
                     href={profile.social_links.bandcamp}
@@ -379,16 +359,6 @@ export default function ProfileClient() {
                     className="px-4 py-2 bg-cyan-500 text-white border-2 border-black font-black text-sm hover:bg-cyan-600 transition-colors"
                   >
                     BANDCAMP →
-                  </a>
-                )}
-                {profile.social_links.appleMusic && (
-                  <a
-                    href={profile.social_links.appleMusic}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="px-4 py-2 bg-gray-800 text-white border-2 border-black font-black text-sm hover:bg-gray-900 transition-colors"
-                  >
-                    APPLE MUSIC →
                   </a>
                 )}
               </div>

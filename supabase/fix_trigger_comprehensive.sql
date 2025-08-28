@@ -65,6 +65,8 @@ BEGIN
       zip_code,
       experience_level,
       genres,
+      seeking,
+      influences,
       profile_image_url,
       is_published
     ) VALUES (
@@ -76,6 +78,8 @@ BEGIN
       '10956',
       'intermediate',
       ARRAY['Rock'],
+      ARRAY['Band members', 'Collaborators'],
+      'The Beatles, Led Zeppelin, Pink Floyd',
       '/social.png',
       true
     );
@@ -147,6 +151,8 @@ INSERT INTO public.profiles (
   zip_code,
   experience_level,
   genres,
+  seeking,
+  influences,
   profile_image_url,
   is_published
 )
@@ -159,6 +165,8 @@ SELECT
   '10956',
   'intermediate',
   ARRAY['Rock'],
+  ARRAY['Band members', 'Collaborators'],
+  'The Beatles, Led Zeppelin, Pink Floyd',
   '/social.png',
   true
 FROM auth.users u

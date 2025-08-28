@@ -31,10 +31,7 @@ export default function EditProfilePage() {
     socialLinks: {
       youtube: '',
       instagram: '',
-      soundcloud: '',
-      spotify: '',
-      bandcamp: '',
-      appleMusic: ''
+      bandcamp: ''
     },
     isPublished: false
   })
@@ -73,10 +70,7 @@ export default function EditProfilePage() {
         socialLinks: profileData.social_links || {
           youtube: '',
           instagram: '',
-          soundcloud: '',
-          spotify: '',
-          bandcamp: '',
-          appleMusic: ''
+          bandcamp: ''
         },
         isPublished: profileData.is_published || false
       })
@@ -410,30 +404,6 @@ export default function EditProfilePage() {
                   />
                 </div>
                 <div>
-                  <label className="block font-black text-sm mb-2">SOUNDCLOUD</label>
-                  <Input
-                    type="url"
-                    value={formData.socialLinks.soundcloud}
-                    onChange={(e) => setFormData({
-                      ...formData, 
-                      socialLinks: {...formData.socialLinks, soundcloud: e.target.value}
-                    })}
-                    placeholder="https://soundcloud.com/..."
-                  />
-                </div>
-                <div>
-                  <label className="block font-black text-sm mb-2">SPOTIFY</label>
-                  <Input
-                    type="url"
-                    value={formData.socialLinks.spotify}
-                    onChange={(e) => setFormData({
-                      ...formData, 
-                      socialLinks: {...formData.socialLinks, spotify: e.target.value}
-                    })}
-                    placeholder="https://open.spotify.com/..."
-                  />
-                </div>
-                <div>
                   <label className="block font-black text-sm mb-2">BANDCAMP</label>
                   <Input
                     type="url"
@@ -443,18 +413,6 @@ export default function EditProfilePage() {
                       socialLinks: {...formData.socialLinks, bandcamp: e.target.value}
                     })}
                     placeholder="https://bandcamp.com/..."
-                  />
-                </div>
-                <div>
-                  <label className="block font-black text-sm mb-2">APPLE MUSIC</label>
-                  <Input
-                    type="url"
-                    value={formData.socialLinks.appleMusic}
-                    onChange={(e) => setFormData({
-                      ...formData, 
-                      socialLinks: {...formData.socialLinks, appleMusic: e.target.value}
-                    })}
-                    placeholder="https://music.apple.com/..."
                   />
                 </div>
               </div>
@@ -498,6 +456,8 @@ export default function EditProfilePage() {
               {profile?.username && (
                 <Link 
                   href={`/profile/${profile.username}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="px-6 py-4 bg-cyan-400 hover:bg-cyan-500 border-4 border-black font-black text-lg shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] text-center"
                 >
                   {formData.isPublished ? 'VIEW PROFILE' : 'PREVIEW PROFILE'}
