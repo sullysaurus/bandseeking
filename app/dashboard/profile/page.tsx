@@ -32,7 +32,9 @@ export default function EditProfilePage() {
       youtube: '',
       instagram: '',
       soundcloud: '',
-      spotify: ''
+      spotify: '',
+      bandcamp: '',
+      appleMusic: ''
     },
     isPublished: false
   })
@@ -72,7 +74,9 @@ export default function EditProfilePage() {
           youtube: '',
           instagram: '',
           soundcloud: '',
-          spotify: ''
+          spotify: '',
+          bandcamp: '',
+          appleMusic: ''
         },
         isPublished: profileData.is_published || false
       })
@@ -95,13 +99,13 @@ export default function EditProfilePage() {
         const fileName = `${currentUser.id}.${fileExt}`
         
         const { error: uploadError, data } = await supabase.storage
-          .from('profile-images')
+          .from('avatars')
           .upload(fileName, avatarFile, { upsert: true })
 
         if (uploadError) throw uploadError
 
         const { data: { publicUrl } } = supabase.storage
-          .from('profile-images')
+          .from('avatars')
           .getPublicUrl(fileName)
 
         profileImageUrl = publicUrl
@@ -417,6 +421,30 @@ export default function EditProfilePage() {
                       socialLinks: {...formData.socialLinks, spotify: e.target.value}
                     })}
                     placeholder="https://open.spotify.com/..."
+                  />
+                </div>
+                <div>
+                  <label className="block font-black text-sm mb-2">BANDCAMP</label>
+                  <Input
+                    type="url"
+                    value={formData.socialLinks.bandcamp}
+                    onChange={(e) => setFormData({
+                      ...formData, 
+                      socialLinks: {...formData.socialLinks, bandcamp: e.target.value}
+                    })}
+                    placeholder="https://bandcamp.com/..."
+                  />
+                </div>
+                <div>
+                  <label className="block font-black text-sm mb-2">APPLE MUSIC</label>
+                  <Input
+                    type="url"
+                    value={formData.socialLinks.appleMusic}
+                    onChange={(e) => setFormData({
+                      ...formData, 
+                      socialLinks: {...formData.socialLinks, appleMusic: e.target.value}
+                    })}
+                    placeholder="https://music.apple.com/..."
                   />
                 </div>
               </div>
