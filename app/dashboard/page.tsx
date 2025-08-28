@@ -105,7 +105,7 @@ export default function DashboardPage() {
             <div className="flex items-center justify-between mb-4">
               <div>
                 <h1 className="text-3xl md:text-4xl font-black mb-2">
-                  Welcome back, {user.full_name}
+                  Welcome back, {profile?.is_published ? user.full_name : 'Rockstar'}
                 </h1>
                 <p className="font-bold text-lg text-gray-700">
                   {new Date().getHours() < 12 ? 'Good morning' : 

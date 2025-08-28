@@ -24,15 +24,15 @@ function VerifyContent() {
               <p className="font-bold text-sm md:text-base">
                 WE&apos;VE SENT A VERIFICATION LINK TO
               </p>
-              <p className="font-black text-base md:text-lg text-pink-600 mt-1 break-all">
+              <p className="font-black text-base md:text-lg text-pink-600 mt-1 break-all overflow-hidden">
                 {email || 'YOUR EMAIL'}
               </p>
             </div>
 
             <div className="space-y-4 md:space-y-6">
               <div className="p-3 md:p-4 bg-pink-100 border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
-                <p className="font-bold text-xs md:text-sm text-black">
-                  CLICK THE LINK IN THE EMAIL TO VERIFY YOUR ACCOUNT AND COMPLETE YOUR PROFILE SETUP!
+                <p className="font-bold text-xs md:text-sm text-black leading-tight">
+                  CLICK THE MAGIC LINK IN THE EMAIL TO VERIFY YOUR ACCOUNT AND COMPLETE YOUR PROFILE SETUP!
                 </p>
               </div>
 
