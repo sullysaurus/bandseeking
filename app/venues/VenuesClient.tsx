@@ -46,6 +46,8 @@ export default function VenuesClient() {
   const [itemsPerPage] = useState(12) // Show 12 venues per page
   const [reportModalOpen, setReportModalOpen] = useState(false)
   const [reportingVenue, setReportingVenue] = useState<{ id: string; name: string } | null>(null)
+  const [selectedVenues, setSelectedVenues] = useState<Set<string>>(new Set())
+  const [showEmailModal, setShowEmailModal] = useState(false)
 
   useEffect(() => {
     fetchVenues()
@@ -189,6 +191,51 @@ export default function VenuesClient() {
     setReportingVenue(null)
   }
 
+  const handleVenueSelect = (venueId: string) => {
+    const newSelection = new Set(selectedVenues)
+    if (newSelection.has(venueId)) {
+      newSelection.delete(venueId)
+    } else {
+      newSelection.add(venueId)
+    }
+    setSelectedVenues(newSelection)
+  }
+
+  const handleSelectAll = () => {
+    if (selectedVenues.size === venues.length) {
+      setSelectedVenues(new Set())
+    } else {
+      setSelectedVenues(new Set(venues.map(v => v.id)))
+    }
+  }
+
+  const handleEmailSelected = () => {
+    if (selectedVenues.size > 0) {
+      setShowEmailModal(true)
+    }
+  }
+
+  const generateEmailLink = () => {
+    const selectedVenueData = venues.filter(v => selectedVenues.has(v.id))
+    const emails = selectedVenueData
+      .filter(v => v.contact_email)
+      .map(v => v.contact_email)
+      .join(';')
+    
+    const subject = encodeURIComponent('Booking Inquiry')
+    const body = encodeURIComponent(`Hello,
+
+I'm reaching out regarding potential booking opportunities at your venue.
+
+Please let me know if you have availability for live music performances and what your booking process looks like.
+
+Thank you for your time!
+
+Best regards,`)
+
+    return `mailto:${emails}?subject=${subject}&body=${body}`
+  }
+
   return (
     <div className="min-h-screen bg-gray-50">
       <Navigation />
@@ -232,6 +279,35 @@ export default function VenuesClient() {
           </div>
         </div>
 
+        {/* Selection Controls */}
+        {!loading && venues.length > 0 && (
+          <div className="mb-4 bg-white border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] p-4 rounded-lg">
+            <div className="flex flex-wrap items-center justify-between gap-4">
+              <div className="flex items-center gap-4">
+                <button
+                  onClick={handleSelectAll}
+                  className="px-3 py-1 border-2 border-black font-black text-sm hover:bg-gray-100 transition-colors"
+                >
+                  {selectedVenues.size === venues.length ? 'DESELECT ALL' : 'SELECT ALL'}
+                </button>
+                {selectedVenues.size > 0 && (
+                  <span className="text-sm font-bold text-gray-700">
+                    {selectedVenues.size} venue{selectedVenues.size !== 1 ? 's' : ''} selected
+                  </span>
+                )}
+              </div>
+              {selectedVenues.size > 0 && (
+                <a
+                  href={generateEmailLink()}
+                  className="px-4 py-2 bg-blue-500 text-white border-2 border-black font-black text-sm hover:bg-blue-600 transition-colors shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] inline-block"
+                >
+                  EMAIL SELECTED ({selectedVenues.size})
+                </a>
+              )}
+            </div>
+          </div>
+        )}
+
         {/* Results Count */}
         <div className="mb-3 sm:mb-6">
           <p className="text-gray-600">
@@ -256,7 +332,13 @@ export default function VenuesClient() {
         ) : venues.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {venues.map(venue => (
-              <VenueCard key={venue.id} venue={venue} onReport={handleReport} />
+              <VenueCard 
+                key={venue.id} 
+                venue={venue} 
+                onReport={handleReport} 
+                onSelect={handleVenueSelect}
+                isSelected={selectedVenues.has(venue.id)}
+              />
             ))}
           </div>
         ) : hasSearched ? (

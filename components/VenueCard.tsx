@@ -12,6 +12,8 @@ type Venue = Database['public']['Tables']['venues']['Row']
 interface VenueCardProps {
   venue: Venue
   onReport?: (venueId: string, venueName: string) => void
+  onSelect?: (venueId: string) => void
+  isSelected?: boolean
 }
 
 const venueTypeColors: Record<Venue['venue_type'], string> = {
@@ -50,7 +52,7 @@ const venueTypeIcons: Record<Venue['venue_type'], React.ReactNode> = {
   arena: <Music className="w-3 h-3" />
 }
 
-export default function VenueCard({ venue, onReport }: VenueCardProps) {
+export default function VenueCard({ venue, onReport, onSelect, isSelected = false }: VenueCardProps) {
   const router = useRouter()
   const [currentUser, setCurrentUser] = useState<any>(null)
   const [isSaved, setIsSaved] = useState(false)
@@ -109,11 +111,23 @@ export default function VenueCard({ venue, onReport }: VenueCardProps) {
   }
 
   return (
-    <div className="bg-white rounded-xl border-4 border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] transition-all duration-200 overflow-hidden group">
+    <div className={`bg-white rounded-xl border-4 ${isSelected ? 'border-blue-500 bg-blue-50' : 'border-black'} shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] transition-all duration-200 overflow-hidden group relative`}>
+      {/* Selection Checkbox */}
+      {onSelect && (
+        <div className="absolute top-2 left-2 z-10">
+          <input
+            type="checkbox"
+            checked={isSelected}
+            onChange={() => onSelect(venue.id)}
+            className="w-4 h-4 text-blue-600 bg-white border-2 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
+          />
+        </div>
+      )}
+      
       {/* Header with venue type badge */}
       <div className="p-4 border-b-4 border-black bg-gradient-to-r from-gray-50 to-white">
         <div className="flex justify-between items-start mb-2">
-          <h3 className="text-xl font-bold text-gray-900 group-hover:text-blue-600 transition-colors">
+          <h3 className={`text-xl font-bold ${isSelected ? 'text-blue-600' : 'text-gray-900 group-hover:text-blue-600'} transition-colors ${onSelect ? 'ml-6' : ''}`}>
             {venue.name}
           </h3>
           <div className="flex items-center gap-2">
