@@ -406,7 +406,7 @@ export default function EditProfilePage() {
                   ))}
                 </div>
                 {formData.seeking.length === 0 && (
-                  <p className="text-xs font-bold text-purple-600 mt-1">💡 Let people know what you're looking for!</p>
+                  <p className="text-xs font-bold text-purple-600 mt-1">💡 Let people know what you&apos;re looking for!</p>
                 )}
               </div>
             </div>

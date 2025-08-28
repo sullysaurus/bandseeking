@@ -18,7 +18,7 @@ export function calculateProfileCompletion(profile: any): ProfileCompletion {
     'Social Links': profile.social_links && Object.values(profile.social_links).some(Boolean),
     'Secondary Instrument': !!profile.secondary_instrument,
     'Influences': profile.influences && profile.influences.trim() !== '' && profile.influences !== 'The Beatles, Led Zeppelin, Pink Floyd',
-    'Looking For': profile.seeking && profile.seeking.length > 0 && !profile.seeking.every(s => s === 'Band members' || s === 'Collaborators'),
+    'Looking For': profile.seeking && profile.seeking.length > 0 && !profile.seeking.every((s: string) => s === 'Band members' || s === 'Collaborators'),
     'Custom Username': profile.username && !profile.username.match(/^(guitarist|drummer|vocalist|bassist|keyboardist|producer|songwriter|rockstar)_\d+$/)
   }
   

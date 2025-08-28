@@ -8,6 +8,7 @@ import { supabase } from '@/lib/supabase'
 import { ensureUserRecord } from '@/lib/auth-helpers'
 import { calculateProfileCompletion } from '@/lib/profile-utils'
 import Navigation from '@/components/layout/Navigation'
+import NotificationsCard from '@/components/NotificationsCard'
 
 export default function DashboardPage() {
   const router = useRouter()
@@ -229,6 +230,11 @@ export default function DashboardPage() {
                 </p>
               </div>
             </div>
+          </section>
+
+          {/* Notifications */}
+          <section className="mb-8">
+            <NotificationsCard />
           </section>
 
           {/* Recent Musicians */}
