@@ -45,10 +45,7 @@ export default function NeoBrutalistSearchClient() {
     try {
       let query = supabase
         .from('profiles')
-        .select(`
-          *,
-          user:users(*)
-        `)
+        .select('*')
         .eq('is_published', true)
       
       // Allow users to see their own profile in search results
@@ -89,22 +86,16 @@ export default function NeoBrutalistSearchClient() {
         .select('sender_id')
         .eq('receiver_id', userId)
       
-      // Get users who have saved each other (bidirectional)
-      const { data: savedByUser } = await supabase
+      // Get profiles that user has saved
+      const { data: savedProfiles } = await supabase
         .from('saved_profiles')
-        .select('saved_user_id')
+        .select('saved_profile_id, profile:profiles!saved_profile_id(user_id)')
         .eq('user_id', userId)
-      
-      const { data: savedUser } = await supabase
-        .from('saved_profiles')
-        .select('user_id')
-        .eq('saved_user_id', userId)
       
       // Add all connected user IDs
       sentMessages?.forEach(msg => connectedIds.add(msg.receiver_id))
       receivedMessages?.forEach(msg => connectedIds.add(msg.sender_id))
-      savedByUser?.forEach(save => connectedIds.add(save.saved_user_id))
-      savedUser?.forEach(save => connectedIds.add(save.user_id))
+      savedProfiles?.forEach(save => save.profile && connectedIds.add(save.profile.user_id))
       
     } catch (error) {
       console.error('Error fetching connected users:', error)
@@ -120,33 +111,33 @@ export default function NeoBrutalistSearchClient() {
     if (authUser) {
       const { data } = await supabase
         .from('saved_profiles')
-        .select('saved_user_id')
+        .select('saved_profile_id')
         .eq('user_id', authUser.id)
       
       if (data) {
-        setSavedProfiles(new Set(data.map(item => item.saved_user_id)))
+        setSavedProfiles(new Set(data.map(item => item.saved_profile_id)))
       }
     }
   }
 
-  const handleSave = async (profileUserId: string) => {
+  const handleSave = async (profileId: string) => {
     if (!currentUser) {
       router.push('/auth/login')
       return
     }
 
-    const isSaved = savedProfiles.has(profileUserId)
+    const isSaved = savedProfiles.has(profileId)
 
     if (isSaved) {
       await supabase
         .from('saved_profiles')
         .delete()
         .eq('user_id', currentUser.id)
-        .eq('saved_user_id', profileUserId)
+        .eq('saved_profile_id', profileId)
       
       setSavedProfiles(prev => {
         const newSet = new Set(prev)
-        newSet.delete(profileUserId)
+        newSet.delete(profileId)
         return newSet
       })
     } else {
@@ -154,10 +145,10 @@ export default function NeoBrutalistSearchClient() {
         .from('saved_profiles')
         .insert({
           user_id: currentUser.id,
-          saved_user_id: profileUserId
+          saved_profile_id: profileId
         })
       
-      setSavedProfiles(prev => new Set(prev).add(profileUserId))
+      setSavedProfiles(prev => new Set(prev).add(profileId))
     }
   }
 
@@ -176,10 +167,7 @@ export default function NeoBrutalistSearchClient() {
     try {
       let query = supabase
         .from('profiles')
-        .select(`
-          *,
-          user:users(*)
-        `)
+        .select('*')
         .eq('is_published', true)
       
       // Exclude current user's own profile

@@ -4,60 +4,79 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { supabase } from '@/lib/supabase'
-import { ensureUserRecord } from '@/lib/auth-helpers'
 import Navigation from '@/components/layout/Navigation'
-import Input from '@/components/ui/Input'
-import Button from '@/components/ui/Button'
-import { z } from 'zod'
-import { useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
-
-const loginSchema = z.object({
-  email: z.string().email('Invalid email address'),
-  password: z.string().min(1, 'Password is required')
-})
-
-type LoginFormData = z.infer<typeof loginSchema>
+import MagicLinkInfo from '@/components/auth/MagicLinkInfo'
 
 export default function LoginClient() {
   const router = useRouter()
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [email, setEmail] = useState('')
+  const [emailSent, setEmailSent] = useState(false)
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors }
-  } = useForm<LoginFormData>({
-    resolver: zodResolver(loginSchema)
-  })
+  const handleMagicLink = async (e: React.FormEvent) => {
+    e.preventDefault()
+    
+    if (!email) {
+      setError('Please enter your email')
+      return
+    }
 
-  const onSubmit = async (data: LoginFormData) => {
     setIsLoading(true)
     setError(null)
 
     try {
-      const { error: authError } = await supabase.auth.signInWithPassword({
-        email: data.email,
-        password: data.password
+      const { error } = await supabase.auth.signInWithOtp({
+        email
       })
 
-      if (authError) throw authError
+      if (error) throw error
 
-      // Ensure user record exists and get user data
-      const userData = await ensureUserRecord()
-      
-      // Use router.push for smoother navigation
-      if (userData.profile_completed) {
-        router.push('/dashboard')
-      } else {
-        router.push('/onboarding')
-      }
+      setEmailSent(true)
     } catch (err: any) {
-      setError(err.message || 'Invalid email or password')
+      setError(err.message || 'An error occurred while sending the magic link')
     } finally {
       setIsLoading(false)
     }
+  }
+
+  if (emailSent) {
+    return (
+      <>
+        <Navigation />
+        <div className="min-h-screen bg-cyan-300 flex items-center justify-center px-4 py-8 md:py-12">
+          <div className="w-full max-w-md">
+            <div className="bg-white border-4 md:border-8 border-black p-6 md:p-8 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] md:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
+              <div className="text-center">
+                <h1 className="text-3xl md:text-4xl font-black mb-4">CHECK YOUR EMAIL!</h1>
+                <div className="mb-6">
+                  <div className="text-6xl mb-4">📧</div>
+                  <p className="font-bold text-base md:text-lg mb-2">
+                    WE&apos;VE SENT A MAGIC LINK TO:
+                  </p>
+                  <p className="font-black text-lg bg-yellow-300 px-4 py-2 inline-block border-2 border-black">
+                    {email}
+                  </p>
+                </div>
+                <p className="font-bold text-sm text-gray-600 mb-4">
+                  CLICK THE LINK IN YOUR EMAIL TO SIGN IN INSTANTLY
+                </p>
+                <MagicLinkInfo />
+                <button
+                  onClick={() => {
+                    setEmailSent(false)
+                    setEmail('')
+                  }}
+                  className="w-full px-4 md:px-6 py-3 bg-black text-white border-4 border-black font-black text-base md:text-lg hover:bg-yellow-400 hover:text-black transition-colors shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
+                >
+                  ← TRY A DIFFERENT EMAIL
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </>
+    )
   }
 
   return (
@@ -68,61 +87,50 @@ export default function LoginClient() {
           <div className="bg-white border-4 md:border-8 border-black p-6 md:p-8 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] md:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
             <div className="text-center mb-6 md:mb-8">
               <h1 className="text-3xl md:text-4xl font-black mb-2">WELCOME BACK!</h1>
-              <p className="font-bold text-base md:text-lg">LET&apos;S MAKE SOME NOISE</p>
+              <p className="font-bold text-base md:text-lg">SIGN IN WITH MAGIC LINK</p>
             </div>
 
-
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-              <div>
-                <label className="block font-black mb-2 text-sm">EMAIL</label>
-                <input
-                  type="email"
-                  placeholder="YOUR@EMAIL.COM"
-                  {...register('email')}
-                  className="w-full px-4 py-3 border-4 border-black font-bold text-base placeholder:text-gray-400 focus:outline-none focus:bg-yellow-100 transition-colors"
-                />
-                {errors.email && (
-                  <p className="mt-1 font-bold text-sm text-red-600">{errors.email.message}</p>
-                )}
-              </div>
-
-              <div>
-                <label className="block font-black mb-2 text-sm">PASSWORD</label>
-                <input
-                  type="password"
-                  placeholder="••••••••"
-                  {...register('password')}
-                  className="w-full px-4 py-3 border-4 border-black font-bold text-base placeholder:text-gray-400 focus:outline-none focus:bg-yellow-100 transition-colors"
-                />
-                {errors.password && (
-                  <p className="mt-1 font-bold text-sm text-red-600">{errors.password.message}</p>
-                )}
-              </div>
-
-              {error && (
-                <div className="p-3 bg-red-400 border-4 border-black">
-                  <p className="font-black text-sm">{error.toUpperCase()}</p>
+            <form onSubmit={handleMagicLink} className="space-y-4">
+                <div>
+                  <label className="block font-black mb-2 text-sm">EMAIL ADDRESS</label>
+                  <input
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="YOUR@EMAIL.COM"
+                    className="w-full px-4 py-3 border-4 border-black font-bold text-base placeholder:text-gray-400 focus:outline-none focus:bg-yellow-100 transition-colors"
+                    required
+                  />
                 </div>
-              )}
 
-              <button
-                type="submit"
-                disabled={isLoading}
-                className="w-full px-4 md:px-6 py-3 bg-black text-white border-4 border-black font-black text-base md:text-lg hover:bg-pink-400 hover:text-black transition-colors shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] disabled:opacity-50"
-              >
-                {isLoading ? 'SIGNING IN...' : 'SIGN IN →'}
-              </button>
-            </form>
+                {error && (
+                  <div className="p-3 bg-red-400 border-4 border-black">
+                    <p className="font-black text-sm">{error.toUpperCase()}</p>
+                  </div>
+                )}
 
-            <div className="mt-6 pt-6 border-t-4 border-black">
+                <button
+                  type="submit"
+                  disabled={isLoading}
+                  className="w-full px-4 md:px-6 py-3 bg-black text-white border-4 border-black font-black text-base md:text-lg hover:bg-lime-400 hover:text-black transition-colors shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] disabled:opacity-50"
+                >
+                  {isLoading ? 'SENDING MAGIC LINK...' : 'SEND MAGIC LINK →'}
+                </button>
+              </form>
+
+              <p className="text-center font-bold text-sm text-gray-600 mt-6">
+                NO PASSWORD NEEDED - JUST CLICK THE LINK WE EMAIL YOU!
+              </p>
+
+            <div className="mt-8 pt-6 border-t-4 border-black">
               <p className="text-center font-bold">
-                NO ACCOUNT YET?
+                NEW TO BANDSEEKING?
               </p>
               <Link 
                 href="/auth/register" 
-                className="block mt-2 px-4 md:px-6 py-3 bg-yellow-300 border-4 border-black font-black text-center hover:bg-yellow-400 transition-colors shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
+                className="block mt-2 px-4 md:px-6 py-3 bg-pink-400 border-4 border-black font-black text-center hover:bg-pink-500 transition-colors shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
               >
-                CREATE ACCOUNT →
+                JOIN THE BAND →
               </Link>
             </div>
           </div>

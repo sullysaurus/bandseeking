@@ -15,10 +15,7 @@ export async function getRecentProfiles(limit = 12) {
     console.log('Fetching recent profiles with limit:', limit)
     const { data, error } = await supabaseServer
       .from('profiles')
-      .select(`
-        *,
-        user:users(*)
-      `)
+      .select('*')
       .eq('is_published', true)
       .order('created_at', { ascending: false })
       .limit(limit)
@@ -38,24 +35,18 @@ export async function getRecentProfiles(limit = 12) {
 
 export async function getProfileByUsername(username: string) {
   try {
-    const { data: userData } = await supabaseServer
-      .from('users')
+    const { data: profileData, error } = await supabaseServer
+      .from('profiles')
       .select('*')
       .eq('username', username)
       .single()
 
-    if (!userData) return null
-
-    const { data: profileData } = await supabaseServer
-      .from('profiles')
-      .select('*')
-      .eq('user_id', userData.id)
-      .single()
-
-    return {
-      user: userData,
-      profile: profileData
+    if (error) {
+      console.error('Error fetching profile by username:', error)
+      return null
     }
+
+    return profileData
   } catch (error) {
     console.error('Error in getProfileByUsername:', error)
     return null
@@ -66,10 +57,7 @@ export async function getAllPublishedProfiles() {
   try {
     const { data, error } = await supabaseServer
       .from('profiles')
-      .select(`
-        *,
-        user:users(*)
-      `)
+      .select('*')
       .eq('is_published', true)
       .order('created_at', { ascending: false })
 

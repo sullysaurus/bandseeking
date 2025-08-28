@@ -37,8 +37,8 @@ export default function MessagesPage() {
         .from('messages')
         .select(`
           *,
-          sender:users!sender_id(*),
-          receiver:users!receiver_id(*)
+          sender:profiles!sender_id(*),
+          receiver:profiles!receiver_id(*)
         `)
         .or(`sender_id.eq.${userId},receiver_id.eq.${userId}`)
         .order('created_at', { ascending: false })
@@ -49,11 +49,11 @@ export default function MessagesPage() {
       
       messages?.forEach(message => {
         const otherUserId = message.sender_id === userId ? message.receiver_id : message.sender_id
-        const otherUser = message.sender_id === userId ? message.receiver : message.sender
+        const otherProfile = message.sender_id === userId ? message.receiver : message.sender
         
         if (!conversationMap.has(otherUserId)) {
           conversationMap.set(otherUserId, {
-            user: otherUser,
+            profile: otherProfile,
             lastMessage: message,
             unreadCount: 0
           })
@@ -96,8 +96,8 @@ export default function MessagesPage() {
   }
 
   const filteredConversations = conversations.filter(conv =>
-    conv.user.full_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    conv.user.username.toLowerCase().includes(searchQuery.toLowerCase())
+    conv.profile.full_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    conv.profile.username.toLowerCase().includes(searchQuery.toLowerCase())
   )
 
   if (loading) {
@@ -169,15 +169,15 @@ export default function MessagesPage() {
             <div className="space-y-4">
               {filteredConversations.map((conversation) => (
                 <Link 
-                  key={conversation.user.id} 
-                  href={`/dashboard/messages/${conversation.user.id}`}
+                  key={conversation.profile.user_id} 
+                  href={`/dashboard/messages/${conversation.profile.user_id}`}
                   className="block"
                 >
                   <div className="bg-white border-4 border-black p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all">
                     <div className="flex items-center justify-between">
                       <div className="flex-1">
                         <div className="flex items-center gap-3 mb-2">
-                          <h3 className="font-black text-lg">{conversation.user.full_name.toUpperCase()}</h3>
+                          <h3 className="font-black text-lg">{conversation.profile.full_name.toUpperCase()}</h3>
                           {conversation.unreadCount > 0 && (
                             <span className="px-2 py-1 bg-red-500 text-white font-black text-xs">
                               {conversation.unreadCount} NEW
@@ -185,7 +185,7 @@ export default function MessagesPage() {
                           )}
                         </div>
                         <p className="font-bold text-sm text-gray-600 mb-1">
-                          @{conversation.user.username}
+                          @{conversation.profile.username}
                         </p>
                         <p className="font-bold text-sm line-clamp-2">
                           {conversation.lastMessage.sender_id === currentUser?.id ? 'YOU: ' : ''}

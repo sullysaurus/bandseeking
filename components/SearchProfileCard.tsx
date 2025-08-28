@@ -23,7 +23,7 @@ export default function SearchProfileCard({
   onSave, 
   onMessage 
 }: SearchProfileCardProps) {
-  const locationDisplay = useLocationDisplay(profile.user.zip_code)
+  const locationDisplay = useLocationDisplay(profile.zip_code)
 
   return (
     <div className="bg-white border-4 border-black p-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] transition-all">
@@ -36,7 +36,7 @@ export default function SearchProfileCard({
             {profile.profile_image_url ? (
               <Image
                 src={profile.profile_image_url}
-                alt={profile.user.full_name}
+                alt={profile.full_name}
                 width={64}
                 height={64}
                 className="w-16 h-16 border-4 border-black object-cover"
@@ -47,7 +47,7 @@ export default function SearchProfileCard({
             ) : (
               <div className="w-16 h-16 border-4 border-black bg-gradient-to-br from-pink-400 to-purple-500 flex items-center justify-center">
                 <div className="text-xl font-black text-white">
-                  {profile.user.full_name.charAt(0).toUpperCase()}
+                  {profile.full_name.charAt(0).toUpperCase()}
                 </div>
               </div>
             )}
@@ -55,16 +55,16 @@ export default function SearchProfileCard({
 
           {/* Name and Username */}
           <div className="flex-1 min-w-0">
-            <h3 className="font-black text-xl mb-1 leading-tight">{profile.user.full_name.toUpperCase()}</h3>
-            <p className="font-bold text-sm text-gray-600">@{profile.user.username}</p>
+            <h3 className="font-black text-xl mb-1 leading-tight">{profile.full_name.toUpperCase()}</h3>
+            <p className="font-bold text-sm text-gray-600">@{profile.username}</p>
           </div>
         </div>
 
         {/* Key Tags Row */}
         <div className="flex flex-wrap gap-2">
           {/* Last Active Status */}
-          {profile.user.last_active && (() => {
-            const activeStatus = getLastActiveStatus(profile.user.last_active)
+          {profile.last_active && (() => {
+            const activeStatus = getLastActiveStatus(profile.last_active)
             return (
               <span className={`px-2 py-1 border-2 border-black font-black text-xs ${
                 activeStatus.status === 'online' ? 'bg-green-400' :
@@ -97,7 +97,7 @@ export default function SearchProfileCard({
           )}
 
           {/* Location */}
-          {profile.user.zip_code && (
+          {profile.zip_code && (
             <span className="px-2 py-1 bg-cyan-300 border-2 border-black font-black text-xs">
               📍 {locationDisplay}
             </span>
@@ -161,7 +161,7 @@ export default function SearchProfileCard({
       {/* Action Buttons */}
       <div className="flex gap-2 pt-2 border-t-2 border-black">
         <Link 
-          href={`/profile/${profile.user.username}`} 
+          href={`/profile/${profile.username}`} 
           className="flex-1 px-3 py-1 bg-black text-white border-2 border-black font-black text-sm text-center hover:bg-cyan-400 hover:text-black transition-colors"
         >
           VIEW →
@@ -176,14 +176,14 @@ export default function SearchProfileCard({
         )}
         {currentUser && (
           <button
-            onClick={() => onSave(profile.user_id)}
+            onClick={() => onSave(profile.id)}
             className={`px-3 py-1 border-2 border-black font-black text-sm transition-colors ${
-              savedProfiles.has(profile.user_id)
+              savedProfiles.has(profile.id)
                 ? 'bg-pink-400 hover:bg-pink-500' 
                 : 'bg-white hover:bg-lime-300'
             }`}
           >
-            {savedProfiles.has(profile.user_id) ? '♥' : '♡'}
+            {savedProfiles.has(profile.id) ? '♥' : '♡'}
           </button>
         )}
       </div>

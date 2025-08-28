@@ -9,52 +9,24 @@ export type Json =
 export interface Database {
   public: {
     Tables: {
-      users: {
+      profiles: {
         Row: {
           id: string
+          user_id: string
           email: string
           username: string
           full_name: string
           zip_code: string | null
           latitude: number | null
           longitude: number | null
+          city: string | null
+          state: string | null
           profile_completed: boolean
-          created_at: string
-          updated_at: string
-        }
-        Insert: {
-          id?: string
-          email: string
-          username: string
-          full_name: string
-          zip_code?: string | null
-          latitude?: number | null
-          longitude?: number | null
-          profile_completed?: boolean
-          created_at?: string
-          updated_at?: string
-        }
-        Update: {
-          id?: string
-          email?: string
-          username?: string
-          full_name?: string
-          zip_code?: string | null
-          latitude?: number | null
-          longitude?: number | null
-          profile_completed?: boolean
-          created_at?: string
-          updated_at?: string
-        }
-      }
-      profiles: {
-        Row: {
-          id: string
-          user_id: string
+          last_active: string
           bio: string | null
           main_instrument: string
           secondary_instruments: string[] | null
-          experience_level: 'beginner' | 'intermediate' | 'advanced' | 'professional'
+          experience_level: 'beginner' | 'intermediate' | 'advanced' | 'professional' | null
           seeking: string[] | null
           genres: string[] | null
           influences: string | null
@@ -72,10 +44,20 @@ export interface Database {
         Insert: {
           id?: string
           user_id: string
+          email: string
+          username: string
+          full_name: string
+          zip_code?: string | null
+          latitude?: number | null
+          longitude?: number | null
+          city?: string | null
+          state?: string | null
+          profile_completed?: boolean
+          last_active?: string
           bio?: string | null
           main_instrument: string
           secondary_instruments?: string[] | null
-          experience_level: 'beginner' | 'intermediate' | 'advanced' | 'professional'
+          experience_level?: 'beginner' | 'intermediate' | 'advanced' | 'professional' | null
           seeking?: string[] | null
           genres?: string[] | null
           influences?: string | null
@@ -93,10 +75,20 @@ export interface Database {
         Update: {
           id?: string
           user_id?: string
+          email?: string
+          username?: string
+          full_name?: string
+          zip_code?: string | null
+          latitude?: number | null
+          longitude?: number | null
+          city?: string | null
+          state?: string | null
+          profile_completed?: boolean
+          last_active?: string
           bio?: string | null
           main_instrument?: string
           secondary_instruments?: string[] | null
-          experience_level?: 'beginner' | 'intermediate' | 'advanced' | 'professional'
+          experience_level?: 'beginner' | 'intermediate' | 'advanced' | 'professional' | null
           seeking?: string[] | null
           genres?: string[] | null
           influences?: string | null
@@ -116,19 +108,19 @@ export interface Database {
         Row: {
           id: string
           user_id: string
-          saved_user_id: string
+          saved_profile_id: string
           created_at: string
         }
         Insert: {
           id?: string
           user_id: string
-          saved_user_id: string
+          saved_profile_id: string
           created_at?: string
         }
         Update: {
           id?: string
           user_id?: string
-          saved_user_id?: string
+          saved_profile_id?: string
           created_at?: string
         }
       }
@@ -185,8 +177,7 @@ export interface Database {
           city: string
           state?: string
           zip_code: string
-          capacity_min?: number | null
-          capacity_max?: number | null
+          capacity?: number | null
           venue_type: 'music_venue' | 'brewery' | 'coffee_shop' | 'restaurant' | 'bar' | 'event_space' | 'amphitheater' | 'theater' | 'arena'
           website?: string | null
           social_platform?: string | null
@@ -205,9 +196,8 @@ export interface Database {
           city?: string
           state?: string
           zip_code?: string
-          capacity_min?: number | null
-          capacity_max?: number | null
-          venue_type?: 'music_venue' | 'brewery' | 'coffee_shop' | 'restaurant' | 'bar' | 'event_space' | 'amphitheater' | 'theater'
+          capacity?: number | null
+          venue_type?: 'music_venue' | 'brewery' | 'coffee_shop' | 'restaurant' | 'bar' | 'event_space' | 'amphitheater' | 'theater' | 'arena'
           website?: string | null
           social_platform?: string | null
           social_handle?: string | null
@@ -224,7 +214,7 @@ export interface Database {
           id: string
           venue_id: string
           reporter_id: string | null
-          reason: 'incorrect_info' | 'closed_permanently' | 'wrong_location' | 'inappropriate_content' | 'duplicate' | 'other'
+          reason: string
           description: string | null
           status: 'pending' | 'reviewed' | 'resolved' | 'dismissed'
           admin_notes: string | null
@@ -235,7 +225,7 @@ export interface Database {
           id?: string
           venue_id: string
           reporter_id?: string | null
-          reason: 'incorrect_info' | 'closed_permanently' | 'wrong_location' | 'inappropriate_content' | 'duplicate' | 'other'
+          reason: string
           description?: string | null
           status?: 'pending' | 'reviewed' | 'resolved' | 'dismissed'
           admin_notes?: string | null
@@ -246,7 +236,7 @@ export interface Database {
           id?: string
           venue_id?: string
           reporter_id?: string | null
-          reason?: 'incorrect_info' | 'closed_permanently' | 'wrong_location' | 'inappropriate_content' | 'duplicate' | 'other'
+          reason?: string
           description?: string | null
           status?: 'pending' | 'reviewed' | 'resolved' | 'dismissed'
           admin_notes?: string | null

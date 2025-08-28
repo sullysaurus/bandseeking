@@ -9,30 +9,12 @@ import { Database, Search, Trash2, Eye, EyeOff, ArrowLeft, Music, MapPin } from 
 import Link from 'next/link'
 import Image from 'next/image'
 
-interface ProfileWithUser {
-  id: string
-  user_id: string
-  bio: string
-  main_instrument: string
-  experience_level: string
-  genres: string[]
-  seeking: string[]
-  is_published: boolean
-  profile_image_url: string
-  created_at: string
-  user: {
-    full_name: string
-    username: string
-    email: string
-    zip_code: string
-  }
-}
 
 export default function AdminProfilesPage() {
   const router = useRouter()
   const [currentUser, setCurrentUser] = useState<any>(null)
-  const [profiles, setProfiles] = useState<ProfileWithUser[]>([])
-  const [filteredProfiles, setFilteredProfiles] = useState<ProfileWithUser[]>([])
+  const [profiles, setProfiles] = useState<any[]>([])
+  const [filteredProfiles, setFilteredProfiles] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [searchQuery, setSearchQuery] = useState('')
   const [filterPublished, setFilterPublished] = useState<string>('all')
@@ -68,10 +50,7 @@ export default function AdminProfilesPage() {
     try {
       const { data, error } = await supabase
         .from('profiles')
-        .select(`
-          *,
-          user:users(*)
-        `)
+        .select('*')
         .order('created_at', { ascending: false })
 
       if (error) throw error
@@ -87,8 +66,8 @@ export default function AdminProfilesPage() {
     // Filter by search query
     if (searchQuery) {
       filtered = filtered.filter(profile =>
-        profile.user.full_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        profile.user.username.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        profile.full_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        profile.username.toLowerCase().includes(searchQuery.toLowerCase()) ||
         profile.main_instrument.toLowerCase().includes(searchQuery.toLowerCase()) ||
         profile.bio?.toLowerCase().includes(searchQuery.toLowerCase())
       )
@@ -221,7 +200,7 @@ export default function AdminProfilesPage() {
                       {profile.profile_image_url ? (
                         <Image
                           src={profile.profile_image_url}
-                          alt={profile.user.full_name}
+                          alt={profile.full_name}
                           width={56}
                           height={56}
                           className="w-14 h-14 rounded-xl object-cover ring-2 ring-gray-100"
@@ -229,7 +208,7 @@ export default function AdminProfilesPage() {
                       ) : (
                         <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center ring-2 ring-gray-100">
                           <div className="text-lg font-bold text-white">
-                            {profile.user.full_name.charAt(0).toUpperCase()}
+                            {profile.full_name.charAt(0).toUpperCase()}
                           </div>
                         </div>
                       )}
@@ -242,19 +221,19 @@ export default function AdminProfilesPage() {
                     
                     <div className="flex-1 min-w-0">
                       <h3 className="font-semibold text-lg text-gray-900 truncate">
-                        {profile.user.full_name}
+                        {profile.full_name}
                       </h3>
-                      <p className="text-sm text-gray-600 mb-1">@{profile.user.username}</p>
+                      <p className="text-sm text-gray-600 mb-1">@{profile.username}</p>
                       
                       <div className="flex items-center gap-2 text-sm text-gray-700">
                         <Music className="w-4 h-4 text-blue-600 flex-shrink-0" />
                         <span className="truncate font-medium">{profile.main_instrument}</span>
                       </div>
                       
-                      {profile.user.zip_code && (
+                      {profile.zip_code && (
                         <div className="flex items-center gap-2 text-sm text-gray-600 mt-1">
                           <MapPin className="w-4 h-4 text-gray-400 flex-shrink-0" />
-                          <span>{profile.user.zip_code}</span>
+                          <span>{profile.zip_code}</span>
                         </div>
                       )}
                     </div>
@@ -307,7 +286,7 @@ export default function AdminProfilesPage() {
                 {/* Actions */}
                 <div className="border-t border-gray-200 p-4">
                   <div className="flex gap-2">
-                    <Link href={`/profile/${profile.user.username}`} target="_blank" className="flex-1">
+                    <Link href={`/profile/${profile.username}`} target="_blank" className="flex-1">
                       <Button variant="secondary" size="sm" className="w-full">
                         <Eye className="w-4 h-4 mr-2" />
                         View

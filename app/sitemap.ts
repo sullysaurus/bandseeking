@@ -37,7 +37,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   
   // Dynamic profile pages
   const profilePages = profiles.map((profile) => ({
-    url: `${baseUrl}/profile/${profile.user.username}`,
+    url: `${baseUrl}/profile/${profile.username}`,
     lastModified: new Date(profile.updated_at || profile.created_at),
     changeFrequency: 'weekly' as const,
     priority: 0.7,

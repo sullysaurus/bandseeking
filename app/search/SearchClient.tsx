@@ -42,10 +42,7 @@ export default function SearchClient() {
     try {
       const { data, error } = await supabase
         .from('profiles')
-        .select(`
-          *,
-          user:users(*)
-        `)
+        .select('*')
         .eq('is_published', true)
         .order('created_at', { ascending: false })
 
@@ -70,8 +67,8 @@ export default function SearchClient() {
       filtered = filtered.filter(profile => {
         const searchLower = searchQuery.toLowerCase()
         return (
-          profile.user.full_name.toLowerCase().includes(searchLower) ||
-          profile.user.username.toLowerCase().includes(searchLower) ||
+          profile.full_name.toLowerCase().includes(searchLower) ||
+          profile.username.toLowerCase().includes(searchLower) ||
           profile.bio?.toLowerCase().includes(searchLower) ||
           profile.influences?.toLowerCase().includes(searchLower)
         )
@@ -133,7 +130,7 @@ export default function SearchClient() {
       // TODO: Implement actual distance calculation between zip codes
       // For now, just filter by exact zip code match
       filtered = filtered.filter(profile =>
-        profile.user.zip_code === filters.zipCode
+        profile.zip_code === filters.zipCode
       )
     }
 
