@@ -62,7 +62,7 @@ export default function EditProfilePage() {
       setProfile(profileData)
       setFormData({
         bio: profileData.bio || '',
-        profileImageUrl: profileData.profile_image_url || '',
+        profileImageUrl: profileData.profile_image_url || '/social.png',
         mainInstrument: profileData.main_instrument || '',
         secondaryInstrument: profileData.secondary_instrument || '',
         experienceLevel: profileData.experience_level || '',
@@ -76,7 +76,7 @@ export default function EditProfilePage() {
         },
         isPublished: profileData.is_published || false
       })
-      setAvatarPreview(profileData.profile_image_url)
+      setAvatarPreview(profileData.profile_image_url || '/social.png')
     }
     
     setLoading(false)
@@ -87,7 +87,7 @@ export default function EditProfilePage() {
     setSaving(true)
 
     try {
-      let profileImageUrl = formData.profileImageUrl
+      let profileImageUrl = formData.profileImageUrl || '/social.png'
 
       // Upload avatar if selected
       if (avatarFile) {
@@ -457,12 +457,12 @@ export default function EditProfilePage() {
                 {saving ? 'SAVING...' : 'SAVE PROFILE'}
               </Button>
               
-              {profile?.username && formData.isPublished && (
+              {profile?.username && (
                 <Link 
                   href={`/profile/${profile.username}`}
                   className="px-6 py-4 bg-cyan-400 hover:bg-cyan-500 border-4 border-black font-black text-lg shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] text-center"
                 >
-                  VIEW PROFILE
+                  {formData.isPublished ? 'VIEW PROFILE' : 'PREVIEW PROFILE'}
                 </Link>
               )}
             </div>

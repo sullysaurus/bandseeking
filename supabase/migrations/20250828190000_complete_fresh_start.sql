@@ -208,6 +208,7 @@ BEGIN
     zip_code,
     experience_level,
     genres,
+    profile_image_url,
     is_published
   )
   VALUES (
@@ -219,6 +220,7 @@ BEGIN
     '27601',
     default_experience,
     default_genres,
+    '/social.png',
     true
   );
   
