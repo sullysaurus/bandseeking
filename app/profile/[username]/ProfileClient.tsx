@@ -312,20 +312,24 @@ export default function ProfileClient() {
           </div>
 
           {/* YouTube Video */}
-          {profile.social_links?.youtube && (
-            <div className="bg-white border-4 border-black p-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] mb-6">
-              <h2 className="text-2xl font-black mb-4">🎬 FEATURED VIDEO</h2>
-              <div className="relative" style={{ paddingBottom: '56.25%', height: 0 }}>
-                <iframe
-                  src={getYouTubeEmbedUrl(profile.social_links.youtube)}
-                  title="YouTube video"
-                  className="absolute top-0 left-0 w-full h-full border-4 border-black"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
-                />
+          {profile.social_links?.youtube && (() => {
+            const embedUrl = getYouTubeEmbedUrl(profile.social_links.youtube)
+            if (!embedUrl) return null
+            return (
+              <div className="bg-white border-4 border-black p-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] mb-6">
+                <h2 className="text-2xl font-black mb-4">🎬 FEATURED VIDEO</h2>
+                <div className="relative" style={{ paddingBottom: '56.25%', height: 0 }}>
+                  <iframe
+                    src={embedUrl}
+                    title="YouTube video"
+                    className="absolute top-0 left-0 w-full h-full border-4 border-black"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                  />
+                </div>
               </div>
-            </div>
-          )}
+            )
+          })()}
 
           {/* Social Links */}
           {profile.social_links && Object.values(profile.social_links).some(Boolean) && (
