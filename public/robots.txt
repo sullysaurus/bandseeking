@@ -6,7 +6,6 @@ Allow: /
 Disallow: /dashboard/
 Disallow: /auth/
 Disallow: /api/
-Disallow: /onboarding/
 
 # Sitemap
 Sitemap: https://www.bandseeking.com/sitemap.xml

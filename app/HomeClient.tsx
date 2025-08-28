@@ -211,7 +211,7 @@ export default function HomeClient({ initialProfiles }: HomeClientProps) {
                           {musician.profile_image_url ? (
                             <Image
                               src={musician.profile_image_url}
-                              alt={musician.user.full_name}
+                              alt={musician.full_name}
                               width={64}
                               height={64}
                               className="w-16 h-16 border-4 border-black object-cover"
@@ -219,7 +219,7 @@ export default function HomeClient({ initialProfiles }: HomeClientProps) {
                           ) : (
                             <div className="w-16 h-16 border-4 border-black bg-gradient-to-br from-pink-400 to-purple-500 flex items-center justify-center">
                               <div className="text-xl font-black text-white">
-                                {musician.user.full_name.charAt(0).toUpperCase()}
+                                {musician.full_name.charAt(0).toUpperCase()}
                               </div>
                             </div>
                           )}
@@ -227,8 +227,8 @@ export default function HomeClient({ initialProfiles }: HomeClientProps) {
 
                         {/* Name and Username */}
                         <div className="flex-1 min-w-0">
-                          <h3 className="font-black text-xl mb-1 leading-tight">{musician.user.full_name.toUpperCase()}</h3>
-                          <p className="font-bold text-sm text-gray-600">@{musician.user.username}</p>
+                          <h3 className="font-black text-xl mb-1 leading-tight">{musician.full_name.toUpperCase()}</h3>
+                          <p className="font-bold text-sm text-gray-600">@{musician.username}</p>
                         </div>
                       </div>
 
@@ -236,7 +236,7 @@ export default function HomeClient({ initialProfiles }: HomeClientProps) {
                       <div className="flex flex-wrap gap-2">
                         {/* Last Active Status */}
                         {(() => {
-                          const activeStatus = getActiveStatus(musician.user.last_active)
+                          const activeStatus = getActiveStatus(musician.last_active)
                           return (
                             <span className={`px-2 py-1 border-2 border-black font-black text-xs ${
                               activeStatus.status === 'online' ? 'bg-green-400' :
@@ -269,9 +269,9 @@ export default function HomeClient({ initialProfiles }: HomeClientProps) {
                         )}
 
                         {/* Location */}
-                        {musician.user.city && (
+                        {musician.city && (
                           <span className="px-2 py-1 bg-cyan-300 border-2 border-black font-black text-xs">
-                            📍 {musician.user.city?.toUpperCase()}, {musician.user.state?.toUpperCase()}
+                            📍 {musician.city?.toUpperCase()}, {musician.state?.toUpperCase()}
                           </span>
                         )}
                       </div>

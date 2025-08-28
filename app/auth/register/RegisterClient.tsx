@@ -124,7 +124,7 @@ export default function RegisterClient() {
                 </button>
               </form>
 
-              <p className="text-center font-bold text-sm text-gray-600">
+              <p className="text-center font-bold text-sm text-gray-600 mt-6">
                 WE&apos;LL EMAIL YOU A MAGIC LINK TO SIGN IN INSTANTLY
               </p>
 
