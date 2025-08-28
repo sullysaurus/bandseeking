@@ -26,18 +26,18 @@ export default function AuthCallbackPage() {
           }
           
           if (session) {
-            // Get the user's profile to redirect to their profile page
+            // Get the user's profile to check if it's complete
             const { data: profile } = await supabase
               .from('profiles')
-              .select('username')
+              .select('username, is_published')
               .eq('user_id', session.user.id)
               .single()
 
-            if (profile?.username) {
-              // Redirect to their profile page
+            if (profile?.username && profile.is_published) {
+              // Redirect to their complete profile page
               router.push(`/profile/${profile.username}`)
             } else {
-              // Fallback to dashboard if no profile found
+              // Profile is in draft mode or doesn't exist - redirect to dashboard to complete setup
               router.push('/dashboard')
             }
             return
@@ -54,18 +54,18 @@ export default function AuthCallbackPage() {
         }
 
         if (session) {
-          // Get the user's profile to redirect to their profile page
+          // Get the user's profile to check if it's complete
           const { data: profile } = await supabase
             .from('profiles')
-            .select('username')
+            .select('username, is_published')
             .eq('user_id', session.user.id)
             .single()
 
-          if (profile?.username) {
-            // Redirect to their profile page
+          if (profile?.username && profile.is_published) {
+            // Redirect to their complete profile page
             router.push(`/profile/${profile.username}`)
           } else {
-            // Fallback to dashboard if no profile found
+            // Profile is in draft mode or doesn't exist - redirect to dashboard to complete setup
             router.push('/dashboard')
           }
         } else {
