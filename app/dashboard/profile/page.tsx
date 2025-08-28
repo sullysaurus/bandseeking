@@ -131,9 +131,19 @@ export default function EditProfilePage() {
 
       if (error) throw error
 
+      // Fetch updated profile data to ensure it exists
+      const { data: updatedProfile } = await supabase
+        .from('profiles')
+        .select('username, is_published')
+        .eq('user_id', currentUser.id)
+        .single()
+
       // Redirect based on publish status
-      if (formData.isPublished && profile?.username) {
-        router.push(`/profile/${profile.username}`)
+      if (formData.isPublished && updatedProfile?.username) {
+        // Small delay to ensure database consistency
+        setTimeout(() => {
+          router.push(`/profile/${updatedProfile.username}`)
+        }, 500)
       } else {
         alert('Profile saved successfully!')
       }

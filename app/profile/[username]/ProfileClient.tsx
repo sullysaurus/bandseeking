@@ -209,11 +209,6 @@ export default function ProfileClient() {
                     </span>
                   )}
 
-                  {profile.zip_code && (
-                    <span className="px-3 py-1 bg-cyan-300 border-2 border-black font-black text-sm">
-                      📍 {formatLocationDisplay(profile.zip_code)}
-                    </span>
-                  )}
                 </div>
 
                 {/* Action Buttons */}
@@ -264,7 +259,7 @@ export default function ProfileClient() {
             
             {/* Instruments */}
             <div className="bg-white border-4 border-black p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
-              <h2 className="text-xl font-black mb-3">🎸 INSTRUMENTS</h2>
+              <h2 className="text-xl font-black mb-3">INSTRUMENTS</h2>
               <div className="space-y-3">
                 <div>
                   <span className="font-black text-sm">PRIMARY:</span>
@@ -296,7 +291,7 @@ export default function ProfileClient() {
             {/* What They're Looking For */}
             {profile.seeking && profile.seeking.length > 0 && (
               <div className="bg-white border-4 border-black p-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
-                <h2 className="text-2xl font-black mb-4">🎯 LOOKING FOR</h2>
+                <h2 className="text-xl font-black mb-3">LOOKING FOR</h2>
                 <div className="flex flex-wrap gap-2">
                   {profile.seeking.map((item: string, index: number) => (
                     <span
@@ -317,7 +312,7 @@ export default function ProfileClient() {
             if (!embedUrl) return null
             return (
               <div className="bg-white border-4 border-black p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] mb-4">
-                <h2 className="text-xl font-black mb-3">🎬 FEATURED VIDEO</h2>
+                <h2 className="text-xl font-black mb-3">FEATURED VIDEO</h2>
                 <div className="relative" style={{ paddingBottom: '56.25%', height: 0 }}>
                   <iframe
                     src={embedUrl}
@@ -334,7 +329,7 @@ export default function ProfileClient() {
           {/* Social Links */}
           {profile.social_links && Object.values(profile.social_links).some(Boolean) && (
             <div className="bg-white border-4 border-black p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] mb-4">
-              <h2 className="text-xl font-black mb-3">🔗 LISTEN & FOLLOW</h2>
+              <h2 className="text-xl font-black mb-3">LISTEN & FOLLOW</h2>
               <div className="flex flex-wrap gap-3">
                 {profile.social_links.youtube && (
                   <a
@@ -406,7 +401,7 @@ export default function ProfileClient() {
             {/* Genres */}
             {profile.genres && profile.genres.length > 0 && (
               <div className="bg-white border-4 border-black p-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
-                <h2 className="text-2xl font-black mb-4">🎵 GENRES</h2>
+                <h2 className="text-xl font-black mb-3">GENRES</h2>
                 <div className="flex flex-wrap gap-2">
                   {profile.genres.map((genre: string, index: number) => (
                     <span
@@ -423,7 +418,7 @@ export default function ProfileClient() {
             {/* Influences */}
             {profile.influences && (
               <div className="bg-white border-4 border-black p-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
-                <h2 className="text-2xl font-black mb-4">✨ INFLUENCES</h2>
+                <h2 className="text-xl font-black mb-3">INFLUENCES</h2>
                 <p className="font-bold">{profile.influences}</p>
               </div>
             )}
