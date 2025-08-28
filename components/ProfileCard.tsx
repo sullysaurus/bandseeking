@@ -106,17 +106,13 @@ export default function ProfileCard({ profile }: ProfileCardProps) {
 
         {/* Name and Basic Info */}
         <div className="flex-1 min-w-0">
-          <h3 className="font-black text-xl mb-2 leading-tight">@{user.username}</h3>
+          <h3 className="font-black text-xl leading-tight">@{user.username}</h3>
+          <p className="font-bold text-sm text-gray-600 mb-2">
+            {user.zip_code ? formatLocationDisplay(user.zip_code) : 'Planet Earth'}
+          </p>
           
-          {/* Location and Last Active Row */}
-          <div className="flex flex-wrap gap-2 mb-2">
-            {/* Location */}
-            {user.zip_code && (
-              <span className="px-2 py-1 bg-cyan-300 border-2 border-black font-black text-xs">
-                📍 {formatLocationDisplay(user.zip_code)}
-              </span>
-            )}
-            
+          {/* Key Tags Row - matching SearchProfileCard */}
+          <div className="flex flex-wrap gap-2">
             {/* Last Active Status */}
             {user.last_active && (() => {
               const activeStatus = getLastActiveStatus(user.last_active)
@@ -132,23 +128,13 @@ export default function ProfileCard({ profile }: ProfileCardProps) {
                 </span>
               )
             })()}
-          </div>
-          
-          {/* Instruments and Experience Level Row */}
-          <div className="flex flex-wrap gap-2">
-            {/* Main Instrument Tag */}
+            
+            {/* Primary Instrument */}
             <span className="px-2 py-1 bg-pink-400 border-2 border-black font-black text-xs">
               {profile.main_instrument?.toUpperCase() || 'MUSICIAN'}
             </span>
             
-            {/* Secondary Instruments */}
-            {profile.secondary_instruments && profile.secondary_instruments.map((instrument: string, index: number) => (
-              <span key={index} className="px-2 py-1 bg-purple-300 border-2 border-black font-black text-xs">
-                {instrument.toUpperCase()}
-              </span>
-            ))}
-            
-            {/* Experience Level Tag */}
+            {/* Experience Level */}
             {profile.experience_level && (
               <span className={`px-2 py-1 border-2 border-black font-black text-xs ${
                 profile.experience_level === 'beginner' ? 'bg-green-300' :
