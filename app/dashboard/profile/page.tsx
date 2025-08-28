@@ -288,7 +288,7 @@ export default function EditProfilePage() {
                     className="w-full p-3 border-2 border-black focus:outline-none focus:bg-yellow-100 font-bold resize-none"
                   />
                   {formData.bio === 'Super cool person looking to collaborate. Shoot me a dm!' && (
-                    <p className="text-xs font-bold text-purple-600 mt-1">💡 Tell your story! Mention your style, influences, what you're looking for, experience level, etc.</p>
+                    <p className="text-xs font-bold text-purple-600 mt-1">💡 Tell your story! Mention your style, influences, what you&apos;re looking for, experience level, etc.</p>
                   )}
                 </div>
 
