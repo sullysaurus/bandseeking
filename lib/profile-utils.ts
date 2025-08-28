@@ -17,7 +17,9 @@ export function calculateProfileCompletion(profile: any): ProfileCompletion {
     'Location': profile.zip_code && profile.zip_code !== defaultZipCode,
     'Social Links': profile.social_links && Object.values(profile.social_links).some(Boolean),
     'Secondary Instrument': !!profile.secondary_instrument,
-    'Custom Username': profile.username && !profile.username.match(/^(guitarist|drummer|vocalist|bassist|keyboardist|producer|songwriter)_\d+$/)
+    'Influences': profile.influences && profile.influences.trim() !== '' && profile.influences !== 'The Beatles, Led Zeppelin, Pink Floyd',
+    'Looking For': profile.seeking && profile.seeking.length > 0 && !profile.seeking.every(s => s === 'Band members' || s === 'Collaborators'),
+    'Custom Username': profile.username && !profile.username.match(/^(guitarist|drummer|vocalist|bassist|keyboardist|producer|songwriter|rockstar)_\d+$/)
   }
   
   const completedFields = Object.entries(fields)
@@ -33,7 +35,9 @@ export function calculateProfileCompletion(profile: any): ProfileCompletion {
   const isUsingDefaults = 
     profile.bio === defaultBio ||
     profile.zip_code === defaultZipCode ||
-    (profile.username && profile.username.match(/^(guitarist|drummer|vocalist|bassist|keyboardist|producer|songwriter)_\d+$/))
+    profile.influences === 'The Beatles, Led Zeppelin, Pink Floyd' ||
+    (profile.seeking && profile.seeking.length === 2 && profile.seeking.includes('Band members') && profile.seeking.includes('Collaborators')) ||
+    (profile.username && profile.username.match(/^(guitarist|drummer|vocalist|bassist|keyboardist|producer|songwriter|rockstar)_\d+$/))
   
   return {
     percentage,

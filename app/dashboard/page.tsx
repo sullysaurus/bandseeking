@@ -6,6 +6,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { supabase } from '@/lib/supabase'
 import { ensureUserRecord } from '@/lib/auth-helpers'
+import { calculateProfileCompletion } from '@/lib/profile-utils'
 import Navigation from '@/components/layout/Navigation'
 
 export default function DashboardPage() {
@@ -121,20 +122,52 @@ export default function DashboardPage() {
               )}
             </div>
             
-            {/* Profile completion notice */}
-            {!profile?.is_published && (
-              <div className="bg-gradient-to-r from-yellow-300 to-orange-300 border-4 border-black p-4 mb-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]" role="alert">
-                <h2 className="font-black text-lg mb-2">Complete Your Profile</h2>
-                <p className="font-bold text-sm mb-3">Your profile is in draft mode. Publish it to start connecting with musicians.</p>
-                <Link 
-                  href="/dashboard/profile" 
-                  className="inline-block px-4 py-2 bg-black text-white border-2 border-black font-black text-sm hover:bg-white hover:text-black transition-colors focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2"
-                  aria-label="Complete your profile to get discovered by other musicians"
-                >
-                  Complete Profile
-                </Link>
-              </div>
-            )}
+            {/* Profile Completion Progress Bar */}
+            {profile && (() => {
+              const completion = calculateProfileCompletion(profile)
+              return (
+                <div className="bg-gradient-to-r from-lime-200 to-yellow-200 border-4 border-black p-6 mb-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+                  <div className="flex items-center justify-between mb-4">
+                    <h2 className="text-xl font-black">PROFILE COMPLETION</h2>
+                    <div className="text-2xl font-black">{completion.percentage}%</div>
+                  </div>
+                  
+                  {/* Progress Bar */}
+                  <div className="w-full bg-gray-300 border-4 border-black h-8 mb-4 relative overflow-hidden">
+                    <div 
+                      className="h-full bg-gradient-to-r from-pink-400 via-purple-400 to-cyan-400 border-r-4 border-black transition-all duration-500 ease-out"
+                      style={{ width: `${completion.percentage}%` }}
+                    />
+                  </div>
+                  
+                  {/* Encouraging Messages */}
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2">
+                      <span className="text-lg">⚡</span>
+                      <p className="font-bold text-sm">
+                        {completion.percentage === 100 
+                          ? "Your profile is complete and looks amazing!"
+                          : "Customize your defaults to get noticed by other musicians!"
+                        }
+                      </p>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-lg">✅</span>
+                      <p className="font-bold text-sm text-purple-700">Make your profile pop! 🎸</p>
+                    </div>
+                  </div>
+
+                  {completion.percentage < 100 && (
+                    <Link 
+                      href="/dashboard/profile" 
+                      className="inline-block mt-4 px-6 py-3 bg-black text-white border-4 border-black font-black text-sm hover:bg-yellow-300 hover:text-black transition-colors shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
+                    >
+                      COMPLETE PROFILE →
+                    </Link>
+                  )}
+                </div>
+              )
+            })()}
             
             {user.email === 'dsully15@gmail.com' && (
               <Link 

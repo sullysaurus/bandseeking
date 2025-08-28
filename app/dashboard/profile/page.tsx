@@ -27,6 +27,8 @@ export default function EditProfilePage() {
     secondaryInstrument: '',
     experienceLevel: '',
     genres: [] as string[],
+    seeking: [] as string[],
+    influences: '',
     zipCode: '',
     socialLinks: {
       youtube: '',
@@ -66,6 +68,8 @@ export default function EditProfilePage() {
         secondaryInstrument: profileData.secondary_instrument || '',
         experienceLevel: profileData.experience_level || '',
         genres: profileData.genres || [],
+        seeking: profileData.seeking || [],
+        influences: profileData.influences || '',
         zipCode: profileData.zip_code || '',
         socialLinks: profileData.social_links || {
           youtube: '',
@@ -115,6 +119,8 @@ export default function EditProfilePage() {
           secondary_instrument: formData.secondaryInstrument,
           experience_level: formData.experienceLevel,
           genres: formData.genres,
+          seeking: formData.seeking,
+          influences: formData.influences,
           zip_code: formData.zipCode,
           social_links: formData.socialLinks,
           profile_image_url: profileImageUrl,
@@ -372,6 +378,54 @@ export default function EditProfilePage() {
                     <p className="text-xs font-bold text-purple-600 mt-1">💡 Add 1-2 more genres to help people find you!</p>
                   )}
                 </div>
+              </div>
+            </div>
+
+            {/* Looking For (Seeking) */}
+            <div className="bg-white border-4 border-black p-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+              <h2 className="text-xl font-black mb-4">LOOKING FOR</h2>
+              <div>
+                <label className="block font-black text-sm mb-2">WHAT ARE YOU SEEKING? (select all that apply)</label>
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+                  {['Band members', 'Collaborators', 'Jam sessions', 'Gig opportunities', 'Recording projects', 'Music lessons', 'Songwriting partners', 'Practice space', 'Equipment sharing'].map(seekingOption => (
+                    <label key={seekingOption} className="flex items-center text-sm">
+                      <input
+                        type="checkbox"
+                        checked={formData.seeking.includes(seekingOption)}
+                        onChange={(e) => {
+                          if (e.target.checked) {
+                            setFormData({...formData, seeking: [...formData.seeking, seekingOption]})
+                          } else {
+                            setFormData({...formData, seeking: formData.seeking.filter(s => s !== seekingOption)})
+                          }
+                        }}
+                        className="mr-2 scale-90"
+                      />
+                      <span className="font-bold">{seekingOption}</span>
+                    </label>
+                  ))}
+                </div>
+                {formData.seeking.length === 0 && (
+                  <p className="text-xs font-bold text-purple-600 mt-1">💡 Let people know what you're looking for!</p>
+                )}
+              </div>
+            </div>
+
+            {/* Influences */}
+            <div className="bg-white border-4 border-black p-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+              <h2 className="text-xl font-black mb-4">INFLUENCES</h2>
+              <div>
+                <label className="block font-black text-sm mb-2">WHO ARE YOUR MUSICAL INFLUENCES?</label>
+                <textarea
+                  value={formData.influences}
+                  onChange={(e) => setFormData({...formData, influences: e.target.value})}
+                  placeholder="The Beatles, Led Zeppelin, Pink Floyd, Radiohead, etc."
+                  rows={3}
+                  className="w-full p-3 border-2 border-black focus:outline-none focus:bg-yellow-100 font-bold resize-none"
+                />
+                {formData.influences === '' && (
+                  <p className="text-xs font-bold text-purple-600 mt-1">💡 Share your musical influences - helps people understand your style!</p>
+                )}
               </div>
             </div>
 
