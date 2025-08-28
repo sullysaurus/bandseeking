@@ -235,10 +235,15 @@ export default function VenueCard({ venue, onReport, onSelect, isSelected = fals
 
         {/* Social */}
         {venue.social_handle && venue.social_platform && (
-          <div className="flex items-center text-sm text-gray-600">
+          <a
+            href={`https://www.instagram.com/${venue.social_handle.replace('@', '')}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center text-sm text-blue-600 hover:text-blue-800 transition-colors"
+          >
             <span className="mr-2">@</span>
-            <span>{venue.social_handle} ({venue.social_platform})</span>
-          </div>
+            <span className="truncate">{venue.social_handle} ({venue.social_platform})</span>
+          </a>
         )}
 
         {/* Address */}
