@@ -250,7 +250,7 @@ export default function DashboardPage() {
             <div className="bg-gradient-to-r from-blue-200 to-purple-200 border-4 border-black p-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
               <h3 className="font-black text-xl mb-2">Ready to Connect? 🚀</h3>
               <p className="font-bold mb-4">
-                Your profile is live! Start browsing musicians and save the ones you'd like to collaborate with.
+                Your profile is live! Start browsing musicians and save the ones you&apos;d like to collaborate with.
               </p>
               <Link 
                 href="/search" 
