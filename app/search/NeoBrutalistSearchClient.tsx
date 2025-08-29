@@ -17,115 +17,101 @@ function ProfileRow({ profile, index, currentUser, savedProfiles, handleSave, ha
   
   return (
     <div 
-      key={profile.id}
-      className={`flex flex-col sm:flex-row items-start sm:items-center justify-between p-3 sm:p-4 border-b-2 border-gray-200 last:border-b-0 ${
+      className={`flex flex-col sm:grid sm:grid-cols-12 sm:gap-4 items-start sm:items-center p-3 sm:p-4 border-b-2 border-gray-200 last:border-b-0 ${
         isEven ? 'bg-green-50' : 'bg-white'
       } hover:bg-yellow-50 transition-colors`}
     >
-      {/* Desktop Layout */}
-      <div className="hidden sm:flex items-center flex-1 gap-4">
-        <input type="checkbox" className="w-4 h-4 border-2 border-black flex-shrink-0" />
-        
-        {/* Profile Photo */}
-        <div className="flex-shrink-0">
+      {/* Desktop Layout - Grid columns */}
+      <div className="hidden sm:flex items-center col-span-1">
+        <input type="checkbox" className="w-4 h-4 border-2 border-black" />
+      </div>
+
+      {/* Profile Name - takes more space */}
+      <div className="hidden sm:block col-span-3">
+        <div className="flex items-center gap-3">
+          {/* Profile Photo */}
           {profile.profile_image_url ? (
             <Image
               src={profile.profile_image_url}
               alt={profile.username}
-              width={48}
-              height={48}
-              className="w-12 h-12 border-2 border-black object-cover rounded"
+              width={40}
+              height={40}
+              className="w-10 h-10 border-2 border-black object-cover rounded"
             />
           ) : (
-            <div className="w-12 h-12 border-2 border-black bg-gradient-to-br from-pink-400 to-purple-500 flex items-center justify-center rounded">
-              <span className="text-sm font-black text-white">
+            <div className="w-10 h-10 border-2 border-black bg-gradient-to-br from-pink-400 to-purple-500 flex items-center justify-center rounded">
+              <span className="text-xs font-black text-white">
                 {(profile.username || 'M').charAt(0).toUpperCase()}
               </span>
             </div>
           )}
-        </div>
-
-        {/* Profile Info */}
-        <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-3 mb-1">
-            <h3 className="font-black text-lg">@{profile.username || 'musician'}</h3>
-            {profile.experience_level && (
-              <span className={`px-2 py-1 border-2 border-black font-black text-xs ${
-                profile.experience_level === 'beginner' ? 'bg-green-300' :
-                profile.experience_level === 'intermediate' ? 'bg-yellow-300' :
-                profile.experience_level === 'advanced' ? 'bg-orange-400' :
-                profile.experience_level === 'professional' ? 'bg-red-400 text-white' :
-                'bg-gray-300'
-              }`}>
-                {profile.experience_level.toUpperCase()}
-              </span>
-            )}
-            {profile.last_active && (() => {
-              const activeStatus = getLastActiveStatus(profile.last_active)
-              return (
-                <span className={`px-2 py-1 border-2 border-black font-black text-xs ${
-                  activeStatus.status === 'online' ? 'bg-green-400' :
-                  activeStatus.status === 'recent' ? 'bg-yellow-400' :
-                  activeStatus.status === 'hours' ? 'bg-orange-400' :
-                  activeStatus.status === 'days' ? 'bg-red-400' :
-                  'bg-gray-400'
-                }`}>
-                  {activeStatus.text}
-                </span>
-              )
-            })()}
-          </div>
-          
-          <div className="flex items-center gap-4 text-sm text-gray-600">
-            <div className="flex items-center gap-1">
-              <Music className="w-4 h-4" />
-              <span className="font-bold">{profile.main_instrument || 'Musician'}</span>
-            </div>
-            <div className="flex items-center gap-1">
-              <MapPin className="w-4 h-4" />
-              <span className="font-bold">{locationDisplay || 'Planet Earth'}</span>
-            </div>
-            {profile.seeking && profile.seeking.length > 0 && (
-              <div className="flex items-center gap-1">
-                <Users className="w-4 h-4" />
-                <span className="font-bold">{profile.seeking.length} seeking</span>
-              </div>
-            )}
+          <div>
+            <div className="font-black text-base">@{profile.username || 'musician'}</div>
           </div>
         </div>
       </div>
 
-      {/* Mobile Layout */}
-      <div className="flex sm:hidden items-center w-full gap-3">
-        <input type="checkbox" className="w-4 h-4 border-2 border-black flex-shrink-0" />
-        
-        <div className="flex-1 min-w-0">
-          <div className="font-black text-base mb-1">@{profile.username || 'musician'}</div>
-          <div className="flex items-center gap-3 text-sm text-gray-600">
-            <div className="flex items-center gap-1">
-              <Music className="w-4 h-4" />
-              <span className="font-bold">{profile.main_instrument || 'Musician'}</span>
-            </div>
-            <div className="flex items-center gap-1">
-              <MapPin className="w-4 h-4" />
-              <span className="font-bold">{locationDisplay || 'Planet Earth'}</span>
-            </div>
-          </div>
+      {/* Instrument */}
+      <div className="hidden sm:block col-span-2">
+        <div className="flex items-center gap-1">
+          <Music className="w-4 h-4 text-gray-500" />
+          <span className="font-bold text-sm">{profile.main_instrument || 'Musician'}</span>
+          {profile.experience_level && (
+            <span className={`ml-1 text-xs font-bold ${
+              profile.experience_level === 'beginner' ? 'text-green-600' :
+              profile.experience_level === 'intermediate' ? 'text-amber-600' :
+              profile.experience_level === 'advanced' ? 'text-orange-600' :
+              profile.experience_level === 'professional' ? 'text-red-600' :
+              'text-gray-600'
+            }`}>
+              ({profile.experience_level.charAt(0).toUpperCase()})
+            </span>
+          )}
         </div>
       </div>
 
-      {/* Action Buttons */}
-      <div className="flex gap-2 mt-3 sm:mt-0">
+      {/* Location */}
+      <div className="hidden sm:block col-span-2">
+        <div className="flex items-center gap-1">
+          <MapPin className="w-4 h-4 text-gray-500" />
+          <span className="font-bold text-sm">{locationDisplay || 'Planet Earth'}</span>
+          {profile.last_active && (() => {
+            const activeStatus = getLastActiveStatus(profile.last_active)
+            return (
+              <span className={`ml-2 w-2 h-2 rounded-full inline-block ${
+                activeStatus.status === 'online' ? 'bg-green-400' :
+                activeStatus.status === 'recent' ? 'bg-yellow-400' :
+                activeStatus.status === 'hours' ? 'bg-orange-400' :
+                activeStatus.status === 'days' ? 'bg-red-400' :
+                'bg-gray-400'
+              }`} title={activeStatus.text}></span>
+            )
+          })()}
+        </div>
+      </div>
+
+      {/* Seeking */}
+      <div className="hidden sm:block col-span-1">
+        {profile.seeking && profile.seeking.length > 0 && (
+          <div className="flex items-center gap-1">
+            <Users className="w-4 h-4 text-gray-500" />
+            <span className="font-bold text-sm">{profile.seeking.length}</span>
+          </div>
+        )}
+      </div>
+
+      {/* Actions */}
+      <div className="hidden sm:flex col-span-3 justify-end gap-2">
         <Link
           href={`/profile/${profile.username}`}
-          className="px-3 py-2 bg-blue-400 border-2 border-black font-black text-xs text-center hover:bg-blue-500 transition-colors shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
+          className="px-3 py-2 bg-blue-400 border-2 border-black font-black text-xs hover:bg-blue-500 transition-colors shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
         >
           <Eye className="w-4 h-4" />
         </Link>
         {currentUser && currentUser.id !== profile.user_id && (
           <button
             onClick={() => handleMessage(profile.user_id)}
-            className="px-3 py-2 bg-yellow-400 border-2 border-black font-black text-xs text-center hover:bg-yellow-500 transition-colors shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
+            className="px-3 py-2 bg-yellow-400 border-2 border-black font-black text-xs hover:bg-yellow-500 transition-colors shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
           >
             <MessageSquare className="w-4 h-4" />
           </button>
@@ -142,6 +128,66 @@ function ProfileRow({ profile, index, currentUser, savedProfiles, handleSave, ha
             <Heart className={`w-4 h-4 ${savedProfiles.has(profile.id) ? 'fill-current' : ''}`} />
           </button>
         )}
+      </div>
+
+      {/* Mobile Layout */}
+      <div className="flex sm:hidden items-center w-full gap-3">
+        <input type="checkbox" className="w-4 h-4 border-2 border-black flex-shrink-0" />
+        
+        {/* Profile Photo */}
+        <div className="flex-shrink-0">
+          {profile.profile_image_url ? (
+            <Image
+              src={profile.profile_image_url}
+              alt={profile.username}
+              width={40}
+              height={40}
+              className="w-10 h-10 border-2 border-black object-cover rounded"
+            />
+          ) : (
+            <div className="w-10 h-10 border-2 border-black bg-gradient-to-br from-pink-400 to-purple-500 flex items-center justify-center rounded">
+              <span className="text-xs font-black text-white">
+                {(profile.username || 'M').charAt(0).toUpperCase()}
+              </span>
+            </div>
+          )}
+        </div>
+        
+        <div className="flex-1 min-w-0">
+          <div className="font-black text-sm mb-1">@{profile.username || 'musician'}</div>
+          <div className="flex items-center gap-3 text-xs text-gray-600">
+            <div className="flex items-center gap-1">
+              <Music className="w-3 h-3" />
+              <span className="font-bold">{profile.main_instrument || 'Musician'}</span>
+            </div>
+            <div className="flex items-center gap-1">
+              <MapPin className="w-3 h-3" />
+              <span className="font-bold">{locationDisplay || 'Planet Earth'}</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Mobile Actions - Only View and Save */}
+        <div className="flex gap-1 flex-shrink-0">
+          <Link
+            href={`/profile/${profile.username}`}
+            className="px-2 py-2 bg-blue-400 border-2 border-black hover:bg-blue-500 transition-colors shadow-[1px_1px_0px_0px_rgba(0,0,0,1)]"
+          >
+            <Eye className="w-4 h-4" />
+          </Link>
+          {currentUser && (
+            <button
+              onClick={() => handleSave(profile.id)}
+              className={`px-2 py-2 border-2 border-black transition-colors shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] ${
+                savedProfiles.has(profile.id)
+                  ? 'bg-pink-400 hover:bg-pink-500'
+                  : 'bg-white hover:bg-lime-300'
+              }`}
+            >
+              <Heart className={`w-4 h-4 ${savedProfiles.has(profile.id) ? 'fill-current' : ''}`} />
+            </button>
+          )}
+        </div>
       </div>
     </div>
   )
