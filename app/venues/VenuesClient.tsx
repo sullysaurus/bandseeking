@@ -412,7 +412,6 @@ Best regards,`)
       {/* Report Modal */}
       {reportModalOpen && reportingVenue && (
         <ReportVenueModal
-          isOpen={reportModalOpen}
           onClose={handleReportClose}
           venueId={reportingVenue.id}
           venueName={reportingVenue.name}
