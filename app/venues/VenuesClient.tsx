@@ -376,7 +376,7 @@ Best regards,`)
                 key={venue.id}
                 venue={venue}
                 onReport={handleReport}
-                selected={selectedVenues.has(venue.id)}
+                isSelected={selectedVenues.has(venue.id)}
                 onSelect={handleVenueSelect}
               />
             ))}
