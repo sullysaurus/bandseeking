@@ -17,6 +17,7 @@ export default function NeoBrutalistSearchClient() {
   const [searchText, setSearchText] = useState('')
   const [currentUser, setCurrentUser] = useState<any>(null)
   const [savedProfiles, setSavedProfiles] = useState<Set<string>>(new Set())
+  const [searchExpanded, setSearchExpanded] = useState(false)
 
   useEffect(() => {
     getCurrentUser().then(() => {
@@ -238,18 +239,35 @@ export default function NeoBrutalistSearchClient() {
           
           {/* Search Bar - Both Mobile and Desktop */}
           <div className="bg-white border-4 border-black p-4 mb-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
-            {/* Universal Search */}
-            <div className="flex gap-2 mb-3">
-              <input
-                type="text"
-                placeholder="Search by name, instrument, genre, location, etc..."
-                value={searchText}
-                onChange={(e) => setSearchText(e.target.value)}
-                className="flex-1 px-3 py-2 border-2 border-black font-bold focus:outline-none focus:bg-yellow-100 text-sm"
-              />
-              <Search className="w-6 h-6 mt-2 text-gray-600" />
+            {/* Mobile Search Toggle */}
+            <div className="sm:hidden mb-3">
+              <button
+                onClick={() => setSearchExpanded(!searchExpanded)}
+                className="w-full flex items-center justify-between px-4 py-3 bg-yellow-100 border-2 border-black font-black"
+              >
+                <span className="flex items-center gap-2">
+                  <Search className="w-5 h-5" />
+                  {searchExpanded ? 'HIDE SEARCH' : 'SEARCH MUSICIANS'}
+                </span>
+                <span className="text-xl">{searchExpanded ? '−' : '+'}</span>
+              </button>
             </div>
-            
+
+            {/* Universal Search */}
+            <div className={`${searchExpanded ? 'block' : 'hidden sm:block'}`}>
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  placeholder="Search by name, instrument, genre, location, etc..."
+                  value={searchText}
+                  onChange={(e) => setSearchText(e.target.value)}
+                  className="flex-1 px-3 py-2 border-2 border-black font-bold focus:outline-none focus:bg-yellow-100 text-sm"
+                />
+                <div className="flex items-center px-2">
+                  <Search className="w-6 h-6 text-gray-600" />
+                </div>
+              </div>
+            </div>
           </div>
 
 
