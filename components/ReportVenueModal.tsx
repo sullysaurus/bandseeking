@@ -10,7 +10,7 @@ interface ReportVenueModalProps {
   onClose: () => void
 }
 
-type ReportReason = 'incorrect_info' | 'closed_permanently' | 'wrong_location' | 'inappropriate_content' | 'duplicate' | 'other'
+type ReportReason = 'incorrect_info' | 'closed_permanently' | 'wrong_location' | 'inappropriate_content' | 'duplicate' | 'suggestion' | 'other'
 
 const REPORT_REASONS: { value: ReportReason; label: string; description: string }[] = [
   {
@@ -59,17 +59,12 @@ export default function ReportVenueModal({ venueId, venueName, onClose }: Report
 
     try {
       const { data: { user } } = await supabase.auth.getUser()
-      
-      if (!user) {
-        alert('You must be logged in to report a venue')
-        return
-      }
 
       const { error } = await supabase
         .from('venue_reports')
         .insert({
           venue_id: venueId,
-          reporter_id: user.id,
+          reporter_id: user?.id || null, // Allow null for anonymous reports
           reason: reason as ReportReason,
           description: description.trim() || null
         })

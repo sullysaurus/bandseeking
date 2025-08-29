@@ -6,7 +6,8 @@ import { trackVenueSearch } from '@/components/FacebookPixel'
 import Navigation from '@/components/layout/Navigation'
 import VenueCard from '@/components/VenueCard'
 import ReportVenueModal from '@/components/ReportVenueModal'
-import { Search, MapPin, Music, Coffee, Beer, Mail, Eye, Flag, Users } from 'lucide-react'
+import SuggestVenueModal from '@/components/SuggestVenueModal'
+import { Search, MapPin, Music, Coffee, Beer, Mail, Eye, Flag, Users, Plus } from 'lucide-react'
 import type { Database } from '@/lib/database.types'
 
 type Venue = Database['public']['Tables']['venues']['Row']
@@ -80,6 +81,7 @@ export default function VenuesClient() {
   const [selectedVenues, setSelectedVenues] = useState<Set<string>>(new Set())
   const [showEmailModal, setShowEmailModal] = useState(false)
   const [searchExpanded, setSearchExpanded] = useState(false)
+  const [showSuggestModal, setShowSuggestModal] = useState(false)
 
   useEffect(() => {
     fetchVenues()
@@ -290,25 +292,9 @@ Best regards,`)
           <h1 className="text-2xl sm:text-4xl lg:text-5xl font-black text-black mb-1 sm:mb-4">
             VENUES
           </h1>
-          <p className="text-sm sm:text-lg font-bold text-black mb-2 sm:mb-4 hidden sm:block">
+          <p className="text-sm sm:text-lg font-bold text-black">
             DISCOVER VENUES FOR BOOKING YOUR NEXT SHOW
           </p>
-          <div className="bg-yellow-400 border-2 sm:border-4 border-black p-2 sm:p-4 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] sm:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hidden sm:block">
-            <div className="flex items-start">
-              <div className="flex-shrink-0">
-                <div className="bg-black border-2 border-black p-2">
-                  <svg className="h-4 w-4 sm:h-5 sm:w-5 text-yellow-400" viewBox="0 0 20 20" fill="currentColor">
-                    <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
-                  </svg>
-                </div>
-              </div>
-              <div className="ml-3">
-                <p className="text-sm sm:text-base font-black text-black">
-                  ⚠️ EVOLVING DATABASE: Click the flag icon on any listing to report inaccuracies.
-                </p>
-              </div>
-            </div>
-          </div>
         </div>
 
         {/* Search and Controls */}
@@ -569,6 +555,7 @@ Best regards,`)
           venueName={reportingVenue.name}
         />
       )}
+
     </div>
   )
 }
