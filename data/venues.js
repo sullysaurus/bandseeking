@@ -318,6 +318,21 @@ export const venues = [
     genres: ['Singer-Songwriter', 'Indie', 'Acoustic']
   },
   {
+    name: 'Bond Brothers Eastside',
+    address: '602 E Chatham St',
+    city: 'Cary',
+    state: 'NC',
+    zip_code: '27511',
+    capacity: 150,
+    venue_type: 'brewery',
+    website: 'https://www.bondbrothersbeer.com',
+    social_platform: 'Instagram',
+    social_handle: '@bondbrosbeer',
+    contact_email: 'info@bondbrothersbeer.com',
+    description: 'Bond Brothers second location focused on live music and barrel program. Intimate space with regular acoustic performances.',
+    genres: ['Acoustic', 'Singer-Songwriter', 'Local']
+  },
+  {
     name: 'Trophy Brewing on Maywood',
     address: '656 Maywood Ave',
     city: 'Raleigh',
@@ -344,7 +359,7 @@ export const venues = [
     social_platform: 'Instagram',
     social_handle: '@raleighbrewing',
     contact_email: 'info@raleighbrewing.com',
-    description: 'Local brewery with spacious taproom hosting weekend music. Books singer-songwriters and local bands.',
+    description: 'Local brewery with spacious taproom hosting weekend music. Summer Music Series on Saturdays, live music Thursday 7-9pm, and trivia Wednesdays.',
     genres: ['Singer-Songwriter', 'Local', 'Rock']
   },
   {
@@ -358,13 +373,13 @@ export const venues = [
     website: 'https://ponysaurusbrewing.com',
     social_platform: 'Instagram',
     social_handle: '@ponysaurusbrewing',
-    contact_email: 'events@ponysaurusbrewing.com',
-    description: 'Durham brewery with large outdoor space perfect for live music. Regular concerts featuring indie, folk, and alternative acts.',
+    contact_email: 'taproom@ponysaurusbrewing.com',
+    description: 'Durham brewery with large outdoor space perfect for live music. Regular concerts Wednesday and Sunday featuring indie, folk, and alternative acts.',
     genres: ['Indie', 'Folk', 'Alternative']
   },
   {
     name: 'Fullsteam Brewery',
-    address: 'Boxyard RTP (Transitioning Location)',
+    address: 'American Tobacco Campus (New Location - Opening 2025)',
     city: 'Durham',
     state: 'NC',
     zip_code: '27701',
@@ -374,12 +389,12 @@ export const venues = [
     social_platform: 'Instagram',
     social_handle: '@fullsteambrewery',
     contact_email: 'events@fullsteam.ag',
-    description: 'Southern-inspired brewery with regular live music and community events. Books diverse acts from bluegrass to indie rock.',
+    description: 'Southern-inspired brewery with regular live music and community events. Currently transitioning to new American Tobacco Campus location in 2025.',
     genres: ['Bluegrass', 'Indie Rock', 'Americana']
   },
   {
     name: 'Hi-Wire Brewing',
-    address: '800 Taylor St',
+    address: '800 Taylor St, Ste 9-150',
     city: 'Durham',
     state: 'NC',
     zip_code: '27701',
@@ -389,7 +404,7 @@ export const venues = [
     social_platform: 'Instagram',
     social_handle: '@hiwirebrewing_durm',
     contact_email: 'durham@hiwirebrewing.com',
-    description: 'Spacious Durham location with regular live music on weekends. Features local and touring indie bands.',
+    description: 'Spacious Durham location with 8,844 sq ft interior plus outdoor patio. Features 24 taps, games, and outdoor stage showcasing local performing artists.',
     genres: ['Indie', 'Rock', 'Alternative']
   },
   {
@@ -404,12 +419,12 @@ export const venues = [
     social_platform: 'Instagram',
     social_handle: '@gizmobrewworks',
     contact_email: 'info@gizmobrewworks.com',
-    description: 'Industrial park brewery with regular live music and open mic nights. Features local bands and diverse musical acts.',
+    description: 'Industrial park brewery with regular live music and open mic nights. Sunday open mic 3-6pm, live music Fridays, trivia, and vinyl nights.',
     genres: ['Open Mic', 'Local', 'Rock']
   },
   {
     name: 'Tap Yard',
-    address: '508 W Hargett St',
+    address: '1610 Automotive Way',
     city: 'Raleigh',
     state: 'NC',
     zip_code: '27603',
@@ -419,12 +434,12 @@ export const venues = [
     social_platform: 'Instagram',
     social_handle: '@tapyardraleigh',
     contact_email: 'bands@tapyard.com',
-    description: 'One-acre beer garden with three bars and regular live music. Family-friendly outdoor venue with diverse acts.',
+    description: 'One-acre beer garden with three bars and regular live music. Family-friendly outdoor venue with diverse acts, trivia, and karaoke nights.',
     genres: ['Indie', 'Rock', 'Folk', 'Local']
   },
   {
     name: 'Lonerider Brewing Company',
-    address: '8816 Gulf Ct',
+    address: '8816 Gulf Ct, Ste 100',
     city: 'Raleigh',
     state: 'NC',
     zip_code: '27617',
@@ -434,12 +449,12 @@ export const venues = [
     social_platform: 'Instagram',
     social_handle: '@loneriderbeer',
     contact_email: 'events@loneriderbeer.com',
-    description: 'Western-themed brewery with large taproom and outdoor space. Regular live music featuring country, rock, and indie.',
+    description: 'Western-themed brewery with large taproom and outdoor space. Regular live music Fridays 6-9pm, food trucks Tuesday-Saturday, and monthly brewery tours.',
     genres: ['Country', 'Rock', 'Indie']
   },
   {
     name: 'Steel String Brewery',
-    address: '106 S Greensboro St',
+    address: '106A S. Greensboro St',
     city: 'Carrboro',
     state: 'NC',
     zip_code: '27510',
@@ -448,13 +463,13 @@ export const venues = [
     website: 'https://steelstringbrewery.com',
     social_platform: 'Instagram',
     social_handle: '@steelstringbrewery',
-    contact_email: 'events@steelstringbrewery.com',
-    description: 'Small Carrboro brewery with intimate acoustic performances. Specializes in singer-songwriter and folk acts.',
+    contact_email: 'info@steelstringbrewery.com',
+    description: 'Small Carrboro brewery with intimate acoustic performances. Specializes in singer-songwriter and folk acts, most shows on Sunday nights.',
     genres: ['Singer-Songwriter', 'Folk', 'Acoustic']
   },
   {
     name: 'Bull City Ciderworks',
-    address: '1906 Fairview Rd',
+    address: '305 S Roxboro St',
     city: 'Durham',
     state: 'NC',
     zip_code: '27701',
@@ -462,9 +477,9 @@ export const venues = [
     venue_type: 'brewery',
     website: 'https://bullcityciderworks.com',
     social_platform: 'Instagram',
-    social_handle: '@bullcityciderworks',
-    contact_email: 'events@bullcityciderworks.com',
-    description: 'Durham cidery with regular live music and community events. Features local bands and acoustic acts.',
+    social_handle: '@bullcitydrm',
+    contact_email: 'Durham.Taproom@BullCityCiderworks.com',
+    description: 'Durham cidery with 24 taps and regular live music events. Features local bands, pop-up markets with live music, and community fundraisers.',
     genres: ['Local', 'Acoustic', 'Indie']
   },
   {
@@ -484,7 +499,7 @@ export const venues = [
   },
   {
     name: 'Eno River Brewing Company',
-    address: '25 Castlebury Ct',
+    address: '329 Allison Street',
     city: 'Hillsborough',
     state: 'NC',
     zip_code: '27278',
@@ -493,13 +508,13 @@ export const venues = [
     website: 'https://enoriverbrewing.com',
     social_platform: 'Instagram',
     social_handle: '@enoriverbrewing',
-    contact_email: 'events@enoriverbrewing.com',
+    contact_email: 'info@enoriverbrewing.com',
     description: 'Hillsborough brewery with regular live music on weekends. Features bluegrass, folk, and indie acts.',
     genres: ['Bluegrass', 'Folk', 'Indie']
   },
   {
     name: 'ZincHouse Winery and Brewery',
-    address: '1220 Bible St',
+    address: '6625 Wake Forest Hwy',
     city: 'Durham',
     state: 'NC',
     zip_code: '27701',
@@ -514,15 +529,15 @@ export const venues = [
   },
   {
     name: 'Clouds Brewing',
-    address: '126 N West St',
+    address: '1233 Front St',
     city: 'Raleigh',
     state: 'NC',
-    zip_code: '27603',
+    zip_code: '27609',
     capacity: 100,
     venue_type: 'brewery',
     website: 'https://cloudsbrewing.com',
     social_platform: 'Instagram',
-    social_handle: '@cloudsbrewing',
+    social_handle: '@cloudsbrewingraleigh',
     contact_email: 'info@cloudsbrewing.com',
     description: 'Warehouse district brewery with intimate performances and beer releases. Books indie and experimental acts.',
     genres: ['Indie', 'Experimental', 'Local']

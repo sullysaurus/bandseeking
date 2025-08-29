@@ -43,7 +43,7 @@ export default function VenuesClient() {
   const [searchText, setSearchText] = useState('')
   const [currentPage, setCurrentPage] = useState(1)
   const [totalCount, setTotalCount] = useState(0)
-  const [itemsPerPage] = useState(12) // Show 12 venues per page
+  const [itemsPerPage] = useState(20) // Show 20 venues per page
   const [reportModalOpen, setReportModalOpen] = useState(false)
   const [reportingVenue, setReportingVenue] = useState<{ id: string; name: string } | null>(null)
   const [selectedVenues, setSelectedVenues] = useState<Set<string>>(new Set())
