@@ -230,7 +230,12 @@ export default function HomeClient({ initialProfiles }: HomeClientProps) {
                         <div className="flex-1 min-w-0">
                           <h3 className="font-black text-xl mb-1 leading-tight">@{musician.username}</h3>
                           <p className="font-bold text-sm text-gray-600 mb-2">
-                            {musician.zip_code ? formatLocationDisplay(musician.zip_code) : 'Planet Earth'}
+                            {musician.city && musician.state 
+                              ? `${musician.city}, ${musician.state}` 
+                              : musician.zip_code 
+                                ? formatLocationDisplay(musician.zip_code)
+                                : 'Planet Earth'
+                            }
                           </p>
                         </div>
                       </div>

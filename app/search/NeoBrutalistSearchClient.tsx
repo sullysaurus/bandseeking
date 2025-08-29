@@ -165,6 +165,8 @@ export default function NeoBrutalistSearchClient() {
     setLoading(true)
     setHasSearched(true)
     
+    console.log('Searching for:', searchText)
+    
     try {
       let query = supabase
         .from('profiles')
@@ -180,29 +182,21 @@ export default function NeoBrutalistSearchClient() {
       const hasSearch = searchText.trim()
       
       if (hasSearch) {
-        // Clean up the search text - remove punctuation and split on spaces
-        const cleanedText = searchText.trim().replace(/[,.-]/g, ' ')
-        const words = cleanedText.split(/\s+/).filter(word => word.length > 0)
+        // Format search query for PostgreSQL full-text search
+        // Replace spaces with & for AND queries for better location matching
+        const formattedQuery = searchText.trim().split(/\s+/).join(' & ')
         
-        if (words.length > 0) {
-          // Create full-text search query
-          // For location searches like "Raleigh, NC", use & (AND) so both terms must match
-          // For general searches, use | (OR) so any term can match
-          const searchTermsStr = words.join(' ')
-          const isLikelyLocation = /^[a-zA-Z\s]+,\s*[A-Z]{2}$/.test(searchTermsStr) || 
-                                   searchTermsStr.includes(',') ||
-                                   words.length === 2
-          
-          const ftsQuery = isLikelyLocation ? words.join(' & ') : words.join(' | ')
-          
-          // Use the correct textSearch syntax for the fts column
-          query = query.textSearch('fts', ftsQuery)
-        }
+        console.log('FTS query:', formattedQuery)
+        
+        // Use full-text search
+        query = query.textSearch('fts', formattedQuery)
       }
 
       const { data, error } = await query.order('created_at', { ascending: false })
 
       if (error) throw error
+      
+      console.log('Search results:', data?.length || 0, 'profiles found')
       
       let filteredData = data || []
       

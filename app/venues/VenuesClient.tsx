@@ -6,27 +6,16 @@ import { trackVenueSearch } from '@/components/FacebookPixel'
 import Navigation from '@/components/layout/Navigation'
 import VenueCard from '@/components/VenueCard'
 import ReportVenueModal from '@/components/ReportVenueModal'
-import { Search, MapPin, Music, Coffee, Beer, Navigation as NavigationIcon } from 'lucide-react'
+import { Search, MapPin, Music, Coffee, Beer } from 'lucide-react'
 import type { Database } from '@/lib/database.types'
 
 type Venue = Database['public']['Tables']['venues']['Row']
-type VenueType = Venue['venue_type']
 
-const venueTypeLabels: Record<VenueType, string> = {
-  music_venue: 'Music Venue',
-  brewery: 'Brewery',
-  coffee_shop: 'Coffee Shop',
-  restaurant: 'Restaurant',
-  bar: 'Bar',
-  event_space: 'Event Space',
-  amphitheater: 'Amphitheater',
-  theater: 'Theater',
-  arena: 'Arena'
-}
-
-const venueTypeIcons: Record<VenueType, React.ReactNode> = {
+// Map venue types to icons
+const venueTypeIcons = {
   music_venue: <Music className="w-4 h-4" />,
   brewery: <Beer className="w-4 h-4" />,
+  winery: <Music className="w-4 h-4" />,
   coffee_shop: <Coffee className="w-4 h-4" />,
   restaurant: <Music className="w-4 h-4" />,
   bar: <Beer className="w-4 h-4" />,
@@ -48,114 +37,11 @@ export default function VenuesClient() {
   const [reportingVenue, setReportingVenue] = useState<{ id: string; name: string } | null>(null)
   const [selectedVenues, setSelectedVenues] = useState<Set<string>>(new Set())
   const [showEmailModal, setShowEmailModal] = useState(false)
-  const [locationFilter, setLocationFilter] = useState('')
-  const [distanceFilter, setDistanceFilter] = useState(25) // Default 25 miles
-  const [userLocation, setUserLocation] = useState<{ lat: number; lon: number } | null>(null)
-  const [locationLoading, setLocationLoading] = useState(false)
   const [searchExpanded, setSearchExpanded] = useState(false)
-
-  // Helper function to calculate distance between two points
-  const calculateDistance = (lat1: number, lon1: number, lat2: number, lon2: number): number => {
-    const R = 3959 // Earth's radius in miles
-    const dLat = (lat2 - lat1) * Math.PI / 180
-    const dLon = (lon2 - lon1) * Math.PI / 180
-    const a = 
-      Math.sin(dLat/2) * Math.sin(dLat/2) +
-      Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
-      Math.sin(dLon/2) * Math.sin(dLon/2)
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a))
-    return R * c
-  }
-
-  // Geocode a location string (ZIP or city)
-  const geocodeLocation = async (location: string): Promise<{ lat: number; lon: number } | null> => {
-    try {
-      const response = await fetch(
-        `/api/geocode?location=${encodeURIComponent(location)}`
-      )
-      if (!response.ok) {
-        throw new Error('Geocoding failed')
-      }
-      const data = await response.json()
-      if (data.lat && data.lon) {
-        return {
-          lat: data.lat,
-          lon: data.lon
-        }
-      }
-    } catch (error) {
-      console.error('Error geocoding location:', error)
-    }
-    return null
-  }
-
-  // Handle location search
-  const handleLocationSearch = async () => {
-    if (!locationFilter.trim()) return
-    
-    // Skip geocoding if already using current location
-    if (locationFilter === '📍 Current Location' && userLocation) {
-      setCurrentPage(1)
-      fetchVenues(1)
-      return
-    }
-    
-    setLocationLoading(true)
-    try {
-      const coords = await geocodeLocation(locationFilter)
-      if (coords) {
-        setUserLocation(coords)
-        setCurrentPage(1)
-        fetchVenues(1)
-      } else {
-        alert('Could not find location. Please try a different ZIP code or city name.')
-      }
-    } catch (error) {
-      console.error('Error searching by location:', error)
-      alert('Error searching by location. Please try again.')
-    } finally {
-      setLocationLoading(false)
-    }
-  }
-
-  // Handle using current location
-  const handleUseCurrentLocation = () => {
-    if (!navigator.geolocation) {
-      alert('Geolocation is not supported by your browser')
-      return
-    }
-
-    setLocationLoading(true)
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        const coords = {
-          lat: position.coords.latitude,
-          lon: position.coords.longitude
-        }
-        setUserLocation(coords)
-        setLocationFilter('📍 Current Location')
-        setCurrentPage(1)
-        // Don't call fetchVenues here, let useEffect handle it
-        setLocationLoading(false)
-      },
-      (error) => {
-        console.error('Error getting location:', error)
-        alert('Could not get your location. Please check your browser permissions.')
-        setLocationLoading(false)
-      }
-    )
-  }
 
   useEffect(() => {
     fetchVenues()
   }, [currentPage])
-
-  // Refetch when location changes
-  useEffect(() => {
-    if (userLocation) {
-      fetchVenues(1)
-    }
-  }, [userLocation, distanceFilter])
 
   // Auto-search when search text changes (debounced)
   useEffect(() => {
@@ -258,12 +144,12 @@ export default function VenuesClient() {
         const { count: fallbackCount } = await supabase
           .from('venues')
           .select('*', { count: 'exact', head: true })
-          .or(`name.ilike.%${searchText}%,description.ilike.%${searchText}%,city.ilike.%${searchText}%`)
+          .or(`name.ilike.%${searchText}%,description.ilike.%${searchText}%,city.ilike.%${searchText}%,state.ilike.%${searchText}%`)
         
         const fallbackQuery = supabase
           .from('venues')
           .select('*')
-          .or(`name.ilike.%${searchText}%,description.ilike.%${searchText}%,city.ilike.%${searchText}%`)
+          .or(`name.ilike.%${searchText}%,description.ilike.%${searchText}%,city.ilike.%${searchText}%,state.ilike.%${searchText}%`)
           .order('name', { ascending: true })
           .range(from, to)
         
@@ -381,7 +267,7 @@ Best regards,`)
           </div>
         </div>
 
-        {/* Search and Filters */}
+        {/* Search */}
         <div className="bg-white rounded-xl border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] sm:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] p-4 sm:p-6 mb-4 sm:mb-8">
           {/* Mobile Search Toggle */}
           <div className="sm:hidden mb-4">
@@ -397,79 +283,17 @@ Best regards,`)
             </button>
           </div>
 
-          <div className={`space-y-4 ${searchExpanded ? 'block' : 'hidden sm:block'}`}>
+          <div className={`${searchExpanded ? 'block' : 'hidden sm:block'}`}>
             {/* Search Input */}
             <div className="relative">
               <input
                 type="text"
-                placeholder="Search by venue name, city, state, type, or genre (e.g., 'brewery raleigh', 'coffee shop charlotte', 'indie rock')..."
+                placeholder="Search by venue name, city, state, type, or genre (e.g., 'brewery', 'raleigh', 'coffee shop charlotte')..."
                 value={searchText}
                 onChange={(e) => setSearchText(e.target.value)}
                 className="w-full pl-10 sm:pl-12 pr-4 py-3 sm:py-4 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-black transition-colors text-base sm:text-lg"
               />
               <Search className="absolute left-3 sm:left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5 sm:w-6 sm:h-6" />
-            </div>
-            
-            {/* Location Filter */}
-            <div className="flex flex-col sm:flex-row gap-3">
-              <div className="flex-1">
-                <div className="flex items-center gap-2">
-                  <input
-                    type="text"
-                    placeholder="Enter ZIP code or city for location-based search"
-                    value={locationFilter}
-                    onChange={(e) => setLocationFilter(e.target.value)}
-                    className="flex-1 px-4 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-black transition-colors"
-                  />
-                  <button
-                    onClick={handleLocationSearch}
-                    disabled={locationLoading || !locationFilter.trim()}
-                    className="px-4 py-2 bg-blue-500 text-white border-2 border-black font-bold text-sm hover:bg-blue-600 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] flex items-center gap-2"
-                  >
-                    <NavigationIcon className="w-4 h-4" />
-                    {locationLoading ? 'LOCATING...' : 'SEARCH NEARBY'}
-                  </button>
-                </div>
-              </div>
-              
-              <div className="flex items-center gap-2">
-                <label className="text-sm font-bold text-gray-700">Within:</label>
-                <select
-                  value={distanceFilter}
-                  onChange={(e) => setDistanceFilter(Number(e.target.value))}
-                  className="px-3 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-black transition-colors font-bold"
-                >
-                  <option value="10">10 miles</option>
-                  <option value="25">25 miles</option>
-                  <option value="50">50 miles</option>
-                  <option value="100">100 miles</option>
-                  <option value="250">250 miles</option>
-                </select>
-              </div>
-            </div>
-            
-            {/* Current Location Button */}
-            <div className="flex items-center gap-2">
-              <button
-                onClick={handleUseCurrentLocation}
-                disabled={locationLoading}
-                className="px-4 py-2 bg-green-500 text-white border-2 border-black font-bold text-sm hover:bg-green-600 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] flex items-center gap-2"
-              >
-                <MapPin className="w-4 h-4" />
-                USE MY CURRENT LOCATION
-              </button>
-              {userLocation && (
-                <button
-                  onClick={() => {
-                    setUserLocation(null)
-                    setLocationFilter('')
-                    fetchVenues(1)
-                  }}
-                  className="px-4 py-2 bg-gray-500 text-white border-2 border-black font-bold text-sm hover:bg-gray-600 transition-colors shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
-                >
-                  CLEAR LOCATION
-                </button>
-              )}
             </div>
           </div>
         </div>
@@ -525,7 +349,7 @@ Best regards,`)
                       rel="noopener noreferrer"
                       className="block px-4 py-2 font-bold text-sm text-gray-800 hover:bg-gray-100"
                     >
-                      📬 Yahoo Mail
+                      ✉️ Yahoo Mail
                     </a>
                   </div>
                 </div>
@@ -534,135 +358,64 @@ Best regards,`)
           </div>
         )}
 
-        {/* Results Count */}
-        <div className="mb-3 sm:mb-6">
-          <p className="text-gray-600">
-            {loading ? 'Loading venues...' : (
-              <>
-                Showing {venues.length > 0 ? (currentPage - 1) * itemsPerPage + 1 : 0} - {Math.min(currentPage * itemsPerPage, totalCount)} of {totalCount} venues
-                {hasSearched && searchText && (
-                  <span className="ml-2 text-gray-500">
-                    for &quot;{searchText}&quot;
-                  </span>
-                )}
-              </>
-            )}
-          </p>
-        </div>
-
-        {/* Venues Grid */}
+        {/* Results Grid */}
         {loading ? (
-          <div className="flex justify-center items-center h-64">
-            <div className="animate-spin rounded-full h-12 w-12 border-4 border-gray-300 border-t-black"></div>
+          <div className="text-center py-8">
+            <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
+            <p className="mt-2 text-gray-600">Loading venues...</p>
           </div>
-        ) : venues.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {venues.map(venue => (
-              <VenueCard 
-                key={venue.id} 
-                venue={venue} 
-                onReport={handleReport} 
-                onSelect={handleVenueSelect}
-                isSelected={selectedVenues.has(venue.id)}
-              />
-            ))}
-          </div>
-        ) : hasSearched ? (
-          <div className="text-center py-12">
-            <Search className="mx-auto h-12 w-12 text-gray-400 mb-4" />
-            <h3 className="text-lg font-medium text-gray-900 mb-2">No venues found for &quot;{searchText}&quot;</h3>
-            <p className="text-gray-600">Try different search terms like venue names, cities, types, or genres</p>
-            <button
-              onClick={() => setSearchText('')}
-              className="mt-4 px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors font-medium"
-            >
-              Show All Venues
-            </button>
+        ) : venues.length === 0 ? (
+          <div className="text-center py-8 bg-white rounded-xl border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] sm:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
+            <p className="text-lg font-semibold text-gray-900">No venues found</p>
+            <p className="mt-2 text-gray-600">Try adjusting your search criteria</p>
           </div>
         ) : (
-          <div className="text-center py-12">
-            <MapPin className="mx-auto h-12 w-12 text-gray-400 mb-4" />
-            <h3 className="text-lg font-medium text-gray-900 mb-2">No venues available</h3>
-            <p className="text-gray-600">Check back later for more venues</p>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+            {venues.map((venue) => (
+              <VenueCard
+                key={venue.id}
+                venue={venue}
+                onReport={handleReport}
+                selected={selectedVenues.has(venue.id)}
+                onSelect={handleVenueSelect}
+              />
+            ))}
           </div>
         )}
 
         {/* Pagination */}
-        {!loading && totalCount > itemsPerPage && (
+        {totalCount > itemsPerPage && (
           <div className="mt-8 flex justify-center">
-            <div className="bg-white border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] rounded-lg px-6 py-4">
-              <div className="flex items-center space-x-2">
-                <button
-                  onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
-                  disabled={currentPage === 1}
-                  className={`px-4 py-2 font-black text-sm border-2 border-black transition-colors ${
-                    currentPage === 1
-                      ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
-                      : 'bg-white text-black hover:bg-cyan-300'
-                  }`}
-                >
-                  ← PREV
-                </button>
-
-                {/* Page Numbers */}
-                <div className="flex items-center space-x-1">
-                  {(() => {
-                    const totalPages = Math.ceil(totalCount / itemsPerPage)
-                    const pages = []
-                    const showPages = 5
-                    let startPage = Math.max(1, currentPage - Math.floor(showPages / 2))
-                    let endPage = Math.min(totalPages, startPage + showPages - 1)
-                    
-                    // Adjust start if we're near the end
-                    startPage = Math.max(1, endPage - showPages + 1)
-
-                    for (let i = startPage; i <= endPage; i++) {
-                      pages.push(
-                        <button
-                          key={i}
-                          onClick={() => setCurrentPage(i)}
-                          className={`px-3 py-2 font-black text-sm border-2 border-black transition-colors ${
-                            currentPage === i
-                              ? 'bg-black text-white'
-                              : 'bg-white text-black hover:bg-lime-300'
-                          }`}
-                        >
-                          {i}
-                        </button>
-                      )
-                    }
-                    return pages
-                  })()}
-                </div>
-
-                <button
-                  onClick={() => setCurrentPage(Math.min(Math.ceil(totalCount / itemsPerPage), currentPage + 1))}
-                  disabled={currentPage >= Math.ceil(totalCount / itemsPerPage)}
-                  className={`px-4 py-2 font-black text-sm border-2 border-black transition-colors ${
-                    currentPage >= Math.ceil(totalCount / itemsPerPage)
-                      ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
-                      : 'bg-white text-black hover:bg-cyan-300'
-                  }`}
-                >
-                  NEXT →
-                </button>
-              </div>
-
-              {/* Page info */}
-              <div className="text-center mt-3 text-sm text-gray-600">
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                disabled={currentPage === 1}
+                className="px-4 py-2 border-2 border-black font-black text-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-100 transition-colors shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
+              >
+                PREV
+              </button>
+              <span className="px-4 py-2 font-bold">
                 Page {currentPage} of {Math.ceil(totalCount / itemsPerPage)}
-              </div>
+              </span>
+              <button
+                onClick={() => setCurrentPage(prev => Math.min(Math.ceil(totalCount / itemsPerPage), prev + 1))}
+                disabled={currentPage === Math.ceil(totalCount / itemsPerPage)}
+                className="px-4 py-2 border-2 border-black font-black text-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-100 transition-colors shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
+              >
+                NEXT
+              </button>
             </div>
           </div>
         )}
       </div>
-      
+
       {/* Report Modal */}
       {reportModalOpen && reportingVenue && (
         <ReportVenueModal
+          isOpen={reportModalOpen}
+          onClose={handleReportClose}
           venueId={reportingVenue.id}
           venueName={reportingVenue.name}
-          onClose={handleReportClose}
         />
       )}
     </div>
