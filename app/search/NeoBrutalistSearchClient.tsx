@@ -5,9 +5,147 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
+import { getLastActiveStatus } from '@/lib/auth-helpers'
+import { useLocationDisplay } from '@/hooks/useLocationDisplay'
 import Navigation from '@/components/layout/Navigation'
-import SearchProfileCard from '@/components/SearchProfileCard'
-import { Search } from 'lucide-react'
+import { Search, Music, MapPin, Eye, MessageSquare, Heart, Users } from 'lucide-react'
+
+// Component to handle location display with hook
+function ProfileRow({ profile, index, currentUser, savedProfiles, handleSave, handleMessage }: any) {
+  const locationDisplay = useLocationDisplay(profile.zip_code)
+  const isEven = index % 2 === 0
+  
+  return (
+    <div 
+      key={profile.id}
+      className={`flex flex-col sm:flex-row items-start sm:items-center justify-between p-3 sm:p-4 border-b-2 border-gray-200 last:border-b-0 ${
+        isEven ? 'bg-green-50' : 'bg-white'
+      } hover:bg-yellow-50 transition-colors`}
+    >
+      {/* Desktop Layout */}
+      <div className="hidden sm:flex items-center flex-1 gap-4">
+        <input type="checkbox" className="w-4 h-4 border-2 border-black flex-shrink-0" />
+        
+        {/* Profile Photo */}
+        <div className="flex-shrink-0">
+          {profile.profile_image_url ? (
+            <Image
+              src={profile.profile_image_url}
+              alt={profile.username}
+              width={48}
+              height={48}
+              className="w-12 h-12 border-2 border-black object-cover rounded"
+            />
+          ) : (
+            <div className="w-12 h-12 border-2 border-black bg-gradient-to-br from-pink-400 to-purple-500 flex items-center justify-center rounded">
+              <span className="text-sm font-black text-white">
+                {(profile.username || 'M').charAt(0).toUpperCase()}
+              </span>
+            </div>
+          )}
+        </div>
+
+        {/* Profile Info */}
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-3 mb-1">
+            <h3 className="font-black text-lg">@{profile.username || 'musician'}</h3>
+            {profile.experience_level && (
+              <span className={`px-2 py-1 border-2 border-black font-black text-xs ${
+                profile.experience_level === 'beginner' ? 'bg-green-300' :
+                profile.experience_level === 'intermediate' ? 'bg-yellow-300' :
+                profile.experience_level === 'advanced' ? 'bg-orange-400' :
+                profile.experience_level === 'professional' ? 'bg-red-400 text-white' :
+                'bg-gray-300'
+              }`}>
+                {profile.experience_level.toUpperCase()}
+              </span>
+            )}
+            {profile.last_active && (() => {
+              const activeStatus = getLastActiveStatus(profile.last_active)
+              return (
+                <span className={`px-2 py-1 border-2 border-black font-black text-xs ${
+                  activeStatus.status === 'online' ? 'bg-green-400' :
+                  activeStatus.status === 'recent' ? 'bg-yellow-400' :
+                  activeStatus.status === 'hours' ? 'bg-orange-400' :
+                  activeStatus.status === 'days' ? 'bg-red-400' :
+                  'bg-gray-400'
+                }`}>
+                  {activeStatus.text}
+                </span>
+              )
+            })()}
+          </div>
+          
+          <div className="flex items-center gap-4 text-sm text-gray-600">
+            <div className="flex items-center gap-1">
+              <Music className="w-4 h-4" />
+              <span className="font-bold">{profile.main_instrument || 'Musician'}</span>
+            </div>
+            <div className="flex items-center gap-1">
+              <MapPin className="w-4 h-4" />
+              <span className="font-bold">{locationDisplay || 'Planet Earth'}</span>
+            </div>
+            {profile.seeking && profile.seeking.length > 0 && (
+              <div className="flex items-center gap-1">
+                <Users className="w-4 h-4" />
+                <span className="font-bold">{profile.seeking.length} seeking</span>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* Mobile Layout */}
+      <div className="flex sm:hidden items-center w-full gap-3">
+        <input type="checkbox" className="w-4 h-4 border-2 border-black flex-shrink-0" />
+        
+        <div className="flex-1 min-w-0">
+          <div className="font-black text-base mb-1">@{profile.username || 'musician'}</div>
+          <div className="flex items-center gap-3 text-sm text-gray-600">
+            <div className="flex items-center gap-1">
+              <Music className="w-4 h-4" />
+              <span className="font-bold">{profile.main_instrument || 'Musician'}</span>
+            </div>
+            <div className="flex items-center gap-1">
+              <MapPin className="w-4 h-4" />
+              <span className="font-bold">{locationDisplay || 'Planet Earth'}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Action Buttons */}
+      <div className="flex gap-2 mt-3 sm:mt-0">
+        <Link
+          href={`/profile/${profile.username}`}
+          className="px-3 py-2 bg-blue-400 border-2 border-black font-black text-xs text-center hover:bg-blue-500 transition-colors shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
+        >
+          <Eye className="w-4 h-4" />
+        </Link>
+        {currentUser && currentUser.id !== profile.user_id && (
+          <button
+            onClick={() => handleMessage(profile.user_id)}
+            className="px-3 py-2 bg-yellow-400 border-2 border-black font-black text-xs text-center hover:bg-yellow-500 transition-colors shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
+          >
+            <MessageSquare className="w-4 h-4" />
+          </button>
+        )}
+        {currentUser && (
+          <button
+            onClick={() => handleSave(profile.id)}
+            className={`px-3 py-2 border-2 border-black font-black text-xs transition-colors shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] ${
+              savedProfiles.has(profile.id)
+                ? 'bg-pink-400 hover:bg-pink-500'
+                : 'bg-white hover:bg-lime-300'
+            }`}
+          >
+            <Heart className={`w-4 h-4 ${savedProfiles.has(profile.id) ? 'fill-current' : ''}`} />
+          </button>
+        )}
+      </div>
+    </div>
+  )
+}
 
 export default function NeoBrutalistSearchClient() {
   const router = useRouter()
@@ -281,19 +419,32 @@ export default function NeoBrutalistSearchClient() {
             </div>
           )}
 
-          {/* Results Grid */}
+          {/* Results Table */}
           {profiles.length > 0 && (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {profiles.map((profile) => (
-                <SearchProfileCard
-                  key={profile.id}
-                  profile={profile}
-                  currentUser={currentUser}
-                  savedProfiles={savedProfiles}
-                  onSave={handleSave}
-                  onMessage={handleMessage}
-                />
-              ))}
+            <div className="bg-white border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+              {/* Table Header - Desktop Only */}
+              <div className="hidden sm:flex items-center justify-between p-4 border-b-4 border-black bg-gray-100">
+                <div className="flex items-center gap-2">
+                  <input type="checkbox" className="w-4 h-4 border-2 border-black" />
+                  <span className="font-black text-sm">MUSICIAN INFO</span>
+                </div>
+                <span className="font-black text-sm">ACTIONS</span>
+              </div>
+
+              {/* Table Rows */}
+              <div>
+                {profiles.map((profile, index) => (
+                  <ProfileRow
+                    key={profile.id}
+                    profile={profile}
+                    index={index}
+                    currentUser={currentUser}
+                    savedProfiles={savedProfiles}
+                    handleSave={handleSave}
+                    handleMessage={handleMessage}
+                  />
+                ))}
+              </div>
             </div>
           )}
         </div>
