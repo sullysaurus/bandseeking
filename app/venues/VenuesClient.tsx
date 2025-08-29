@@ -6,7 +6,7 @@ import { trackVenueSearch } from '@/components/FacebookPixel'
 import Navigation from '@/components/layout/Navigation'
 import VenueCard from '@/components/VenueCard'
 import ReportVenueModal from '@/components/ReportVenueModal'
-import { Search, MapPin, Music, Coffee, Beer } from 'lucide-react'
+import { Search, MapPin, Music, Coffee, Beer, Navigation as NavigationIcon } from 'lucide-react'
 import type { Database } from '@/lib/database.types'
 
 type Venue = Database['public']['Tables']['venues']['Row']
@@ -48,6 +48,95 @@ export default function VenuesClient() {
   const [reportingVenue, setReportingVenue] = useState<{ id: string; name: string } | null>(null)
   const [selectedVenues, setSelectedVenues] = useState<Set<string>>(new Set())
   const [showEmailModal, setShowEmailModal] = useState(false)
+  const [locationFilter, setLocationFilter] = useState('')
+  const [distanceFilter, setDistanceFilter] = useState(25) // Default 25 miles
+  const [userLocation, setUserLocation] = useState<{ lat: number; lon: number } | null>(null)
+  const [locationLoading, setLocationLoading] = useState(false)
+  const [searchExpanded, setSearchExpanded] = useState(false)
+
+  // Helper function to calculate distance between two points
+  const calculateDistance = (lat1: number, lon1: number, lat2: number, lon2: number): number => {
+    const R = 3959 // Earth's radius in miles
+    const dLat = (lat2 - lat1) * Math.PI / 180
+    const dLon = (lon2 - lon1) * Math.PI / 180
+    const a = 
+      Math.sin(dLat/2) * Math.sin(dLat/2) +
+      Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+      Math.sin(dLon/2) * Math.sin(dLon/2)
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a))
+    return R * c
+  }
+
+  // Geocode a location string (ZIP or city)
+  const geocodeLocation = async (location: string): Promise<{ lat: number; lon: number } | null> => {
+    try {
+      const response = await fetch(
+        `/api/geocode?location=${encodeURIComponent(location)}`
+      )
+      if (!response.ok) {
+        throw new Error('Geocoding failed')
+      }
+      const data = await response.json()
+      if (data.lat && data.lon) {
+        return {
+          lat: data.lat,
+          lon: data.lon
+        }
+      }
+    } catch (error) {
+      console.error('Error geocoding location:', error)
+    }
+    return null
+  }
+
+  // Handle location search
+  const handleLocationSearch = async () => {
+    if (!locationFilter.trim()) return
+    
+    setLocationLoading(true)
+    try {
+      const coords = await geocodeLocation(locationFilter)
+      if (coords) {
+        setUserLocation(coords)
+        setCurrentPage(1)
+        fetchVenues(1)
+      } else {
+        alert('Could not find location. Please try a different ZIP code or city name.')
+      }
+    } catch (error) {
+      console.error('Error searching by location:', error)
+      alert('Error searching by location. Please try again.')
+    } finally {
+      setLocationLoading(false)
+    }
+  }
+
+  // Handle using current location
+  const handleUseCurrentLocation = () => {
+    if (!navigator.geolocation) {
+      alert('Geolocation is not supported by your browser')
+      return
+    }
+
+    setLocationLoading(true)
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        setUserLocation({
+          lat: position.coords.latitude,
+          lon: position.coords.longitude
+        })
+        setLocationFilter('Current Location')
+        setCurrentPage(1)
+        fetchVenues(1)
+        setLocationLoading(false)
+      },
+      (error) => {
+        console.error('Error getting location:', error)
+        alert('Could not get your location. Please check your browser permissions.')
+        setLocationLoading(false)
+      }
+    )
+  }
 
   useEffect(() => {
     fetchVenues()
@@ -277,17 +366,96 @@ Best regards,`)
           </div>
         </div>
 
-        {/* Search */}
+        {/* Search and Filters */}
         <div className="bg-white rounded-xl border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] sm:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] p-4 sm:p-6 mb-4 sm:mb-8">
-          <div className="relative">
-            <input
-              type="text"
-              placeholder="Search by venue name, city, type, or genre (e.g., 'brewery raleigh', 'coffee shop', 'indie rock')..."
-              value={searchText}
-              onChange={(e) => setSearchText(e.target.value)}
-              className="w-full pl-10 sm:pl-12 pr-4 py-3 sm:py-4 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-black transition-colors text-base sm:text-lg"
-            />
-            <Search className="absolute left-3 sm:left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5 sm:w-6 sm:h-6" />
+          {/* Mobile Search Toggle */}
+          <div className="sm:hidden mb-4">
+            <button
+              onClick={() => setSearchExpanded(!searchExpanded)}
+              className="w-full flex items-center justify-between px-4 py-3 bg-gray-100 border-2 border-black rounded-lg font-bold text-gray-800"
+            >
+              <span className="flex items-center gap-2">
+                <Search className="w-5 h-5" />
+                {searchExpanded ? 'HIDE SEARCH' : 'SEARCH VENUES'}
+              </span>
+              <span className="text-xl">{searchExpanded ? '−' : '+'}</span>
+            </button>
+          </div>
+
+          <div className={`space-y-4 ${searchExpanded ? 'block' : 'hidden sm:block'}`}>
+            {/* Search Input */}
+            <div className="relative">
+              <input
+                type="text"
+                placeholder="Search by venue name, city, state, type, or genre (e.g., 'brewery raleigh', 'coffee shop charlotte', 'indie rock')..."
+                value={searchText}
+                onChange={(e) => setSearchText(e.target.value)}
+                className="w-full pl-10 sm:pl-12 pr-4 py-3 sm:py-4 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-black transition-colors text-base sm:text-lg"
+              />
+              <Search className="absolute left-3 sm:left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5 sm:w-6 sm:h-6" />
+            </div>
+            
+            {/* Location Filter */}
+            <div className="flex flex-col sm:flex-row gap-3">
+              <div className="flex-1">
+                <div className="flex items-center gap-2">
+                  <input
+                    type="text"
+                    placeholder="Enter ZIP code or city for location-based search"
+                    value={locationFilter}
+                    onChange={(e) => setLocationFilter(e.target.value)}
+                    className="flex-1 px-4 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-black transition-colors"
+                  />
+                  <button
+                    onClick={handleLocationSearch}
+                    disabled={locationLoading || !locationFilter.trim()}
+                    className="px-4 py-2 bg-blue-500 text-white border-2 border-black font-bold text-sm hover:bg-blue-600 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] flex items-center gap-2"
+                  >
+                    <NavigationIcon className="w-4 h-4" />
+                    {locationLoading ? 'LOCATING...' : 'SEARCH NEARBY'}
+                  </button>
+                </div>
+              </div>
+              
+              <div className="flex items-center gap-2">
+                <label className="text-sm font-bold text-gray-700">Within:</label>
+                <select
+                  value={distanceFilter}
+                  onChange={(e) => setDistanceFilter(Number(e.target.value))}
+                  className="px-3 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-black transition-colors font-bold"
+                >
+                  <option value="10">10 miles</option>
+                  <option value="25">25 miles</option>
+                  <option value="50">50 miles</option>
+                  <option value="100">100 miles</option>
+                  <option value="250">250 miles</option>
+                </select>
+              </div>
+            </div>
+            
+            {/* Current Location Button */}
+            <div className="flex items-center gap-2">
+              <button
+                onClick={handleUseCurrentLocation}
+                disabled={locationLoading}
+                className="px-4 py-2 bg-green-500 text-white border-2 border-black font-bold text-sm hover:bg-green-600 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] flex items-center gap-2"
+              >
+                <MapPin className="w-4 h-4" />
+                USE MY CURRENT LOCATION
+              </button>
+              {userLocation && (
+                <button
+                  onClick={() => {
+                    setUserLocation(null)
+                    setLocationFilter('')
+                    fetchVenues(1)
+                  }}
+                  className="px-4 py-2 bg-gray-500 text-white border-2 border-black font-bold text-sm hover:bg-gray-600 transition-colors shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
+                >
+                  CLEAR LOCATION
+                </button>
+              )}
+            </div>
           </div>
         </div>
 
