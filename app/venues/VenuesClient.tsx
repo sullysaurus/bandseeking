@@ -93,6 +93,13 @@ export default function VenuesClient() {
   const handleLocationSearch = async () => {
     if (!locationFilter.trim()) return
     
+    // Skip geocoding if already using current location
+    if (locationFilter === '📍 Current Location' && userLocation) {
+      setCurrentPage(1)
+      fetchVenues(1)
+      return
+    }
+    
     setLocationLoading(true)
     try {
       const coords = await geocodeLocation(locationFilter)
@@ -121,13 +128,14 @@ export default function VenuesClient() {
     setLocationLoading(true)
     navigator.geolocation.getCurrentPosition(
       (position) => {
-        setUserLocation({
+        const coords = {
           lat: position.coords.latitude,
           lon: position.coords.longitude
-        })
-        setLocationFilter('Current Location')
+        }
+        setUserLocation(coords)
+        setLocationFilter('📍 Current Location')
         setCurrentPage(1)
-        fetchVenues(1)
+        // Don't call fetchVenues here, let useEffect handle it
         setLocationLoading(false)
       },
       (error) => {
@@ -141,6 +149,13 @@ export default function VenuesClient() {
   useEffect(() => {
     fetchVenues()
   }, [currentPage])
+
+  // Refetch when location changes
+  useEffect(() => {
+    if (userLocation) {
+      fetchVenues(1)
+    }
+  }, [userLocation, distanceFilter])
 
   // Auto-search when search text changes (debounced)
   useEffect(() => {
