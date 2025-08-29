@@ -57,44 +57,42 @@ export default function SearchProfileCard({
 
             {/* Name and Compact Info - Single Row */}
             <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-2 mb-1">
+              <div className="mb-1">
                 <h3 className="font-black text-sm">@{profile.username || 'musician'}</h3>
-                {profile.experience_level && (
-                  <span className={`px-1.5 py-0.5 border border-black font-black text-xs ${
-                    profile.experience_level === 'beginner' ? 'bg-green-300' :
-                    profile.experience_level === 'intermediate' ? 'bg-yellow-300' :
-                    profile.experience_level === 'advanced' ? 'bg-orange-400' :
-                    profile.experience_level === 'professional' ? 'bg-red-400 text-white' :
-                    'bg-gray-300'
-                  }`}>
-                    {profile.experience_level.charAt(0).toUpperCase()}
-                  </span>
-                )}
-                {profile.last_active && (() => {
-                  const activeStatus = getLastActiveStatus(profile.last_active)
-                  return (
-                    <span className={`px-1.5 py-0.5 border border-black font-black text-xs ${
-                      activeStatus.status === 'online' ? 'bg-green-400' :
-                      activeStatus.status === 'recent' ? 'bg-yellow-400' :
-                      activeStatus.status === 'hours' ? 'bg-orange-400' :
-                      activeStatus.status === 'days' ? 'bg-red-400' :
-                      'bg-gray-400'
-                    }`}>
-                      {activeStatus.text.split(' ')[0]}
-                    </span>
-                  )
-                })()}
               </div>
               
-              {/* Instrument and Location - Single Row */}
+              {/* Instrument and Location with subtle indicators */}
               <div className="flex items-center gap-3 text-xs text-gray-600">
                 <div className="flex items-center gap-1">
                   <Music className="w-3.5 h-3.5" />
                   <span className="font-bold">{profile.main_instrument || 'Musician'}</span>
+                  {profile.experience_level && (
+                    <span className={`ml-1 text-xs font-black ${
+                      profile.experience_level === 'beginner' ? 'text-green-600' :
+                      profile.experience_level === 'intermediate' ? 'text-yellow-600' :
+                      profile.experience_level === 'advanced' ? 'text-orange-600' :
+                      profile.experience_level === 'professional' ? 'text-red-600' :
+                      'text-gray-600'
+                    }`}>
+                      ({profile.experience_level.charAt(0).toUpperCase()})
+                    </span>
+                  )}
                 </div>
                 <div className="flex items-center gap-1">
                   <MapPin className="w-3.5 h-3.5" />
                   <span className="font-bold">{locationDisplay || 'Planet Earth'}</span>
+                  {profile.last_active && (() => {
+                    const activeStatus = getLastActiveStatus(profile.last_active)
+                    return (
+                      <span className={`ml-1 w-2 h-2 rounded-full inline-block ${
+                        activeStatus.status === 'online' ? 'bg-green-400' :
+                        activeStatus.status === 'recent' ? 'bg-yellow-400' :
+                        activeStatus.status === 'hours' ? 'bg-orange-400' :
+                        activeStatus.status === 'days' ? 'bg-red-400' :
+                        'bg-gray-400'
+                      }`} title={activeStatus.text}></span>
+                    )
+                  })()}
                 </div>
               </div>
             </div>
