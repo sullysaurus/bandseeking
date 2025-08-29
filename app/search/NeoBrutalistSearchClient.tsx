@@ -17,14 +17,15 @@ function ProfileRow({ profile, index, currentUser, savedProfiles, handleSave, ha
   
   return (
     <div 
-      className={`flex flex-col sm:grid sm:grid-cols-11 sm:gap-4 items-start sm:items-center p-3 sm:p-4 border-b-2 border-gray-200 last:border-b-0 ${
+      className={`flex items-center justify-between p-3 sm:p-4 border-b-2 border-gray-200 last:border-b-0 ${
         isEven ? 'bg-green-50' : 'bg-white'
       } hover:bg-yellow-50 transition-colors`}
     >
-      {/* Profile Name - takes more space without checkbox */}
-      <div className="hidden sm:block col-span-4">
-        <div className="flex items-center gap-4">
-          {/* Profile Photo - Bigger */}
+      {/* Desktop Layout - Flex with proper spacing */}
+      <div className="hidden sm:flex items-center flex-1 gap-6">
+        {/* Profile Info */}
+        <div className="flex items-center gap-4 min-w-0 flex-shrink-0">
+          {/* Profile Photo */}
           {profile.profile_image_url ? (
             <Image
               src={profile.profile_image_url}
@@ -40,15 +41,13 @@ function ProfileRow({ profile, index, currentUser, savedProfiles, handleSave, ha
               </span>
             </div>
           )}
-          <div>
+          <div className="min-w-0">
             <div className="font-black text-lg">@{profile.username || 'musician'}</div>
           </div>
         </div>
-      </div>
 
-      {/* Instrument */}
-      <div className="hidden sm:block col-span-2">
-        <div className="flex items-center gap-1">
+        {/* Instrument */}
+        <div className="flex items-center gap-1 min-w-0 flex-shrink-0">
           <Music className="w-4 h-4 text-gray-500" />
           <span className="font-bold text-sm">{profile.main_instrument || 'Musician'}</span>
           {profile.experience_level && (
@@ -63,11 +62,9 @@ function ProfileRow({ profile, index, currentUser, savedProfiles, handleSave, ha
             </span>
           )}
         </div>
-      </div>
 
-      {/* Location */}
-      <div className="hidden sm:block col-span-2">
-        <div className="flex items-center gap-1">
+        {/* Location */}
+        <div className="flex items-center gap-1 min-w-0 flex-shrink-0">
           <MapPin className="w-4 h-4 text-gray-500" />
           <span className="font-bold text-sm">{locationDisplay || 'Planet Earth'}</span>
           {profile.last_active && (() => {
@@ -83,20 +80,20 @@ function ProfileRow({ profile, index, currentUser, savedProfiles, handleSave, ha
             )
           })()}
         </div>
+
+        {/* Seeking */}
+        <div className="flex items-center gap-1 min-w-0 flex-shrink-0">
+          {profile.seeking && profile.seeking.length > 0 && (
+            <>
+              <Users className="w-4 h-4 text-gray-500" />
+              <span className="font-bold text-sm">{profile.seeking.length}</span>
+            </>
+          )}
+        </div>
       </div>
 
-      {/* Seeking */}
-      <div className="hidden sm:block col-span-1">
-        {profile.seeking && profile.seeking.length > 0 && (
-          <div className="flex items-center gap-1">
-            <Users className="w-4 h-4 text-gray-500" />
-            <span className="font-bold text-sm">{profile.seeking.length}</span>
-          </div>
-        )}
-      </div>
-
-      {/* Actions */}
-      <div className="hidden sm:flex col-span-3 justify-end gap-2">
+      {/* Actions - Desktop */}
+      <div className="hidden sm:flex gap-2 flex-shrink-0">
         <Link
           href={`/profile/${profile.username}`}
           className="px-3 py-2 bg-blue-400 border-2 border-black font-black text-xs hover:bg-blue-500 transition-colors shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
@@ -306,27 +303,43 @@ export default function NeoBrutalistSearchClient() {
 
     const isSaved = savedProfiles.has(profileId)
 
-    if (isSaved) {
-      await supabase
-        .from('saved_profiles')
-        .delete()
-        .eq('user_id', currentUser.id)
-        .eq('saved_profile_id', profileId)
-      
-      setSavedProfiles(prev => {
-        const newSet = new Set(prev)
-        newSet.delete(profileId)
-        return newSet
-      })
-    } else {
-      await supabase
-        .from('saved_profiles')
-        .insert({
-          user_id: currentUser.id,
-          saved_profile_id: profileId
+    try {
+      if (isSaved) {
+        const { error } = await supabase
+          .from('saved_profiles')
+          .delete()
+          .eq('user_id', currentUser.id)
+          .eq('saved_profile_id', profileId)
+        
+        if (error) {
+          console.error('Error removing saved profile:', error)
+          return
+        }
+        
+        setSavedProfiles(prev => {
+          const newSet = new Set(prev)
+          newSet.delete(profileId)
+          return newSet
         })
-      
-      setSavedProfiles(prev => new Set(prev).add(profileId))
+        console.log('Profile unsaved successfully')
+      } else {
+        const { error } = await supabase
+          .from('saved_profiles')
+          .insert({
+            user_id: currentUser.id,
+            saved_profile_id: profileId
+          })
+        
+        if (error) {
+          console.error('Error saving profile:', error)
+          return
+        }
+        
+        setSavedProfiles(prev => new Set(prev).add(profileId))
+        console.log('Profile saved successfully')
+      }
+    } catch (error) {
+      console.error('Error in handleSave:', error)
     }
   }
 
@@ -408,35 +421,18 @@ export default function NeoBrutalistSearchClient() {
             <h1 className="text-3xl md:text-5xl font-black">FIND MUSICIANS</h1>
           </div>
           
-          {/* Search Bar - Both Mobile and Desktop */}
+          {/* Search Bar - Always Visible */}
           <div className="bg-white border-4 border-black p-4 mb-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
-            {/* Mobile Search Toggle */}
-            <div className="sm:hidden mb-3">
-              <button
-                onClick={() => setSearchExpanded(!searchExpanded)}
-                className="w-full flex items-center justify-between px-4 py-3 bg-yellow-100 border-2 border-black font-black"
-              >
-                <span className="flex items-center gap-2">
-                  <Search className="w-5 h-5" />
-                  {searchExpanded ? 'HIDE SEARCH' : 'SEARCH MUSICIANS'}
-                </span>
-                <span className="text-xl">{searchExpanded ? '−' : '+'}</span>
-              </button>
-            </div>
-
-            {/* Universal Search */}
-            <div className={`${searchExpanded ? 'block' : 'hidden sm:block'}`}>
-              <div className="flex gap-2">
-                <input
-                  type="text"
-                  placeholder="Search by name, instrument, genre, location, etc..."
-                  value={searchText}
-                  onChange={(e) => setSearchText(e.target.value)}
-                  className="flex-1 px-3 py-2 border-2 border-black font-bold focus:outline-none focus:bg-yellow-100 text-sm"
-                />
-                <div className="flex items-center px-2">
-                  <Search className="w-6 h-6 text-gray-600" />
-                </div>
+            <div className="flex gap-2">
+              <input
+                type="text"
+                placeholder="Search by name, instrument, genre, location, etc..."
+                value={searchText}
+                onChange={(e) => setSearchText(e.target.value)}
+                className="flex-1 px-3 py-2 border-2 border-black font-bold focus:outline-none focus:bg-yellow-100 text-sm"
+              />
+              <div className="flex items-center px-2">
+                <Search className="w-6 h-6 text-gray-600" />
               </div>
             </div>
           </div>

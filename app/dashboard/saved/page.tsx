@@ -29,9 +29,9 @@ export default function SavedProfilesPage() {
         .from('saved_profiles')
         .select(`
           *,
-          saved_user:users!saved_user_id(
+          profile:profiles!saved_profile_id(
             *,
-            profiles(*)
+            user:users(*)
           )
         `)
         .eq('user_id', user.id)
@@ -41,8 +41,8 @@ export default function SavedProfilesPage() {
 
       // Transform the data to match ProfileCard format
       const transformedProfiles = data?.map(item => ({
-        ...item.saved_user.profiles[0],
-        user: item.saved_user
+        ...item.profile,
+        user: item.profile.user
       })) || []
 
       setSavedProfiles(transformedProfiles)

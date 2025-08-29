@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
+import { Search, MapPin, MessageSquare, Home, LogOut, UserPlus, LogIn } from 'lucide-react'
 
 export default function Navigation() {
   const router = useRouter()
@@ -130,89 +131,49 @@ export default function Navigation() {
             )}
           </div>
 
-          {/* Mobile Menu Button */}
-          <button
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
-            className="md:hidden px-3 py-1 bg-yellow-300 border-2 border-black font-black text-sm shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
-          >
-            {isMenuOpen ? 'X' : 'MENU'}
-          </button>
-        </div>
-      </div>
-
-      {/* Mobile Menu */}
-      {isMenuOpen && (
-        <div className="md:hidden border-t-4 border-black bg-white">
-          <div className="px-4 py-4 space-y-2">
-            <Link
-              href="/search"
-              className="block px-4 py-2 bg-yellow-300 border-2 border-black font-black hover:bg-yellow-400 transition-colors"
-              onClick={() => setIsMenuOpen(false)}
-            >
-              BROWSE
+          {/* Mobile Icon Navigation */}
+          <div className="flex md:hidden items-center gap-2">
+            <Link href="/search" className="p-2 bg-pink-400 border-2 border-black hover:bg-pink-500 transition-colors shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+              <Search className="w-5 h-5 text-black" />
             </Link>
-            <Link
-              href="/venues"
-              className="block px-4 py-2 bg-orange-400 border-2 border-black font-black hover:bg-orange-500 transition-colors"
-              onClick={() => setIsMenuOpen(false)}
-            >
-              VENUES
+            <Link href="/venues" className="p-2 bg-orange-400 border-2 border-black hover:bg-orange-500 transition-colors shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+              <MapPin className="w-5 h-5 text-black" />
             </Link>
-
+            
             {isLoading ? (
-              <div className="px-4 py-2 font-black">LOADING...</div>
+              <div className="p-2 bg-gray-200 border-2 border-black">
+                <div className="w-5 h-5"></div>
+              </div>
             ) : user ? (
               <>
-                <Link
-                  href="/dashboard/messages"
-                  className="relative block px-4 py-2 bg-cyan-300 border-2 border-black font-black hover:bg-cyan-400 transition-colors"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  MESSAGES
+                <Link href="/dashboard/messages" className="relative p-2 bg-cyan-300 border-2 border-black hover:bg-cyan-400 transition-colors shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+                  <MessageSquare className="w-5 h-5 text-black" />
                   {unreadCount > 0 && (
-                    <span className="absolute top-1 right-4 bg-red-500 text-white text-xs font-black min-w-[20px] h-5 rounded-full flex items-center justify-center border-2 border-black">
-                      {unreadCount > 99 ? '99+' : unreadCount}
+                    <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-black min-w-[16px] h-4 rounded-full flex items-center justify-center border border-black">
+                      {unreadCount > 9 ? '9+' : unreadCount}
                     </span>
                   )}
                 </Link>
-                <Link
-                  href="/dashboard"
-                  className="block px-4 py-2 bg-lime-300 border-2 border-black font-black hover:bg-lime-400 transition-colors"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  DASHBOARD
+                <Link href="/dashboard" className="p-2 bg-lime-300 border-2 border-black hover:bg-lime-400 transition-colors shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+                  <Home className="w-5 h-5 text-black" />
                 </Link>
-                <button
-                  onClick={() => {
-                    handleSignOut()
-                    setIsMenuOpen(false)
-                  }}
-                  className="block w-full text-left px-4 py-2 bg-white border-2 border-black font-black hover:bg-red-400 transition-colors"
-                >
-                  SIGN OUT
+                <button onClick={handleSignOut} className="p-2 bg-white border-2 border-black hover:bg-red-400 transition-colors shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+                  <LogOut className="w-5 h-5 text-black" />
                 </button>
               </>
             ) : (
               <>
-                <Link
-                  href="/auth/login"
-                  className="block px-4 py-2 bg-white border-2 border-black font-black hover:bg-cyan-300 transition-colors"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  SIGN IN
+                <Link href="/auth/login" className="p-2 bg-white border-2 border-black hover:bg-cyan-300 transition-colors shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+                  <LogIn className="w-5 h-5 text-black" />
                 </Link>
-                <Link
-                  href="/auth/register"
-                  className="block px-4 py-2 bg-pink-400 border-2 border-black font-black hover:bg-pink-500 transition-colors"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  JOIN NOW
+                <Link href="/auth/register" className="p-2 bg-pink-400 border-2 border-black hover:bg-pink-500 transition-colors shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+                  <UserPlus className="w-5 h-5 text-black" />
                 </Link>
               </>
             )}
           </div>
         </div>
-      )}
+      </div>
     </nav>
   )
 }
