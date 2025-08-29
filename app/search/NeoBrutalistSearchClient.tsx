@@ -17,36 +17,31 @@ function ProfileRow({ profile, index, currentUser, savedProfiles, handleSave, ha
   
   return (
     <div 
-      className={`flex flex-col sm:grid sm:grid-cols-12 sm:gap-4 items-start sm:items-center p-3 sm:p-4 border-b-2 border-gray-200 last:border-b-0 ${
+      className={`flex flex-col sm:grid sm:grid-cols-11 sm:gap-4 items-start sm:items-center p-3 sm:p-4 border-b-2 border-gray-200 last:border-b-0 ${
         isEven ? 'bg-green-50' : 'bg-white'
       } hover:bg-yellow-50 transition-colors`}
     >
-      {/* Desktop Layout - Grid columns */}
-      <div className="hidden sm:flex items-center col-span-1">
-        <input type="checkbox" className="w-4 h-4 border-2 border-black" />
-      </div>
-
-      {/* Profile Name - takes more space */}
-      <div className="hidden sm:block col-span-3">
-        <div className="flex items-center gap-3">
-          {/* Profile Photo */}
+      {/* Profile Name - takes more space without checkbox */}
+      <div className="hidden sm:block col-span-4">
+        <div className="flex items-center gap-4">
+          {/* Profile Photo - Bigger */}
           {profile.profile_image_url ? (
             <Image
               src={profile.profile_image_url}
               alt={profile.username}
-              width={40}
-              height={40}
-              className="w-10 h-10 border-2 border-black object-cover rounded"
+              width={56}
+              height={56}
+              className="w-14 h-14 border-2 border-black object-cover rounded"
             />
           ) : (
-            <div className="w-10 h-10 border-2 border-black bg-gradient-to-br from-pink-400 to-purple-500 flex items-center justify-center rounded">
-              <span className="text-xs font-black text-white">
+            <div className="w-14 h-14 border-2 border-black bg-gradient-to-br from-pink-400 to-purple-500 flex items-center justify-center rounded">
+              <span className="text-base font-black text-white">
                 {(profile.username || 'M').charAt(0).toUpperCase()}
               </span>
             </div>
           )}
           <div>
-            <div className="font-black text-base">@{profile.username || 'musician'}</div>
+            <div className="font-black text-lg">@{profile.username || 'musician'}</div>
           </div>
         </div>
       </div>
@@ -131,22 +126,20 @@ function ProfileRow({ profile, index, currentUser, savedProfiles, handleSave, ha
       </div>
 
       {/* Mobile Layout */}
-      <div className="flex sm:hidden items-center w-full gap-3">
-        <input type="checkbox" className="w-4 h-4 border-2 border-black flex-shrink-0" />
-        
-        {/* Profile Photo */}
+      <div className="flex sm:hidden items-center w-full gap-4">
+        {/* Profile Photo - Bigger on mobile too */}
         <div className="flex-shrink-0">
           {profile.profile_image_url ? (
             <Image
               src={profile.profile_image_url}
               alt={profile.username}
-              width={40}
-              height={40}
-              className="w-10 h-10 border-2 border-black object-cover rounded"
+              width={48}
+              height={48}
+              className="w-12 h-12 border-2 border-black object-cover rounded"
             />
           ) : (
-            <div className="w-10 h-10 border-2 border-black bg-gradient-to-br from-pink-400 to-purple-500 flex items-center justify-center rounded">
-              <span className="text-xs font-black text-white">
+            <div className="w-12 h-12 border-2 border-black bg-gradient-to-br from-pink-400 to-purple-500 flex items-center justify-center rounded">
+              <span className="text-sm font-black text-white">
                 {(profile.username || 'M').charAt(0).toUpperCase()}
               </span>
             </div>
@@ -471,7 +464,6 @@ export default function NeoBrutalistSearchClient() {
               {/* Table Header - Desktop Only */}
               <div className="hidden sm:flex items-center justify-between p-4 border-b-4 border-black bg-gray-100">
                 <div className="flex items-center gap-2">
-                  <input type="checkbox" className="w-4 h-4 border-2 border-black" />
                   <span className="font-black text-sm">MUSICIAN INFO</span>
                 </div>
                 <span className="font-black text-sm">ACTIONS</span>
