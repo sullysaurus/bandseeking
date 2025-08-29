@@ -17,15 +17,15 @@ interface VenueCardProps {
 }
 
 const venueTypeColors: Record<Venue['venue_type'], string> = {
-  music_venue: 'bg-purple-100 text-purple-800 border-purple-300',
-  brewery: 'bg-amber-100 text-amber-800 border-amber-300',
-  coffee_shop: 'bg-orange-100 text-orange-800 border-orange-300',
-  restaurant: 'bg-green-100 text-green-800 border-green-300',
-  bar: 'bg-blue-100 text-blue-800 border-blue-300',
-  event_space: 'bg-pink-100 text-pink-800 border-pink-300',
-  amphitheater: 'bg-red-100 text-red-800 border-red-300',
-  theater: 'bg-indigo-100 text-indigo-800 border-indigo-300',
-  arena: 'bg-gray-100 text-gray-800 border-gray-300'
+  music_venue: 'bg-purple-400 text-white border-black',
+  brewery: 'bg-amber-400 text-black border-black',
+  coffee_shop: 'bg-orange-400 text-white border-black',
+  restaurant: 'bg-green-400 text-black border-black',
+  bar: 'bg-blue-400 text-white border-black',
+  event_space: 'bg-pink-400 text-black border-black',
+  amphitheater: 'bg-red-400 text-white border-black',
+  theater: 'bg-indigo-400 text-white border-black',
+  arena: 'bg-cyan-400 text-black border-black'
 }
 
 const venueTypeLabels: Record<Venue['venue_type'], string> = {
@@ -125,13 +125,13 @@ export default function VenueCard({ venue, onReport, onSelect, isSelected = fals
       )}
       
       {/* Header with venue type badge */}
-      <div className="p-4 border-b-4 border-black bg-gradient-to-r from-gray-50 to-white">
+      <div className="p-4 border-b-4 border-black bg-gradient-to-r from-yellow-200 to-lime-200">
         <div className="flex justify-between items-start mb-2">
-          <h3 className={`text-xl font-bold ${isSelected ? 'text-blue-600' : 'text-gray-900 group-hover:text-blue-600'} transition-colors ${onSelect ? 'ml-6' : ''}`}>
+          <h3 className={`text-xl font-black ${isSelected ? 'text-blue-600' : 'text-gray-900 group-hover:text-blue-600'} transition-colors ${onSelect ? 'ml-6' : ''}`}>
             {venue.name}
           </h3>
           <div className="flex items-center gap-2">
-            <span className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-semibold border-2 ${venueTypeColors[venue.venue_type]}`}>
+            <span className={`inline-flex items-center gap-1 px-3 py-1 text-xs font-black border-2 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] ${venueTypeColors[venue.venue_type]}`}>
               {venueTypeIcons[venue.venue_type]}
               {venueTypeLabels[venue.venue_type]}
             </span>
@@ -164,43 +164,44 @@ export default function VenueCard({ venue, onReport, onSelect, isSelected = fals
           </div>
         </div>
         
-        {/* Location */}
-        <div className="flex items-center text-sm text-gray-600 mb-2">
-          <MapPin className="w-4 h-4 mr-1" />
-          {venue.city}, {venue.state}
-        </div>
-
-        {/* Capacity */}
-        <div className="flex items-center text-sm text-gray-600">
-          <Users className="w-4 h-4 mr-1" />
-          Capacity: {formatCapacity()}
+        {/* Location and Capacity Tags */}
+        <div className="flex flex-wrap gap-2">
+          <span className="inline-flex items-center gap-1 px-2 py-1 bg-cyan-400 text-black text-xs font-black border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+            <MapPin className="w-3 h-3" />
+            {venue.city.toUpperCase()}, {venue.state}
+          </span>
+          <span className="inline-flex items-center gap-1 px-2 py-1 bg-lime-400 text-black text-xs font-black border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+            <Users className="w-3 h-3" />
+            {formatCapacity().toUpperCase()}
+          </span>
         </div>
       </div>
 
       {/* Description */}
       {venue.description && (
-        <div className="p-4 border-b-2 border-gray-200">
-          <p className="text-sm text-gray-700 line-clamp-3">
-            {venue.description}
+        <div className="p-4 border-b-2 border-black bg-gradient-to-r from-pink-100 to-yellow-100">
+          <p className="text-sm text-gray-800 font-bold line-clamp-3">
+            &quot;{venue.description}&quot;
           </p>
         </div>
       )}
 
       {/* Genres */}
       {venue.genres && venue.genres.length > 0 && (
-        <div className="px-4 py-3 border-b-2 border-gray-200">
+        <div className="px-4 py-3 border-b-2 border-black bg-gradient-to-r from-cyan-100 to-blue-100">
+          <p className="text-xs font-black mb-2 text-gray-700">GENRES:</p>
           <div className="flex flex-wrap gap-1">
             {venue.genres.slice(0, 4).map((genre, idx) => (
               <span
                 key={idx}
-                className="inline-block px-2 py-1 bg-gray-100 text-gray-700 text-xs rounded-md border border-gray-300"
+                className="inline-block px-2 py-1 bg-purple-300 text-black text-xs font-black border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
               >
-                {genre}
+                {genre.toUpperCase()}
               </span>
             ))}
             {venue.genres.length > 4 && (
-              <span className="inline-block px-2 py-1 text-gray-500 text-xs">
-                +{venue.genres.length - 4} more
+              <span className="inline-block px-2 py-1 bg-gray-200 text-gray-700 text-xs font-black border-2 border-black">
+                +{venue.genres.length - 4} MORE
               </span>
             )}
           </div>
@@ -208,7 +209,7 @@ export default function VenueCard({ venue, onReport, onSelect, isSelected = fals
       )}
 
       {/* Contact Info */}
-      <div className="p-4 bg-gray-50 space-y-2">
+      <div className="p-4 bg-gradient-to-r from-orange-100 to-red-100 space-y-2">
         {/* Website */}
         {venue.website && (
           <a
