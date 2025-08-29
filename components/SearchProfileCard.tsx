@@ -32,81 +32,81 @@ export default function SearchProfileCard({
       <div className="p-3 sm:p-6">
         {/* Mobile Layout */}
         <div className="sm:hidden">
-          <div className="flex items-start gap-3 mb-2">
-            {/* Profile Photo - Smaller on mobile */}
+          <div className="flex items-center gap-3">
+            {/* Profile Photo - Compact */}
             <div className="flex-shrink-0">
               {profile.profile_image_url ? (
                 <Image
                   src={profile.profile_image_url}
                   alt={profile.username}
-                  width={48}
-                  height={48}
-                  className="w-12 h-12 border-2 border-black object-cover rounded"
+                  width={40}
+                  height={40}
+                  className="w-10 h-10 border-2 border-black object-cover rounded"
                   onError={(e) => {
                     console.error('Profile image failed to load:', profile.profile_image_url)
                   }}
                 />
               ) : (
-                <div className="w-12 h-12 border-2 border-black bg-gradient-to-br from-pink-400 to-purple-500 flex items-center justify-center rounded">
-                  <div className="text-sm font-black text-white">
+                <div className="w-10 h-10 border-2 border-black bg-gradient-to-br from-pink-400 to-purple-500 flex items-center justify-center rounded">
+                  <div className="text-xs font-black text-white">
                     {(profile.username || 'M').charAt(0).toUpperCase()}
                   </div>
                 </div>
               )}
             </div>
 
-            {/* Name and Info */}
+            {/* Name and Compact Info - Single Row */}
             <div className="flex-1 min-w-0">
-              <h3 className="font-black text-sm leading-tight mb-1">@{profile.username || 'musician'}</h3>
+              <div className="flex items-center gap-2 mb-1">
+                <h3 className="font-black text-sm">@{profile.username || 'musician'}</h3>
+                {profile.experience_level && (
+                  <span className={`px-1.5 py-0.5 border border-black font-black text-xs ${
+                    profile.experience_level === 'beginner' ? 'bg-green-300' :
+                    profile.experience_level === 'intermediate' ? 'bg-yellow-300' :
+                    profile.experience_level === 'advanced' ? 'bg-orange-400' :
+                    profile.experience_level === 'professional' ? 'bg-red-400 text-white' :
+                    'bg-gray-300'
+                  }`}>
+                    {profile.experience_level.charAt(0).toUpperCase()}
+                  </span>
+                )}
+                {profile.last_active && (() => {
+                  const activeStatus = getLastActiveStatus(profile.last_active)
+                  return (
+                    <span className={`px-1.5 py-0.5 border border-black font-black text-xs ${
+                      activeStatus.status === 'online' ? 'bg-green-400' :
+                      activeStatus.status === 'recent' ? 'bg-yellow-400' :
+                      activeStatus.status === 'hours' ? 'bg-orange-400' :
+                      activeStatus.status === 'days' ? 'bg-red-400' :
+                      'bg-gray-400'
+                    }`}>
+                      {activeStatus.text.split(' ')[0]}
+                    </span>
+                  )
+                })()}
+              </div>
               
-              {/* Condensed info with icons */}
-              <div className="space-y-1">
-                <div className="flex items-center gap-2 text-xs text-gray-600">
-                  <Music className="w-3 h-3" />
+              {/* Instrument and Location - Single Row */}
+              <div className="flex items-center gap-3 text-xs text-gray-600">
+                <div className="flex items-center gap-1">
+                  <Music className="w-3.5 h-3.5" />
                   <span className="font-bold">{profile.main_instrument || 'Musician'}</span>
                 </div>
-                <div className="flex items-center gap-2 text-xs text-gray-600">
-                  <MapPin className="w-3 h-3" />
+                <div className="flex items-center gap-1">
+                  <MapPin className="w-3.5 h-3.5" />
                   <span className="font-bold">{locationDisplay || 'Planet Earth'}</span>
                 </div>
-                {profile.experience_level && (
-                  <div className="flex items-center gap-2 text-xs">
-                    <span className={`px-1 py-0.5 rounded font-black text-xs ${
-                      profile.experience_level === 'beginner' ? 'bg-green-300' :
-                      profile.experience_level === 'intermediate' ? 'bg-yellow-300' :
-                      profile.experience_level === 'advanced' ? 'bg-orange-400' :
-                      profile.experience_level === 'professional' ? 'bg-red-400 text-white' :
-                      'bg-gray-300'
-                    }`}>
-                      {profile.experience_level.toUpperCase()}
-                    </span>
-                    {profile.last_active && (() => {
-                      const activeStatus = getLastActiveStatus(profile.last_active)
-                      return (
-                        <span className={`px-1 py-0.5 rounded font-black text-xs ${
-                          activeStatus.status === 'online' ? 'bg-green-400' :
-                          activeStatus.status === 'recent' ? 'bg-yellow-400' :
-                          activeStatus.status === 'hours' ? 'bg-orange-400' :
-                          activeStatus.status === 'days' ? 'bg-red-400' :
-                          'bg-gray-400'
-                        }`}>
-                          {activeStatus.text}
-                        </span>
-                      )
-                    })()}
-                  </div>
-                )}
               </div>
             </div>
 
-            {/* Action Icons - Right aligned */}
-            <div className="flex flex-col gap-1">
+            {/* Action Icons - Horizontal Row */}
+            <div className="flex gap-1 flex-shrink-0">
               <Link 
                 href={`/profile/${profile.username}`} 
                 className="inline-flex items-center justify-center w-8 h-8 bg-blue-400 border-2 border-black hover:bg-blue-500 transition-colors shadow-[1px_1px_0px_0px_rgba(0,0,0,1)]"
                 title={`View ${profile.username}`}
               >
-                <Eye className="w-3 h-3 text-black" />
+                <Eye className="w-4 h-4 text-black" />
               </Link>
               {currentUser && currentUser.id !== profile.user_id && (
                 <button
@@ -114,7 +114,7 @@ export default function SearchProfileCard({
                   className="inline-flex items-center justify-center w-8 h-8 bg-yellow-400 border-2 border-black hover:bg-yellow-500 transition-colors shadow-[1px_1px_0px_0px_rgba(0,0,0,1)]"
                   title={`Message ${profile.username}`}
                 >
-                  <MessageSquare className="w-3 h-3 text-black" />
+                  <MessageSquare className="w-4 h-4 text-black" />
                 </button>
               )}
               {currentUser && (
@@ -127,7 +127,7 @@ export default function SearchProfileCard({
                   }`}
                   title={savedProfiles.has(profile.id) ? 'Remove from saved' : 'Save profile'}
                 >
-                  <Heart className={`w-3 h-3 text-black ${savedProfiles.has(profile.id) ? 'fill-current' : ''}`} />
+                  <Heart className={`w-4 h-4 text-black ${savedProfiles.has(profile.id) ? 'fill-current' : ''}`} />
                 </button>
               )}
             </div>

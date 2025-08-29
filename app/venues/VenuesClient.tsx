@@ -14,16 +14,16 @@ type Venue = Database['public']['Tables']['venues']['Row']
 
 // Map venue types to icons
 const venueTypeIcons = {
-  music_venue: <Music className="w-4 h-4" />,
-  brewery: <Beer className="w-4 h-4" />,
-  winery: <Music className="w-4 h-4" />,
-  coffee_shop: <Coffee className="w-4 h-4" />,
-  restaurant: <Music className="w-4 h-4" />,
-  bar: <Beer className="w-4 h-4" />,
-  event_space: <Music className="w-4 h-4" />,
-  amphitheater: <Music className="w-4 h-4" />,
-  theater: <Music className="w-4 h-4" />,
-  arena: <Music className="w-4 h-4" />
+  music_venue: <Music className="w-5 h-5" />,
+  brewery: <Beer className="w-5 h-5" />,
+  winery: <Music className="w-5 h-5" />,
+  coffee_shop: <Coffee className="w-5 h-5" />,
+  restaurant: <Music className="w-5 h-5" />,
+  bar: <Beer className="w-5 h-5" />,
+  event_space: <Music className="w-5 h-5" />,
+  amphitheater: <Music className="w-5 h-5" />,
+  theater: <Music className="w-5 h-5" />,
+  arena: <Music className="w-5 h-5" />
 }
 
 // Map venue types to colors
