@@ -304,10 +304,10 @@ Best regards,`)
             <div className="flex-1 relative">
               <input
                 type="text"
-                placeholder="Search by venue name, city, state, type, or genre..."
+                placeholder="Search venues..."
                 value={searchText}
                 onChange={(e) => setSearchText(e.target.value)}
-                className="w-full pl-10 pr-4 py-3 border-2 border-gray-300 focus:outline-none focus:border-black transition-colors font-bold"
+                className="w-full pl-10 pr-4 py-2 sm:py-3 border-2 border-gray-300 focus:outline-none focus:border-black transition-colors font-bold text-sm sm:text-base"
               />
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
             </div>
@@ -335,24 +335,15 @@ Best regards,`)
         </div>
 
         {/* Selection Controls */}
-        {!loading && venues.length > 0 && (
+        {!loading && venues.length > 0 && selectedVenues.size > 0 && (
           <div className="mb-3 sm:mb-4 bg-white border-2 sm:border-4 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] sm:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] p-2 sm:p-4 rounded-lg">
             <div className="flex flex-wrap items-center justify-between gap-4">
               <div className="flex items-center gap-4">
-                <button
-                  onClick={handleSelectAll}
-                  className="px-3 py-1 border-2 border-black font-black text-sm hover:bg-gray-100 transition-colors"
-                >
-                  {selectedVenues.size === venues.length ? 'DESELECT ALL' : 'SELECT ALL'}
-                </button>
-                {selectedVenues.size > 0 && (
-                  <span className="text-sm font-bold text-gray-700">
-                    {selectedVenues.size} venue{selectedVenues.size !== 1 ? 's' : ''} selected
-                  </span>
-                )}
+                <span className="text-sm font-bold text-gray-700">
+                  {selectedVenues.size} venue{selectedVenues.size !== 1 ? 's' : ''} selected
+                </span>
               </div>
-              {selectedVenues.size > 0 && (
-                <div className="relative group">
+              <div className="relative group">
                   <button className="px-4 py-2 bg-blue-500 text-white border-2 border-black font-black text-sm hover:bg-blue-600 transition-colors shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] flex items-center gap-2">
                     EMAIL SELECTED ({selectedVenues.size}) ▼
                   </button>
@@ -389,7 +380,6 @@ Best regards,`)
                     </a>
                   </div>
                 </div>
-              )}
             </div>
           </div>
         )}
@@ -406,12 +396,6 @@ Best regards,`)
                 <thead className="bg-gray-100 border-b-4 border-black">
                   <tr>
                     <th className="px-2 sm:px-4 py-2 sm:py-3 text-left font-black text-xs sm:text-sm">
-                      <input
-                        type="checkbox"
-                        checked={selectedVenues.size === venues.length && venues.length > 0}
-                        onChange={handleSelectAll}
-                        className="mr-1 sm:mr-2 w-3 h-3 sm:w-4 sm:h-4"
-                      />
                       VENUE INFO
                     </th>
                     <th className="px-1 sm:px-4 py-2 sm:py-3 text-center font-black text-xs sm:text-sm hidden sm:table-cell">TYPE</th>

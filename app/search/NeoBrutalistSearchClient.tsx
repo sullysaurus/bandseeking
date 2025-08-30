@@ -23,9 +23,9 @@ function ProfileRow({ profile, index, currentUser, savedProfiles, handleSave, ha
     >
       {/* Desktop Layout - Grid with columns */}
       <div className="hidden sm:block">
-        <div className="grid grid-cols-12 gap-4 items-center">
+        <div className="grid grid-cols-12 gap-4 items-center py-2">
           {/* Musician Info - 4 columns */}
-          <div className="col-span-4 flex items-center gap-4">
+          <div className="col-span-4 flex items-center gap-3">
             {/* Profile Photo */}
             {profile.profile_image_url ? (
               <Image
@@ -81,12 +81,19 @@ function ProfileRow({ profile, index, currentUser, savedProfiles, handleSave, ha
           {/* Genres - 2 columns */}
           <div className="col-span-2 text-center">
             {profile.genres && profile.genres.length > 0 ? (
-              <div className="flex justify-center gap-1">
+              <div className="flex flex-wrap justify-center gap-1">
                 <span className="px-2 py-1 bg-cyan-300 border border-black text-xs font-bold rounded">
                   {profile.genres[0]}
                 </span>
                 {profile.genres.length > 1 && (
-                  <span className="text-xs text-gray-500 font-bold">+{profile.genres.length - 1}</span>
+                  <>
+                    <span className="px-2 py-1 bg-cyan-300 border border-black text-xs font-bold rounded">
+                      {profile.genres[1]}
+                    </span>
+                    {profile.genres.length > 2 && (
+                      <span className="text-xs text-gray-500 font-bold">+{profile.genres.length - 2}</span>
+                    )}
+                  </>
                 )}
               </div>
             ) : (
@@ -149,7 +156,7 @@ function ProfileRow({ profile, index, currentUser, savedProfiles, handleSave, ha
         
         <div className="flex-1 min-w-0">
           <div className="font-black text-sm mb-1">@{profile.username || 'musician'}</div>
-          <div className="flex items-center gap-3 text-xs text-gray-600">
+          <div className="flex items-center gap-3 text-xs text-gray-600 mb-1">
             <div className="flex items-center gap-1">
               <Music className="w-3 h-3" />
               <span className="font-bold">{profile.main_instrument || 'Musician'}</span>
@@ -159,6 +166,22 @@ function ProfileRow({ profile, index, currentUser, savedProfiles, handleSave, ha
               <span className="font-bold">{locationDisplay || 'Planet Earth'}</span>
             </div>
           </div>
+          {/* Mobile Genres */}
+          {profile.genres && profile.genres.length > 0 && (
+            <div className="flex flex-wrap gap-1">
+              <span className="px-2 py-0.5 bg-cyan-300 border border-black text-[10px] font-bold rounded">
+                {profile.genres[0]}
+              </span>
+              {profile.genres.length > 1 && (
+                <span className="px-2 py-0.5 bg-cyan-300 border border-black text-[10px] font-bold rounded">
+                  {profile.genres[1]}
+                </span>
+              )}
+              {profile.genres.length > 2 && (
+                <span className="text-[10px] text-gray-500 font-bold self-center">+{profile.genres.length - 2}</span>
+              )}
+            </div>
+          )}
         </div>
 
         {/* Mobile Actions - Only View and Save */}

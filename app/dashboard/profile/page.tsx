@@ -518,6 +518,19 @@ export default function EditProfilePage() {
                 </Link>
               )}
             </div>
+
+            {/* Sign Out Button - Mobile Only */}
+            <div className="block md:hidden mt-8">
+              <button
+                onClick={async () => {
+                  await supabase.auth.signOut()
+                  router.push('/')
+                }}
+                className="w-full px-6 py-4 bg-red-400 hover:bg-red-500 border-4 border-black font-black text-lg shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] text-center"
+              >
+                SIGN OUT
+              </button>
+            </div>
           </form>
         </div>
       </div>
