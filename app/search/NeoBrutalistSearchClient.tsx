@@ -21,105 +21,125 @@ function ProfileRow({ profile, index, currentUser, savedProfiles, handleSave, ha
         isEven ? 'bg-green-50' : 'bg-white'
       } hover:bg-yellow-50 transition-colors`}
     >
-      {/* Desktop Layout - Flex with proper spacing */}
-      <div className="hidden sm:flex items-center flex-1 gap-6">
-        {/* Profile Info */}
-        <div className="flex items-center gap-4 min-w-0 flex-shrink-0">
-          {/* Profile Photo */}
-          {profile.profile_image_url ? (
-            <Image
-              src={profile.profile_image_url}
-              alt={profile.username}
-              width={56}
-              height={56}
-              className="w-14 h-14 border-2 border-black object-cover rounded"
-            />
-          ) : (
-            <div className="w-14 h-14 border-2 border-black bg-gradient-to-br from-pink-400 to-purple-500 flex items-center justify-center rounded">
-              <span className="text-base font-black text-white">
-                {(profile.username || 'M').charAt(0).toUpperCase()}
-              </span>
+      {/* Desktop Layout - Grid with columns */}
+      <div className="hidden sm:block">
+        <div className="grid grid-cols-12 gap-4 items-center">
+          {/* Musician Info - 4 columns */}
+          <div className="col-span-4 flex items-center gap-4">
+            {/* Profile Photo */}
+            {profile.profile_image_url ? (
+              <Image
+                src={profile.profile_image_url}
+                alt={profile.username}
+                width={48}
+                height={48}
+                className="w-12 h-12 border-2 border-black object-cover rounded"
+              />
+            ) : (
+              <div className="w-12 h-12 border-2 border-black bg-gradient-to-br from-pink-400 to-purple-500 flex items-center justify-center rounded">
+                <span className="text-sm font-black text-white">
+                  {(profile.username || 'M').charAt(0).toUpperCase()}
+                </span>
+              </div>
+            )}
+            <div className="min-w-0">
+              <div className="font-black text-base truncate">@{profile.username || 'musician'}</div>
+              {profile.bio && (
+                <div className="text-xs text-gray-600 truncate">{profile.bio.slice(0, 50)}...</div>
+              )}
             </div>
-          )}
-          <div className="min-w-0">
-            <div className="font-black text-lg">@{profile.username || 'musician'}</div>
+          </div>
+
+          {/* Instrument - 2 columns */}
+          <div className="col-span-2 text-center">
+            <div className="flex items-center justify-center gap-1">
+              <Music className="w-4 h-4 text-gray-500" />
+              <span className="font-bold text-sm">{profile.main_instrument || 'Musician'}</span>
+            </div>
+            {profile.experience_level && (
+              <div className={`text-xs font-bold mt-1 ${
+                profile.experience_level === 'beginner' ? 'text-green-600' :
+                profile.experience_level === 'intermediate' ? 'text-amber-600' :
+                profile.experience_level === 'advanced' ? 'text-orange-600' :
+                profile.experience_level === 'professional' ? 'text-red-600' :
+                'text-gray-600'
+              }`}>
+                ({profile.experience_level.charAt(0).toUpperCase()})
+              </div>
+            )}
+          </div>
+
+          {/* Location - 2 columns */}
+          <div className="col-span-2 text-center">
+            <div className="flex items-center justify-center gap-1">
+              <MapPin className="w-4 h-4 text-gray-500" />
+              <span className="font-bold text-sm">{locationDisplay || 'Planet Earth'}</span>
+            </div>
+            {profile.last_active && (() => {
+              const activeStatus = getLastActiveStatus(profile.last_active)
+              return (
+                <div className="flex items-center justify-center gap-1 mt-1">
+                  <span className={`w-2 h-2 rounded-full inline-block ${
+                    activeStatus.status === 'online' ? 'bg-green-400' :
+                    activeStatus.status === 'recent' ? 'bg-yellow-400' :
+                    activeStatus.status === 'hours' ? 'bg-orange-400' :
+                    activeStatus.status === 'days' ? 'bg-red-400' :
+                    'bg-gray-400'
+                  }`}></span>
+                  <span className="text-xs text-gray-600">{activeStatus.text}</span>
+                </div>
+              )
+            })()}
+          </div>
+
+          {/* Genres - 2 columns */}
+          <div className="col-span-2 text-center">
+            {profile.genres && profile.genres.length > 0 ? (
+              <div className="flex flex-wrap justify-center gap-1">
+                {profile.genres.slice(0, 2).map((genre: string, idx: number) => (
+                  <span key={idx} className="px-2 py-1 bg-cyan-300 border border-black text-xs font-bold rounded">
+                    {genre}
+                  </span>
+                ))}
+                {profile.genres.length > 2 && (
+                  <span className="text-xs text-gray-500 font-bold">+{profile.genres.length - 2}</span>
+                )}
+              </div>
+            ) : (
+              <span className="text-xs text-gray-500">No genres</span>
+            )}
+          </div>
+
+          {/* Actions - 2 columns */}
+          <div className="col-span-2 flex gap-2 justify-center">
+            <Link
+              href={`/profile/${profile.username}`}
+              className="px-2 py-2 bg-blue-400 border-2 border-black font-black text-xs hover:bg-blue-500 transition-colors shadow-[1px_1px_0px_0px_rgba(0,0,0,1)]"
+            >
+              <Eye className="w-4 h-4" />
+            </Link>
+            {currentUser && currentUser.id !== profile.user_id && (
+              <button
+                onClick={() => handleMessage(profile.user_id)}
+                className="px-2 py-2 bg-yellow-400 border-2 border-black font-black text-xs hover:bg-yellow-500 transition-colors shadow-[1px_1px_0px_0px_rgba(0,0,0,1)]"
+              >
+                <MessageSquare className="w-4 h-4" />
+              </button>
+            )}
+            {currentUser && (
+              <button
+                onClick={() => handleSave(profile.id)}
+                className={`px-2 py-2 border-2 border-black font-black text-xs transition-colors shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] ${
+                  savedProfiles.has(profile.id)
+                    ? 'bg-pink-400 hover:bg-pink-500'
+                    : 'bg-white hover:bg-lime-300'
+                }`}
+              >
+                <Heart className={`w-4 h-4 ${savedProfiles.has(profile.id) ? 'fill-current' : ''}`} />
+              </button>
+            )}
           </div>
         </div>
-
-        {/* Instrument */}
-        <div className="flex items-center gap-1 min-w-0 flex-shrink-0">
-          <Music className="w-4 h-4 text-gray-500" />
-          <span className="font-bold text-sm">{profile.main_instrument || 'Musician'}</span>
-          {profile.experience_level && (
-            <span className={`ml-1 text-xs font-bold ${
-              profile.experience_level === 'beginner' ? 'text-green-600' :
-              profile.experience_level === 'intermediate' ? 'text-amber-600' :
-              profile.experience_level === 'advanced' ? 'text-orange-600' :
-              profile.experience_level === 'professional' ? 'text-red-600' :
-              'text-gray-600'
-            }`}>
-              ({profile.experience_level.charAt(0).toUpperCase()})
-            </span>
-          )}
-        </div>
-
-        {/* Location */}
-        <div className="flex items-center gap-1 min-w-0 flex-shrink-0">
-          <MapPin className="w-4 h-4 text-gray-500" />
-          <span className="font-bold text-sm">{locationDisplay || 'Planet Earth'}</span>
-          {profile.last_active && (() => {
-            const activeStatus = getLastActiveStatus(profile.last_active)
-            return (
-              <span className={`ml-2 w-2 h-2 rounded-full inline-block ${
-                activeStatus.status === 'online' ? 'bg-green-400' :
-                activeStatus.status === 'recent' ? 'bg-yellow-400' :
-                activeStatus.status === 'hours' ? 'bg-orange-400' :
-                activeStatus.status === 'days' ? 'bg-red-400' :
-                'bg-gray-400'
-              }`} title={activeStatus.text}></span>
-            )
-          })()}
-        </div>
-
-        {/* Seeking */}
-        <div className="flex items-center gap-1 min-w-0 flex-shrink-0">
-          {profile.seeking && profile.seeking.length > 0 && (
-            <>
-              <Users className="w-4 h-4 text-gray-500" />
-              <span className="font-bold text-sm">{profile.seeking.length}</span>
-            </>
-          )}
-        </div>
-      </div>
-
-      {/* Actions - Desktop */}
-      <div className="hidden sm:flex gap-2 flex-shrink-0">
-        <Link
-          href={`/profile/${profile.username}`}
-          className="px-3 py-2 bg-blue-400 border-2 border-black font-black text-xs hover:bg-blue-500 transition-colors shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
-        >
-          <Eye className="w-4 h-4" />
-        </Link>
-        {currentUser && currentUser.id !== profile.user_id && (
-          <button
-            onClick={() => handleMessage(profile.user_id)}
-            className="px-3 py-2 bg-yellow-400 border-2 border-black font-black text-xs hover:bg-yellow-500 transition-colors shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
-          >
-            <MessageSquare className="w-4 h-4" />
-          </button>
-        )}
-        {currentUser && (
-          <button
-            onClick={() => handleSave(profile.id)}
-            className={`px-3 py-2 border-2 border-black font-black text-xs transition-colors shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] ${
-              savedProfiles.has(profile.id)
-                ? 'bg-pink-400 hover:bg-pink-500'
-                : 'bg-white hover:bg-lime-300'
-            }`}
-          >
-            <Heart className={`w-4 h-4 ${savedProfiles.has(profile.id) ? 'fill-current' : ''}`} />
-          </button>
-        )}
       </div>
 
       {/* Mobile Layout */}
@@ -458,11 +478,24 @@ export default function NeoBrutalistSearchClient() {
           {profiles.length > 0 && (
             <div className="bg-white border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
               {/* Table Header - Desktop Only */}
-              <div className="hidden sm:flex items-center justify-between p-4 border-b-4 border-black bg-gray-100">
-                <div className="flex items-center gap-2">
-                  <span className="font-black text-sm">MUSICIAN INFO</span>
+              <div className="hidden sm:block">
+                <div className="grid grid-cols-12 gap-4 p-4 border-b-4 border-black bg-gray-100">
+                  <div className="col-span-4">
+                    <span className="font-black text-sm">MUSICIAN INFO</span>
+                  </div>
+                  <div className="col-span-2 text-center">
+                    <span className="font-black text-sm">INSTRUMENT</span>
+                  </div>
+                  <div className="col-span-2 text-center">
+                    <span className="font-black text-sm">LOCATION</span>
+                  </div>
+                  <div className="col-span-2 text-center">
+                    <span className="font-black text-sm">GENRES</span>
+                  </div>
+                  <div className="col-span-2 text-center">
+                    <span className="font-black text-sm">ACTIONS</span>
+                  </div>
                 </div>
-                <span className="font-black text-sm">ACTIONS</span>
               </div>
 
               {/* Table Rows */}
