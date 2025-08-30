@@ -176,7 +176,7 @@ export default function DashboardPage() {
             <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
               {/* Browse Musicians */}
               <Link href="/search" className="block group">
-                <div className="bg-blue-400 border-4 border-black p-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] group-hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all">
+                <div className="bg-blue-200 border-4 border-black p-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] group-hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all">
                   <h3 className="text-xl font-black mb-2">BROWSE</h3>
                   <p className="font-bold text-sm mb-3">Find musicians to collaborate with</p>
                   <div className="text-lg font-black">🎵</div>
@@ -185,7 +185,7 @@ export default function DashboardPage() {
 
               {/* Venues */}
               <Link href="/venues" className="block group">
-                <div className="bg-purple-400 border-4 border-black p-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] group-hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all">
+                <div className="bg-purple-200 border-4 border-black p-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] group-hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all">
                   <h3 className="text-xl font-black mb-2">VENUES</h3>
                   <p className="font-bold text-sm mb-3">Discover places to perform</p>
                   <div className="text-lg font-black">🎤</div>
@@ -194,7 +194,7 @@ export default function DashboardPage() {
 
               {/* Messages */}
               <Link href="/dashboard/messages" className="block group relative">
-                <div className="bg-yellow-400 border-4 border-black p-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] group-hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all">
+                <div className="bg-yellow-200 border-4 border-black p-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] group-hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all">
                   <h3 className="text-xl font-black mb-2">MESSAGES</h3>
                   <p className="font-bold text-sm mb-3">Chat with other musicians</p>
                   <div className="text-lg font-black">💬</div>
@@ -208,7 +208,7 @@ export default function DashboardPage() {
 
               {/* Saved Musicians */}
               <Link href="/dashboard/saved" className="block group">
-                <div className="bg-pink-400 border-4 border-black p-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] group-hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all">
+                <div className="bg-pink-200 border-4 border-black p-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] group-hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all">
                   <h3 className="text-xl font-black mb-2">SAVED</h3>
                   <p className="font-bold text-sm mb-3">{savedCount} musicians saved</p>
                   <div className="text-lg font-black">♥</div>
@@ -217,7 +217,7 @@ export default function DashboardPage() {
 
               {/* Saved Venues */}
               <Link href="/dashboard/saved-venues" className="block group">
-                <div className="bg-orange-400 border-4 border-black p-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] group-hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all">
+                <div className="bg-orange-200 border-4 border-black p-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] group-hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all">
                   <h3 className="text-xl font-black mb-2">VENUES</h3>
                   <p className="font-bold text-sm mb-3">{savedVenuesCount} venues saved</p>
                   <div className="text-lg font-black">📍</div>
@@ -227,7 +227,7 @@ export default function DashboardPage() {
               {/* My Profile */}
               {profile?.is_published ? (
                 <Link href={`/profile/${profile.username}`} className="block group">
-                  <div className="bg-cyan-400 border-4 border-black p-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] group-hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all">
+                  <div className="bg-cyan-200 border-4 border-black p-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] group-hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all">
                     <h3 className="text-xl font-black mb-2">MY PROFILE</h3>
                     <p className="font-bold text-sm mb-3">View your public profile</p>
                     <div className="text-lg font-black">👤</div>
@@ -235,7 +235,7 @@ export default function DashboardPage() {
                 </Link>
               ) : (
                 <Link href="/dashboard/profile" className="block group">
-                  <div className="bg-lime-400 border-4 border-black p-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] group-hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all">
+                  <div className="bg-lime-200 border-4 border-black p-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] group-hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all">
                     <h3 className="text-xl font-black mb-2">PROFILE</h3>
                     <p className="font-bold text-sm mb-3">Complete your setup</p>
                     <div className="text-lg font-black">⚙️</div>

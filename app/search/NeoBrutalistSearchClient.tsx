@@ -44,9 +44,21 @@ function ProfileRow({ profile, index, currentUser, savedProfiles, handleSave, ha
             )}
             <div className="min-w-0">
               <div className="font-black text-base truncate">@{profile.username || 'musician'}</div>
-              {profile.bio && (
-                <div className="text-xs text-gray-600 truncate">{profile.bio.slice(0, 50)}...</div>
-              )}
+              {profile.last_active && (() => {
+                const activeStatus = getLastActiveStatus(profile.last_active)
+                return (
+                  <div className="flex items-center gap-1 mt-1">
+                    <span className={`w-2 h-2 rounded-full inline-block ${
+                      activeStatus.status === 'online' ? 'bg-green-400' :
+                      activeStatus.status === 'recent' ? 'bg-yellow-400' :
+                      activeStatus.status === 'hours' ? 'bg-orange-400' :
+                      activeStatus.status === 'days' ? 'bg-red-400' :
+                      'bg-gray-400'
+                    }`}></span>
+                    <span className="text-xs text-gray-600">{activeStatus.text}</span>
+                  </div>
+                )
+              })()}
             </div>
           </div>
 
@@ -56,17 +68,6 @@ function ProfileRow({ profile, index, currentUser, savedProfiles, handleSave, ha
               <Music className="w-4 h-4 text-gray-500" />
               <span className="font-bold text-sm">{profile.main_instrument || 'Musician'}</span>
             </div>
-            {profile.experience_level && (
-              <div className={`text-xs font-bold mt-1 ${
-                profile.experience_level === 'beginner' ? 'text-green-600' :
-                profile.experience_level === 'intermediate' ? 'text-amber-600' :
-                profile.experience_level === 'advanced' ? 'text-orange-600' :
-                profile.experience_level === 'professional' ? 'text-red-600' :
-                'text-gray-600'
-              }`}>
-                ({profile.experience_level.charAt(0).toUpperCase()})
-              </div>
-            )}
           </div>
 
           {/* Location - 2 columns */}
@@ -75,34 +76,17 @@ function ProfileRow({ profile, index, currentUser, savedProfiles, handleSave, ha
               <MapPin className="w-4 h-4 text-gray-500" />
               <span className="font-bold text-sm">{locationDisplay || 'Planet Earth'}</span>
             </div>
-            {profile.last_active && (() => {
-              const activeStatus = getLastActiveStatus(profile.last_active)
-              return (
-                <div className="flex items-center justify-center gap-1 mt-1">
-                  <span className={`w-2 h-2 rounded-full inline-block ${
-                    activeStatus.status === 'online' ? 'bg-green-400' :
-                    activeStatus.status === 'recent' ? 'bg-yellow-400' :
-                    activeStatus.status === 'hours' ? 'bg-orange-400' :
-                    activeStatus.status === 'days' ? 'bg-red-400' :
-                    'bg-gray-400'
-                  }`}></span>
-                  <span className="text-xs text-gray-600">{activeStatus.text}</span>
-                </div>
-              )
-            })()}
           </div>
 
           {/* Genres - 2 columns */}
           <div className="col-span-2 text-center">
             {profile.genres && profile.genres.length > 0 ? (
-              <div className="flex flex-wrap justify-center gap-1">
-                {profile.genres.slice(0, 2).map((genre: string, idx: number) => (
-                  <span key={idx} className="px-2 py-1 bg-cyan-300 border border-black text-xs font-bold rounded">
-                    {genre}
-                  </span>
-                ))}
-                {profile.genres.length > 2 && (
-                  <span className="text-xs text-gray-500 font-bold">+{profile.genres.length - 2}</span>
+              <div className="flex justify-center gap-1">
+                <span className="px-2 py-1 bg-cyan-300 border border-black text-xs font-bold rounded">
+                  {profile.genres[0]}
+                </span>
+                {profile.genres.length > 1 && (
+                  <span className="text-xs text-gray-500 font-bold">+{profile.genres.length - 1}</span>
                 )}
               </div>
             ) : (

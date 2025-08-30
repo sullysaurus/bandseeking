@@ -87,7 +87,7 @@ export default function Navigation() {
     <nav className="sticky top-0 z-50 bg-white border-b-4 border-black">
       <div className="max-w-6xl mx-auto px-4">
         <div className="flex justify-between items-center h-16">
-          <Link href={user ? "/dashboard" : "/"} className="text-2xl font-black hover:text-pink-400 transition-colors">
+          <Link href={user ? "/dashboard" : "/"} className="text-lg md:text-2xl font-black hover:text-pink-400 transition-colors">
             BANDSEEKING
           </Link>
 
@@ -132,42 +132,42 @@ export default function Navigation() {
           </div>
 
           {/* Mobile Icon Navigation */}
-          <div className="flex md:hidden items-center gap-2">
-            <Link href="/search" className="p-2 bg-pink-400 border-2 border-black hover:bg-pink-500 transition-colors shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
-              <Search className="w-5 h-5 text-black" />
+          <div className="flex md:hidden items-center gap-1">
+            <Link href="/search" className="p-1.5 bg-pink-400 border-2 border-black hover:bg-pink-500 transition-colors shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+              <Search className="w-4 h-4 text-black" />
             </Link>
-            <Link href="/venues" className="p-2 bg-orange-400 border-2 border-black hover:bg-orange-500 transition-colors shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
-              <MapPin className="w-5 h-5 text-black" />
+            <Link href="/venues" className="p-1.5 bg-orange-400 border-2 border-black hover:bg-orange-500 transition-colors shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+              <MapPin className="w-4 h-4 text-black" />
             </Link>
             
             {isLoading ? (
-              <div className="p-2 bg-gray-200 border-2 border-black">
-                <div className="w-5 h-5"></div>
+              <div className="p-1.5 bg-gray-200 border-2 border-black">
+                <div className="w-4 h-4"></div>
               </div>
             ) : user ? (
               <>
-                <Link href="/dashboard/messages" className="relative p-2 bg-cyan-300 border-2 border-black hover:bg-cyan-400 transition-colors shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
-                  <MessageSquare className="w-5 h-5 text-black" />
+                <Link href="/dashboard/messages" className="relative p-1.5 bg-cyan-300 border-2 border-black hover:bg-cyan-400 transition-colors shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+                  <MessageSquare className="w-4 h-4 text-black" />
                   {unreadCount > 0 && (
-                    <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-black min-w-[16px] h-4 rounded-full flex items-center justify-center border border-black">
+                    <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-black min-w-[14px] h-3.5 rounded-full flex items-center justify-center border border-black">
                       {unreadCount > 9 ? '9+' : unreadCount}
                     </span>
                   )}
                 </Link>
-                <Link href="/dashboard" className="p-2 bg-lime-300 border-2 border-black hover:bg-lime-400 transition-colors shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
-                  <Home className="w-5 h-5 text-black" />
+                <Link href="/dashboard" className="p-1.5 bg-lime-300 border-2 border-black hover:bg-lime-400 transition-colors shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+                  <Home className="w-4 h-4 text-black" />
                 </Link>
-                <button onClick={handleSignOut} className="p-2 bg-white border-2 border-black hover:bg-red-400 transition-colors shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
-                  <LogOut className="w-5 h-5 text-black" />
+                <button onClick={handleSignOut} className="p-1.5 bg-white border-2 border-black hover:bg-red-400 transition-colors shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+                  <LogOut className="w-4 h-4 text-black" />
                 </button>
               </>
             ) : (
               <>
-                <Link href="/auth/login" className="p-2 bg-white border-2 border-black hover:bg-cyan-300 transition-colors shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
-                  <LogIn className="w-5 h-5 text-black" />
+                <Link href="/auth/login" className="p-1.5 bg-white border-2 border-black hover:bg-cyan-300 transition-colors shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+                  <LogIn className="w-4 h-4 text-black" />
                 </Link>
-                <Link href="/auth/register" className="p-2 bg-pink-400 border-2 border-black hover:bg-pink-500 transition-colors shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
-                  <UserPlus className="w-5 h-5 text-black" />
+                <Link href="/auth/register" className="p-1.5 bg-pink-400 border-2 border-black hover:bg-pink-500 transition-colors shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+                  <UserPlus className="w-4 h-4 text-black" />
                 </Link>
               </>
             )}
